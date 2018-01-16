@@ -1,12 +1,10 @@
 import bpy
 from bpy.types import Operator
 
-bpy.types.Scene.carver_target = bpy.props.StringProperty()
-
 class FC_BevelOperator(Operator):
-    bl_idname = "obj.bevel"
+    bl_idname = "object.bevel"
     bl_label = "Bevel an object"
-    bl_description = "Bevels a selected object" 
+    bl_description = "Bevels the target object" 
     bl_options = {'REGISTER', 'UNDO'} 
             
     def execute(self, context):

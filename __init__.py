@@ -17,6 +17,8 @@ from . fc_panel    import FC_Panel
 from . fc_bool_op  import FC_BoolOperator_Diff
 from . fc_bool_op  import FC_BoolOperator_Union
 
+bpy.types.Scene.carver_target = bpy.props.StringProperty()
+
 def register():
    bpy.utils.register_class(FC_Panel)
    bpy.utils.register_class(FC_BevelOperator)

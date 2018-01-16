@@ -1,11 +1,6 @@
 import bpy
 from bpy.types import Panel
 
-# TODO: Draw some nice icons
-# from . fc_icons  import get_icon
-
-icon_collection = {}
-
 class FC_Panel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
@@ -25,13 +20,14 @@ class FC_Panel(Panel):
             
         # Bevel button
         row = layout.row()
-                
-        row.operator('obj.bevel', text="Sharp & Bevel", icon='MOD_MESHDEFORM')
+        
+            
+        row.operator('object.bevel', text="Sharp & Bevel", icon='MOD_MESHDEFORM')
 
         # Bool diff button
         row = layout.row()
-        row.operator('obj.bool_diff', text='Difference', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_diff', text='Difference', icon='MOD_MESHDEFORM')
         
         # Bool union button
         row = layout.row()
-        row.operator('obj.bool_union', text='Union', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_union', text='Union', icon='MOD_MESHDEFORM')

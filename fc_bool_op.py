@@ -4,7 +4,7 @@ from bpy.types import Operator
 from . fc_bool_util import execute_boolean_op
 
 class FC_BoolOperator_Diff(Operator):
-    bl_idname = "obj.bool_diff"
+    bl_idname = "object.bool_diff"
     bl_label = "Bool difference"
     bl_description = "Difference for 2 selected objects" 
     bl_options = {'REGISTER', 'UNDO'} 
@@ -16,7 +16,7 @@ class FC_BoolOperator_Diff(Operator):
         return {'FINISHED'}
     
 class FC_BoolOperator_Union(Operator):
-    bl_idname = "obj.bool_union"
+    bl_idname = "object.bool_union"
     bl_label = "Bool union"
     bl_description = "Union for 2 selected objects" 
     bl_options = {'REGISTER', 'UNDO'} 
