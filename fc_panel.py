@@ -31,3 +31,7 @@ class FC_Panel(Panel):
         # Bool union button
         row = layout.row()
         row.operator('object.bool_union', text='Union', icon='MOD_MESHDEFORM')
+        
+        # Bool Slice button
+        row = layout.row()
+        row.operator('object.bool_slice', text='Slice', icon='MOD_MESHDEFORM')

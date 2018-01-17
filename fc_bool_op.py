@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Operator
 
-from . fc_bool_util import execute_boolean_op
+from . fc_bool_util import execute_boolean_op, execute_slice_op
 
 class FC_BoolOperator_Diff(Operator):
     bl_idname = "object.bool_diff"
@@ -25,4 +25,16 @@ class FC_BoolOperator_Union(Operator):
         target_obj = bpy.data.objects[bpy.context.scene.carver_target]
         
         execute_boolean_op(context, target_obj, 1)
+        return {'FINISHED'}
+    
+class FC_BoolOperator_Slice(Operator):
+    bl_idname = "object.bool_slice"
+    bl_label = "Bool slice"
+    bl_description = "Slice for 2 selected objects" 
+    bl_options = {'REGISTER', 'UNDO'} 
+            
+    def execute(self, context):
+        target_obj = bpy.data.objects[bpy.context.scene.carver_target]
+        
+        execute_slice_op(context, target_obj)
         return {'FINISHED'}
