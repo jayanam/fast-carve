@@ -13,7 +13,7 @@ class FC_BevelOperator(Operator):
         # cause the operator is for OM only
         bpy.ops.object.select_all(action='DESELECT')
 
-        target_obj = bpy.data.objects[bpy.context.scene.carver_target]
+        target_obj = bpy.context.scene.carver_target
         target_obj.select = True
         bpy.context.scene.objects.active = target_obj
         

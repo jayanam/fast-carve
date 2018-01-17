@@ -10,7 +10,7 @@ class FC_BoolOperator_Diff(Operator):
     bl_options = {'REGISTER', 'UNDO'} 
             
     def execute(self, context):
-        target_obj = bpy.data.objects[bpy.context.scene.carver_target]
+        target_obj = bpy.context.scene.carver_target
         
         execute_boolean_op(context, target_obj, 0)
         return {'FINISHED'}
@@ -22,7 +22,7 @@ class FC_BoolOperator_Union(Operator):
     bl_options = {'REGISTER', 'UNDO'} 
             
     def execute(self, context):
-        target_obj = bpy.data.objects[bpy.context.scene.carver_target]
+        target_obj = bpy.context.scene.carver_target
         
         execute_boolean_op(context, target_obj, 1)
         return {'FINISHED'}
@@ -34,7 +34,7 @@ class FC_BoolOperator_Slice(Operator):
     bl_options = {'REGISTER', 'UNDO'} 
             
     def execute(self, context):
-        target_obj = bpy.data.objects[bpy.context.scene.carver_target]
+        target_obj = bpy.context.scene.carver_target
         
         execute_slice_op(context, target_obj)
         return {'FINISHED'}

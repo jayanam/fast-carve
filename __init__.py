@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 2, 0, 0),
+    "version": (0, 2, 0, 1),
     "blender": (2, 79, 0),
     "location": "View3D",
     "category": "Object"}
@@ -18,7 +18,7 @@ from . fc_bool_op  import FC_BoolOperator_Diff
 from . fc_bool_op  import FC_BoolOperator_Union
 from . fc_bool_op  import FC_BoolOperator_Slice
 
-bpy.types.Scene.carver_target = bpy.props.StringProperty()
+bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
 def register():
    bpy.utils.register_class(FC_Panel)
