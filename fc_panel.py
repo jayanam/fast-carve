@@ -4,9 +4,9 @@ from bpy.types import Panel
 class FC_Panel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
-    bl_label = "Fast Carve"
+    bl_label = "Booleans"
     bl_context = "objectmode"
-    bl_category = "jayanam"
+    bl_category = "Fast Carve"
     
     def draw(self, context):
         global custom_icons;
@@ -18,11 +18,8 @@ class FC_Panel(Panel):
         row = layout.row()
         layout.prop_search(context.scene, "carver_target", context.scene, "objects", text="Target Object")
             
-        # Bevel button
+        # New row
         row = layout.row()
-        
-            
-        row.operator('object.bevel', text="Sharp & Bevel", icon='MOD_MESHDEFORM')
 
         # Bool diff button
         row = layout.row()

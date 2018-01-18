@@ -43,7 +43,7 @@ def execute_slice_op(context, target_obj):
         
     # Difference for target
     select_active(target_obj)
-    bpy.ops.object.make_single_user(object=True, obdata=True)
+    bpy.ops.object.make_single_user(object=False, obdata=True)
             
     bool_mod_and_apply(current_obj, 0)
         
