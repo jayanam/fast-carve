@@ -3,4 +3,4 @@ Hardsurface utility Blender addon for quick and easy boolean and bevel operation
 
 An introduction video about the idea of Fast Curve can be seen here:
 
-https://youtu.be/5n8o4cVPgv8
+[![Blender Hardsurface Addon and Python Scripting](http://img.youtube.com/vi/5n8o4cVPgv8/0.jpg)](http://www.youtube.com/watch?v=5n8o4cVPgv8 "Blender Hardsurface Addon and Python Scripting")
