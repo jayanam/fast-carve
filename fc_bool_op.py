@@ -3,12 +3,22 @@ from bpy.types import Operator
 
 from . fc_bool_util import execute_boolean_op, execute_slice_op
 
+def check_cutter_selected(context):
+    result = len(context.selected_objects) > 0
+    result = result and not (bpy.context.scene.carver_target == bpy.context.scene.objects.active)
+    return result
+    
+# Difference operator
 class FC_BoolOperator_Diff(Operator):
     bl_idname = "object.bool_diff"
     bl_label = "Bool difference"
     bl_description = "Difference for 2 selected objects" 
     bl_options = {'REGISTER', 'UNDO'} 
-            
+        
+    @classmethod
+    def poll(cls, context):
+        return check_cutter_selected(context)
+        
     def execute(self, context):
         target_obj = bpy.context.scene.carver_target
         
@@ -20,7 +30,11 @@ class FC_BoolOperator_Union(Operator):
     bl_label = "Bool union"
     bl_description = "Union for 2 selected objects" 
     bl_options = {'REGISTER', 'UNDO'} 
-            
+         
+    @classmethod
+    def poll(cls, context):
+        return check_cutter_selected(context)
+       
     def execute(self, context):
         target_obj = bpy.context.scene.carver_target
         
@@ -32,7 +46,11 @@ class FC_BoolOperator_Slice(Operator):
     bl_label = "Bool slice"
     bl_description = "Slice for 2 selected objects" 
     bl_options = {'REGISTER', 'UNDO'} 
-            
+    
+    @classmethod
+    def poll(cls, context):
+        return check_cutter_selected(context)
+           
     def execute(self, context):
         target_obj = bpy.context.scene.carver_target
         

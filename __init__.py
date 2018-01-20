@@ -18,6 +18,7 @@ from . fc_bevel_panel import FC_Bevel_Panel
 from . fc_bool_op     import FC_BoolOperator_Diff
 from . fc_bool_op     import FC_BoolOperator_Union
 from . fc_bool_op     import FC_BoolOperator_Slice
+from . fc_immediate_mode_op import FC_Immediate_Mode_Operator
 
 bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
@@ -28,6 +29,7 @@ def register():
    bpy.utils.register_class(FC_BoolOperator_Diff)
    bpy.utils.register_class(FC_BoolOperator_Union)
    bpy.utils.register_class(FC_BoolOperator_Slice)
+   bpy.utils.register_class(FC_Immediate_Mode_Operator)
     
 def unregister():
    bpy.utils.unregister_class(FC_Panel)
@@ -36,6 +38,7 @@ def unregister():
    bpy.utils.unregister_class(FC_BoolOperator_Diff)
    bpy.utils.unregister_class(FC_BoolOperator_Union)
    bpy.utils.unregister_class(FC_BoolOperator_Slice)
+   bpy.utils.unregister_class(FC_Immediate_Mode_Operator)
     
 if __name__ == "__main__":
     register()

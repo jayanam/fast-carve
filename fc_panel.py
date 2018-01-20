@@ -32,3 +32,7 @@ class FC_Panel(Panel):
         # Bool Slice button
         row = layout.row()
         row.operator('object.bool_slice', text='Slice', icon='MOD_MESHDEFORM')
+        
+        # Bool Immediate Mode
+        # row = layout.row()
+        # row.operator('scene.fc_immediate_mode_op', text='Immediate Mode')
