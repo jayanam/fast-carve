@@ -7,6 +7,7 @@ def select_active(obj):
     bpy.context.scene.objects.active = obj
 
 def bool_mod_and_apply(obj, bool_method):
+    
     bpy.ops.object.modifier_add(type='BOOLEAN')
     
     active_obj = bpy.context.scene.objects.active
@@ -64,7 +65,7 @@ def execute_boolean_op(context, target_obj, bool_method = 0):
     
     # make target the active object
     select_active(target_obj)
-    
-    bool_mod_and_apply(current_obj, 0)
+        
+    bool_mod_and_apply(current_obj, bool_method)
 
     select_active(current_obj)
