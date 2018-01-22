@@ -5,6 +5,7 @@ from . fc_bool_util import execute_boolean_op, execute_slice_op
 
 def check_cutter_selected(context):
     result = len(context.selected_objects) > 0
+    result = result and not bpy.context.scene.carver_target is None
     result = result and not (bpy.context.scene.carver_target == bpy.context.scene.objects.active)
     return result
     
