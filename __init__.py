@@ -13,6 +13,7 @@ import bpy
 from bpy.props import *
 
 from . fc_bevel_op    import FC_BevelOperator
+from . fc_unbevel_op  import FC_UnBevelOperator
 from . fc_panel       import FC_Panel
 from . fc_bevel_panel import FC_Bevel_Panel
 from . fc_bool_op     import FC_BoolOperator_Diff
@@ -26,6 +27,7 @@ def register():
    bpy.utils.register_class(FC_Panel)
    bpy.utils.register_class(FC_Bevel_Panel)
    bpy.utils.register_class(FC_BevelOperator)
+   bpy.utils.register_class(FC_UnBevelOperator)
    bpy.utils.register_class(FC_BoolOperator_Diff)
    bpy.utils.register_class(FC_BoolOperator_Union)
    bpy.utils.register_class(FC_BoolOperator_Slice)
@@ -35,6 +37,7 @@ def unregister():
    bpy.utils.unregister_class(FC_Panel)
    bpy.utils.unregister_class(FC_Bevel_Panel)
    bpy.utils.unregister_class(FC_BevelOperator)
+   bpy.utils.unregister_class(FC_UnBevelOperator)
    bpy.utils.unregister_class(FC_BoolOperator_Diff)
    bpy.utils.unregister_class(FC_BoolOperator_Union)
    bpy.utils.unregister_class(FC_BoolOperator_Slice)

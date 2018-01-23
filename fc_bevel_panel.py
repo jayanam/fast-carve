@@ -17,3 +17,8 @@ class FC_Bevel_Panel(Panel):
         row = layout.row()
                     
         row.operator('object.bevel', text="Sharp & Bevel", icon='MOD_MESHDEFORM')
+        
+        # Un-Bevel button
+        row = layout.row()
+                    
+        row.operator('object.unbevel', text="Clear Sharp & Bevel", icon='MOD_MESHDEFORM')
