@@ -28,4 +28,4 @@ class FC_Bevel_Panel(Panel):
         if(mode == "OBJECT"):
             row.operator('object.unbevel', text="Clear Sharp & Bevel", icon='MOD_MESHDEFORM')
         else:
-            row.operator('object.unbevel', text="Clear edges", icon='MOD_MESHDEFORM')
+            row.operator('object.unbevel', text="Clear sharp edges", icon='MOD_MESHDEFORM')
