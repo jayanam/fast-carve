@@ -5,13 +5,18 @@ def select_active(obj):
     bpy.ops.object.select_all(action='DESELECT')
     obj.select = True
     bpy.context.scene.objects.active = obj
+    
+def is_apply_immediate():
+    return (bpy.context.scene.apply_bool == True)
 
 def bool_mod_and_apply(obj, bool_method):
     
-    bpy.ops.object.modifier_add(type='BOOLEAN')
+    # bpy.ops.object.modifier_add(type='BOOLEAN')
+    
     
     active_obj = bpy.context.scene.objects.active
-    bool_mod = active_obj.modifiers[-1]
+    
+    bool_mod = active_obj.modifiers.new(type="BOOLEAN", name="FC_BOOL")
     
     method = 'DIFFERENCE'
     
@@ -23,8 +28,13 @@ def bool_mod_and_apply(obj, bool_method):
     bool_mod.operation = method
     bool_mod.solver = 'CARVE'
     bool_mod.object = obj
-    bpy.ops.object.modifier_apply(modifier=bool_mod.name)   
     
+    if is_apply_immediate() == True:
+        bpy.ops.object.modifier_apply(modifier=bool_mod.name)
+    else:  
+        if bool_method == 0:
+            obj.draw_type = 'WIRE'
+
 
 def execute_slice_op(context, target_obj):
      

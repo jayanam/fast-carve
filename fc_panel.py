@@ -16,7 +16,7 @@ class FC_Panel(Panel):
         
         # Carver Target
         row = layout.row()
-        layout.prop_search(context.scene, "carver_target", context.scene, "objects", text="Target Object")
+        layout.prop_search(context.scene, "carver_target", context.scene, "objects", text="Target")
             
         # New row
         row = layout.row()
@@ -33,6 +33,14 @@ class FC_Panel(Panel):
         row = layout.row()
         row.operator('object.bool_slice', text='Slice', icon='MOD_MESHDEFORM')
         
+        # Apply immediately
+        row = layout.row()
+        layout.prop(context.scene, "apply_bool")
+        
+        # Apply all booleans
+        row = layout.row()
+        row.operator('object.apply_bool', text='Apply Pending', icon='MOD_MESHDEFORM')
+            
         # Bool Immediate Mode
         # row = layout.row()
         # row.operator('scene.fc_immediate_mode_op', text='Immediate Mode')
