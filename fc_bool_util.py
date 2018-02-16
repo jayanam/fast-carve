@@ -11,9 +11,6 @@ def is_apply_immediate():
 
 def bool_mod_and_apply(obj, bool_method):
     
-    # bpy.ops.object.modifier_add(type='BOOLEAN')
-    
-    
     active_obj = bpy.context.scene.objects.active
     
     bool_mod = active_obj.modifiers.new(type="BOOLEAN", name="FC_BOOL")

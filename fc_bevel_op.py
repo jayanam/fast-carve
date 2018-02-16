@@ -27,6 +27,9 @@ class FC_BevelOperator(Operator):
                 
                 bpy.context.scene.objects.active = target_obj
                 
+                # Apply the scale before beveling
+                bpy.ops.object.transform_apply(scale=True)
+                
                 # Set smooth shading for the target object
                 bpy.ops.object.shade_smooth()
                 
