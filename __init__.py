@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 5, 0, 0),
+    "version": (0, 5, 1, 0),
     "blender": (2, 79, 0),
     "location": "View3D",
     "category": "Object"}
@@ -19,6 +19,7 @@ from . fc_bevel_panel import FC_Bevel_Panel
 from . fc_bool_op     import FC_BoolOperator_Diff
 from . fc_bool_op     import FC_BoolOperator_Union
 from . fc_bool_op     import FC_BoolOperator_Slice
+from . fc_bool_op     import FC_BoolOperator_Intersect
 from . fc_utils_op    import FC_MirrorOperator
 from . fc_apply_bool_op import FC_ApplyBoolOperator
 from . fc_immediate_mode_op import FC_Immediate_Mode_Operator
@@ -38,6 +39,7 @@ def register():
    bpy.utils.register_class(FC_BoolOperator_Diff)
    bpy.utils.register_class(FC_BoolOperator_Union)
    bpy.utils.register_class(FC_BoolOperator_Slice)
+   bpy.utils.register_class(FC_BoolOperator_Intersect)
    bpy.utils.register_class(FC_MirrorOperator)
    bpy.utils.register_class(FC_ApplyBoolOperator)
    bpy.utils.register_class(FC_Immediate_Mode_Operator)
@@ -57,6 +59,7 @@ def unregister():
    bpy.utils.unregister_class(FC_BoolOperator_Diff)
    bpy.utils.unregister_class(FC_BoolOperator_Union)
    bpy.utils.unregister_class(FC_BoolOperator_Slice)
+   bpy.utils.unregister_class(FC_BoolOperator_Intersect)
    bpy.utils.unregister_class(FC_MirrorOperator)
    bpy.utils.unregister_class(FC_ApplyBoolOperator)
    

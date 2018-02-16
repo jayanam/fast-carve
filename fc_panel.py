@@ -33,6 +33,10 @@ class FC_Panel(Panel):
         row = layout.row()
         row.operator('object.bool_slice', text='Slice', icon='MOD_MESHDEFORM')
         
+        # Bool intersect button
+        row = layout.row()
+        row.operator('object.bool_intersect', text='Intersect', icon='MOD_MESHDEFORM')
+        
         # Apply immediately
         row = layout.row()
         layout.prop(context.scene, "apply_bool")

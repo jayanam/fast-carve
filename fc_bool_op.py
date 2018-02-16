@@ -41,7 +41,23 @@ class FC_BoolOperator_Union(Operator):
         
         execute_boolean_op(context, target_obj, 1)
         return {'FINISHED'}
-    
+
+class FC_BoolOperator_Intersect(Operator):
+    bl_idname = "object.bool_intersect"
+    bl_label = "Bool intersect"
+    bl_description = "Intersect for 2 selected objects" 
+    bl_options = {'REGISTER', 'UNDO'} 
+         
+    @classmethod
+    def poll(cls, context):
+        return check_cutter_selected(context)
+       
+    def execute(self, context):
+        target_obj = bpy.context.scene.carver_target
+        
+        a(context, target_obj, 2)
+        return {'FINISHED'}
+
 class FC_BoolOperator_Slice(Operator):
     bl_idname = "object.bool_slice"
     bl_label = "Bool slice"

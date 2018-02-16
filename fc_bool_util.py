@@ -32,7 +32,7 @@ def bool_mod_and_apply(obj, bool_method):
     if is_apply_immediate() == True:
         bpy.ops.object.modifier_apply(modifier=bool_mod.name)
     else:  
-        if bool_method == 0:
+        if bool_method == 0 or bool_method == 2:
             obj.draw_type = 'WIRE'
 
 
