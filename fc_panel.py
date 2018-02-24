@@ -43,11 +43,11 @@ class FC_Panel(Panel):
         
         # Apply all booleans
         row = layout.row()
-        row.operator('object.apply_bool', text='Apply Pending', icon='MOD_MESHDEFORM')
+        row.operator('object.apply_bool',icon='MOD_MESHDEFORM')
         
         # Selected = target
         row = layout.row()
-        row.operator('object.bool_target', text='Selected to target', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_target', icon='MOD_MESHDEFORM')
             
         # Bool Immediate Mode
         # row = layout.row()

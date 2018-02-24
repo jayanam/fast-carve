@@ -8,6 +8,12 @@ class FC_UnBevelOperator(Operator):
     bl_description = "Un-Bevels selected objects" 
     bl_options = {'REGISTER', 'UNDO'} 
        
+    def get_display(mode):
+        if mode == "OBJECT":
+            return "Clear Sharp & Bevel"
+        else:
+            return "Clear sharp edges"
+        
     @classmethod
     def poll(cls, context):
         return len(context.selected_objects) > 0

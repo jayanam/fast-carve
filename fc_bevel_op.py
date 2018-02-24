@@ -6,8 +6,14 @@ class FC_BevelOperator(Operator):
     bl_idname = "object.bevel"
     bl_label = "Bevel an object"
     bl_description = "Bevels selected objects" 
-    bl_options = {'REGISTER', 'UNDO'} 
-       
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    def get_display(mode):
+        if mode == "OBJECT":
+            return "Bevel an object"
+        else:
+            return "Sharpen edges"
+                  
     @classmethod
     def poll(cls, context):        
         return len(context.selected_objects) > 0

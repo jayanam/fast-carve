@@ -10,8 +10,10 @@ class FC_MirrorOperator(Operator):
     bl_options = {'REGISTER', 'UNDO'} 
     
     @classmethod
-    def poll(cls, context):        
-        return len(context.selected_objects) == 1
+    def poll(cls, context):
+        
+        mode = context.active_object.mode       
+        return len(context.selected_objects) == 1 and mode == "OBJECT"
     
     def execute(self, context):
         

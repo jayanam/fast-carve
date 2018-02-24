@@ -76,7 +76,7 @@ class FC_BoolOperator_Slice(Operator):
     
 class FC_TargetSelectOperator(Operator):
     bl_idname = "object.bool_target"
-    bl_label = "Selected to target"
+    bl_label = "Selected as Target"
     bl_description = "Set selected to target" 
     bl_options = {'REGISTER', 'UNDO'} 
          
