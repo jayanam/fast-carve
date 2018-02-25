@@ -5,7 +5,7 @@ from bpy.types import Operator
 # to the center and add a mirror modifier
 class FC_MirrorOperator(Operator):
     bl_idname = "object.mirror"
-    bl_label = "Mirror an object"
+    bl_label = "Center Origin & Mirror"
     bl_description = "Mirror selected object" 
     bl_options = {'REGISTER', 'UNDO'} 
     

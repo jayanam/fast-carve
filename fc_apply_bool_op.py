@@ -4,7 +4,7 @@ from bpy.types import Operator
 
 class FC_ApplyBoolOperator(Operator):
     bl_idname = "object.apply_bool"
-    bl_label = "Apply Pending"
+    bl_label = "Apply Boolean"
     bl_description = "Apply pending bool operators" 
     bl_options = {'REGISTER', 'UNDO'} 
        
