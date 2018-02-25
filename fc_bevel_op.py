@@ -10,9 +10,9 @@ class FC_BevelOperator(Operator):
     
     def get_display(mode):
         if mode == "OBJECT":
-            return "Bevel an object"
+            return "Bevel Object"
         else:
-            return "Sharpen edges"
+            return "Sharpen Edges"
                   
     @classmethod
     def poll(cls, context):        

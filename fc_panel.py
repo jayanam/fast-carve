@@ -23,19 +23,19 @@ class FC_Panel(Panel):
 
         # Bool diff button
         row = layout.row()
-        row.operator('object.bool_diff', text='Difference', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_diff', text='Difference', icon='MOD_BOOLEAN')
         
         # Bool union button
         row = layout.row()
-        row.operator('object.bool_union', text='Union', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_union', text='Union', icon='MOD_BOOLEAN')
         
         # Bool Slice button
         row = layout.row()
-        row.operator('object.bool_slice', text='Slice', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_slice', text='Slice', icon='MOD_BOOLEAN')
         
         # Bool intersect button
         row = layout.row()
-        row.operator('object.bool_intersect', text='Intersect', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_intersect', text='Intersect', icon='MOD_BOOLEAN')
         
         # Apply immediately
         row = layout.row()
@@ -43,11 +43,11 @@ class FC_Panel(Panel):
         
         # Apply all booleans
         row = layout.row()
-        row.operator('object.apply_bool',icon='MOD_MESHDEFORM')
+        row.operator('object.apply_bool',icon='MOD_BOOLEAN')
         
         # Selected = target
         row = layout.row()
-        row.operator('object.bool_target', icon='MOD_MESHDEFORM')
+        row.operator('object.bool_target', icon='MOD_BOOLEAN')
             
         # Bool Immediate Mode
         # row = layout.row()

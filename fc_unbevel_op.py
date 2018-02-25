@@ -12,7 +12,7 @@ class FC_UnBevelOperator(Operator):
         if mode == "OBJECT":
             return "Clear Sharp & Bevel"
         else:
-            return "Clear sharp edges"
+            return "Clear sharp Edges"
         
     @classmethod
     def poll(cls, context):

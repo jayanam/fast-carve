@@ -30,7 +30,7 @@ class FC_Bevel_Panel(Panel):
         
         mode = context.object.mode         
          
-        row.operator('object.bevel', text=FC_BevelOperator.get_display(context.object.mode), icon='MOD_MESHDEFORM')
+        row.operator('object.bevel', text=FC_BevelOperator.get_display(context.object.mode), icon='MOD_BEVEL')
                       
         if(mode == "OBJECT"):                
 
@@ -41,7 +41,7 @@ class FC_Bevel_Panel(Panel):
                                 
         # Un-Bevel button
         row = layout.row()
-        row.operator('object.unbevel', text=FC_UnBevelOperator.get_display(context.object.mode), icon='MOD_MESHDEFORM')   
+        row.operator('object.unbevel', text=FC_UnBevelOperator.get_display(context.object.mode), icon='MOD_BEVEL')   
                          
         row = layout.row()
-        row.operator('object.mirror', text='Center Origin & Mirror', icon='MOD_MESHDEFORM')
+        row.operator('object.mirror', text='Center Origin & Mirror', icon='MOD_MIRROR')
