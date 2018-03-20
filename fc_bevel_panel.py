@@ -42,6 +42,33 @@ class FC_Bevel_Panel(Panel):
         # Un-Bevel button
         row = layout.row()
         row.operator('object.unbevel', text=FC_UnBevelOperator.get_display(context.object.mode), icon='MOD_BEVEL')   
-                         
+  
+        # Mirror                       
         row = layout.row()
         row.operator('object.mirror', text='Center Origin & Mirror', icon='MOD_MIRROR')
+        
+        # symmetrize negative
+        row = layout.row()
+        split = row.split(0.33)
+        col = split.column()
+        col.operator('object.sym', text="-X", icon='MOD_MESHDEFORM').sym_axis = "NEGATIVE_X"
+        
+        col = split.column()
+        col.operator('object.sym', text="-Y", icon='MOD_MESHDEFORM').sym_axis = "NEGATIVE_Y"
+        
+        col = split.column()
+        col.operator('object.sym', text="-Z", icon='MOD_MESHDEFORM').sym_axis = "NEGATIVE_Z"
+        
+        # symmetrize positive
+        row = layout.row()
+        split = row.split(0.33)
+        col = split.column()
+        col.operator('object.sym', text="X", icon='MOD_MESHDEFORM').sym_axis = "POSITIVE_X"
+        
+        col = split.column()
+        col.operator('object.sym', text="Y", icon='MOD_MESHDEFORM').sym_axis = "POSITIVE_Y"
+        
+        col = split.column()
+        col.operator('object.sym', text="Z", icon='MOD_MESHDEFORM').sym_axis = "POSITIVE_Z"
+
+ 

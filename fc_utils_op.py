@@ -1,5 +1,6 @@
 import bpy
 from bpy.types import Operator
+from bpy.props import StringProperty
 
 # Set the pivot point of the active object
 # to the center and add a mirror modifier
@@ -26,4 +27,31 @@ class FC_MirrorOperator(Operator):
         
         bpy.context.scene.cursor_location = cursor_location
 
-        return {'FINISHED'} 
+        return {'FINISHED'}
+
+# Symmetrize  
+class FC_SymmetrizeOperator(Operator):
+    bl_idname = "object.sym"
+    bl_label = "Symmetrize"
+    bl_description = "Symmetrize selected object" 
+    bl_options = {'REGISTER', 'UNDO'}
+    
+    
+    sym_axis = StringProperty(name="Symmetry axis", options={'HIDDEN'}, default="NEGATIVE_X")
+    
+        
+    @classmethod
+    def poll(cls, context):
+        
+        mode = context.active_object.mode       
+        return len(context.selected_objects) == 1 and mode == "OBJECT"
+    
+
+    def execute(self, context):
+        
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.select_all(action='SELECT')
+        bpy.ops.mesh.symmetrize(direction=self.sym_axis)
+        bpy.ops.object.mode_set(mode="OBJECT")
+        
+        return {'FINISHED'}

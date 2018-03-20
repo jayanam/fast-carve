@@ -17,6 +17,6 @@ class FC_Utils_Panel(Panel):
         # New row
         row = layout.row()
 
-        # Bool diff button
+        # Mirror
         row = layout.row()
         row.operator('object.mirror', text='Center Origin & Mirror', icon='MOD_MESHDEFORM')
