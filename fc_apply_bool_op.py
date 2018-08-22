@@ -14,7 +14,7 @@ class FC_ApplyBoolOperator(Operator):
          
     def execute(self, context):
         
-        active_obj = context.active_object
+        active_obj = bpy.context.view_layer.objects.active
               
         for obj in context.scene.objects:
             for modifier in obj.modifiers:
