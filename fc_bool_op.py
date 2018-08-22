@@ -6,7 +6,7 @@ from . fc_bool_util import execute_boolean_op, execute_slice_op
 def check_cutter_selected(context):
     result = len(context.selected_objects) > 0
     result = result and not bpy.context.scene.carver_target is None
-    result = result and not (bpy.context.scene.carver_target == bpy.context.scene.objects.active)
+    result = result and not (bpy.context.scene.carver_target == context.view_layer.objects.active)
     return result
     
 # Difference operator
@@ -82,9 +82,9 @@ class FC_TargetSelectOperator(Operator):
          
     @classmethod
     def poll(cls, context):
-        return check_cutter_selected(context)
+        return True
        
     def execute(self, context):
-        bpy.context.scene.carver_target = bpy.context.scene.objects.active
+        bpy.context.scene.carver_target = context.view_layer.objects.active
 
         return {'FINISHED'}

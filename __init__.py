@@ -3,7 +3,7 @@ bl_info = {
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
     "version": (0, 6, 0, 0),
-    "blender": (2, 79, 0),
+    "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
 

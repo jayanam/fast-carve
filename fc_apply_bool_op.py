@@ -14,13 +14,14 @@ class FC_ApplyBoolOperator(Operator):
          
     def execute(self, context):
         
-        active_obj = bpy.context.scene.objects.active
+        active_obj = context.active_object
               
         for obj in context.scene.objects:
             for modifier in obj.modifiers:
                 if modifier.name.startswith("FC_BOOL"):
-                    bpy.context.scene.objects.active = obj
+                    # API change 2.8: bpy.context.scene.objects.active = obj
+                    bpy.context.view_layer.objects.active = obj
                     bpy.ops.object.modifier_apply(modifier=modifier.name)
         
-        bpy.context.scene.objects.active = active_obj
+        bpy.context.view_layer.objects.active = active_obj
         return {'FINISHED'}

@@ -20,9 +20,9 @@ class FC_BevelOperator(Operator):
          
     def execute(self, context):
         
-        active_obj = bpy.context.scene.objects.active 
+        active_object = bpy.context.view_layer.objects.active
         
-        mode = context.active_object.mode
+        mode = active_object.mode
         
         # Sharpen and bevel in object mode
         if(mode == "OBJECT"):
@@ -31,7 +31,7 @@ class FC_BevelOperator(Operator):
             # cause the operator is for OM only
             for target_obj in context.selected_objects:
                 
-                bpy.context.scene.objects.active = target_obj
+                bpy.context.view_layer.objects.active = target_obj
                 
                 # Apply the scale before beveling
                 bpy.ops.object.transform_apply(scale=True)
@@ -79,5 +79,5 @@ class FC_BevelOperator(Operator):
             bpy.ops.mesh.mark_sharp()
             bpy.ops.transform.edge_bevelweight(value=1)
         
-        bpy.context.scene.objects.active  = active_obj
+        bpy.context.view_layer.objects.active  = active_object
         return {'FINISHED'} 
