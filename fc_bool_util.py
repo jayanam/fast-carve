@@ -41,15 +41,20 @@ def bool_mod_and_apply(obj, bool_method):
 def execute_slice_op(context, target_obj):
      
     # store active object
-    current_obj = context.object
+    current_obj = context.active_object
     bpy.ops.object.transform_apply(scale=True)
     
     # clone target
-    clone_target = target_obj.copy()
-    context.scene.objects.link(clone_target)
+    select_active(target_obj)  
+    
+    bpy.ops.object.duplicate(linked=True)
+    
+    clone_target = bpy.context.view_layer.objects.active
+    # Blender 2.8 API change 
+    # context.scene.objects.link(clone_target)
+    # ??? bpy.context.view_layer.objects.link(clone_target)
     
     # Intersect for clone
-    select_active(clone_target)            
     bpy.ops.object.make_single_user(object=True, obdata=True)
     
     bool_mod_and_apply(current_obj, 2)
