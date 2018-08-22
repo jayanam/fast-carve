@@ -55,6 +55,7 @@ def execute_slice_op(context, target_obj):
     # ??? bpy.context.view_layer.objects.link(clone_target)
     
     # Intersect for clone
+    # select_active(clone_target)            
     bpy.ops.object.make_single_user(object=True, obdata=True)
     
     bool_mod_and_apply(current_obj, 2)

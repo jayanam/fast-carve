@@ -79,5 +79,5 @@ class FC_BevelOperator(Operator):
             bpy.ops.mesh.mark_sharp()
             bpy.ops.transform.edge_bevelweight(value=1)
         
-        bpy.context.view_layer.objects.active  = active_object
+        bpy.context.view_layer.objects.active = active_object
         return {'FINISHED'} 
