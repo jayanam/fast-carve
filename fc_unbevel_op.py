@@ -20,7 +20,8 @@ class FC_UnBevelOperator(Operator):
          
     def execute(self, context):
         
-        active_obj = bpy.context.scene.objects.active 
+        # API change 2.8: bpy.context.scene.objects.active
+        active_obj = bpy.context.view_layer.objects.active 
         
         mode = context.active_object.mode
         
@@ -62,6 +63,6 @@ class FC_UnBevelOperator(Operator):
                 bpy.ops.transform.edge_bevelweight(value=-1.0)
                 bpy.ops.mesh.mark_sharp(clear=True)
         
-        
-        bpy.context.scene.objects.active  = active_obj
+        # API change 2.8: bpy.context.scene.objects.active
+        bpy.context.view_layer.objects.active = active_obj
         return {'FINISHED'} 
