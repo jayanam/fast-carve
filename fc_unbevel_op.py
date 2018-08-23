@@ -32,7 +32,7 @@ class FC_UnBevelOperator(Operator):
             # cause the operator is for OM only
             for target_obj in context.selected_objects:
                 
-                bpy.context.scene.objects.active = target_obj
+                bpy.context.view_layer.objects.active = target_obj
                 
                 # Set flat shading for the target object
                 bpy.ops.object.shade_flat()
