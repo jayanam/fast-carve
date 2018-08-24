@@ -16,7 +16,7 @@ class FC_ApplyBoolOperator(Operator):
         
         active_obj = bpy.context.view_layer.objects.active
               
-        for obj in context.scene.objects:
+        for obj in context.view_layer.objects:
             for modifier in obj.modifiers:
                 if modifier.name.startswith("FC_BOOL"):
                     # API change 2.8: bpy.context.scene.objects.active = obj
