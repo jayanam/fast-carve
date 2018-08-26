@@ -58,7 +58,7 @@ def register():
        
        kmi = km.keymap_items.new("object.fc_immediate_mode_op", 'F', 'PRESS', shift=True, ctrl=True)
        
-       kmi_mnu = km.keymap_items.new("wm.call_menu", "Q", "PRESS")
+       kmi_mnu = km.keymap_items.new("wm.call_menu", "Q", "PRESS", shift=True)
        kmi_mnu.properties.name = FC_Main_Menu.bl_idname
        
        addon_keymaps.append((km, kmi))
