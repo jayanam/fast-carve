@@ -15,7 +15,7 @@ class FC_Bevel_Panel(Panel):
             if modifier.type == "BEVEL":
                 return True
         return False
-    
+     
     def draw(self, context):
         
         layout = self.layout
@@ -49,7 +49,7 @@ class FC_Bevel_Panel(Panel):
         
         # symmetrize negative
         row = layout.row()
-        split = row.split(0.33)
+        split = row.split(factor=0.33)
         col = split.column()
         col.operator('object.sym', text="-X", icon='MOD_MESHDEFORM').sym_axis = "NEGATIVE_X"
         
@@ -61,7 +61,7 @@ class FC_Bevel_Panel(Panel):
         
         # symmetrize positive
         row = layout.row()
-        split = row.split(0.33)
+        split = row.split(factor=0.33)
         col = split.column()
         col.operator('object.sym', text="X", icon='MOD_MESHDEFORM').sym_axis = "POSITIVE_X"
         
