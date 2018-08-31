@@ -15,7 +15,7 @@ class FC_Bevel_Panel(Panel):
             if modifier.type == "BEVEL":
                 return True
         return False
-    
+     
     def draw(self, context):
         
         layout = self.layout
@@ -70,5 +70,3 @@ class FC_Bevel_Panel(Panel):
         
         col = split.column()
         col.operator('object.sym', text="Z", icon='MOD_MESHDEFORM').sym_axis = "POSITIVE_Z"
-
- 
