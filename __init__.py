@@ -77,8 +77,7 @@ def unregister():
    bpy.utils.unregister_class(FC_SymmetrizeOperator)
    bpy.utils.unregister_class(FC_ApplyBoolOperator)         
    bpy.utils.unregister_class(FC_Main_Menu)
-   
-   
+    
    # remove keymap entry
    for km, kmi in addon_keymaps:
        km.keymap_items.remove(kmi)
