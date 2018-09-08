@@ -35,7 +35,7 @@ def bool_mod_and_apply(obj, bool_method):
 
     else:  
         if bool_method == 0 or bool_method == 2:
-            obj.draw_type = 'WIRE'
+            obj.display_type = 'WIRE'
 
 
 def execute_slice_op(context, target_obj):

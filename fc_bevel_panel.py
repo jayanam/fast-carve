@@ -23,7 +23,7 @@ class FC_Bevel_Panel(Panel):
    
         # Draw type
         row = layout.row()
-        row.prop(context.object, "draw_type", text="Drawtype")
+        row.prop(context.object, "display_type", text="Display As")
                 
         # Bevel button
         row = layout.row()
