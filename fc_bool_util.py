@@ -23,7 +23,7 @@ def bool_mod_and_apply(obj, bool_method):
         method = 'INTERSECT'
     
     bool_mod.operation = method
-    bool_mod.solver = 'CARVE'
+    #bool_mod.solver = 'CARVE'
     bool_mod.object = obj
     
     if is_apply_immediate() == True:
