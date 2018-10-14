@@ -6,7 +6,7 @@ from . fc_unbevel_op import FC_UnBevelOperator
 
 class FC_Bevel_Panel(Panel):
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
+    bl_region_type = "UI"
     bl_label = "Selected objects"
     bl_category = "Fast Carve"
     
