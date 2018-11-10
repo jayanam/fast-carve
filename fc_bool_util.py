@@ -5,7 +5,7 @@ def select_active(obj):
     bpy.ops.object.select_all(action='DESELECT')
     
     # API change 2.8: obj.select = True
-    obj.select_set(action='SELECT')
+    obj.select_set(state=True)
     
     # API change 2.8: bpy.context.scene.objects.active = obj
     bpy.context.view_layer.objects.active = obj
