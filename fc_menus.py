@@ -26,5 +26,4 @@ class FC_Main_Menu(Menu):
         layout.operator("object.bevel", text=bo.get_display(context.object.mode), icon="MOD_BEVEL")
         
         layout.operator("object.unbevel", text=ubo.get_display(context.object.mode), icon="MOD_BEVEL")
-        layout.operator("object.mirror", icon="MOD_MIRROR")
-          
+        layout.operator("object.mirror", icon="MOD_MIRROR")         

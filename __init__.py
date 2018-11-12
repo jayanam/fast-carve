@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 6, 0, 3),
+    "version": (0, 6, 1, 0),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -11,6 +11,10 @@ bl_info = {
 import bpy
 
 from bpy.props import *
+
+from bpy.types import AddonPreferences
+
+import rna_keymap_ui
 
 from . fc_bevel_op    import FC_BevelOperator
 from . fc_unbevel_op  import FC_UnBevelOperator
@@ -32,6 +36,23 @@ bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
 bpy.types.Scene.apply_bool = BoolProperty(name="Apply Immediately", description="Apply bool operation immediately")
 
+# Addon preferences
+class FC_AddonPreferences(AddonPreferences):
+    bl_idname = __name__
+    
+    def draw(self, context):
+        layout = self.layout
+        
+        col = layout.column()
+        kc = bpy.context.window_manager.keyconfigs.addon
+        for km, kmi in addon_keymaps:
+            km = km.active()
+            kmi.show_expanded = False
+            col.context_pointer_set("keymap", km)
+            rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
+    
+    
+
 addon_keymaps = []
 
 def register():
@@ -47,20 +68,22 @@ def register():
    bpy.utils.register_class(FC_MirrorOperator)
    bpy.utils.register_class(FC_SymmetrizeOperator)
    bpy.utils.register_class(FC_ApplyBoolOperator)
-   bpy.utils.register_class(FC_Immediate_Mode_Operator)
+   #bpy.utils.register_class(FC_Immediate_Mode_Operator)
    bpy.utils.register_class(FC_Main_Menu)
+   bpy.utils.register_class(FC_AddonPreferences)
    
    # add keymap entry
    kcfg = bpy.context.window_manager.keyconfigs.addon
    if kcfg:
        km = kcfg.keymaps.new(name='3D View', space_type='VIEW_3D')
        
-       kmi = km.keymap_items.new("object.fc_immediate_mode_op", 'F', 'PRESS', shift=True, ctrl=True)
+       # kmi = km.keymap_items.new("object.fc_immediate_mode_op", 'F', 'PRESS', shift=True, ctrl=True)
        
        kmi_mnu = km.keymap_items.new("wm.call_menu", "Q", "PRESS", shift=True)
        kmi_mnu.properties.name = FC_Main_Menu.bl_idname
+       kmi_mnu.active = True
        
-       addon_keymaps.append((km, kmi))
+       # addon_keymaps.append((km, kmi))
        addon_keymaps.append((km, kmi_mnu))
     
 def unregister():
@@ -77,13 +100,14 @@ def unregister():
    bpy.utils.unregister_class(FC_SymmetrizeOperator)
    bpy.utils.unregister_class(FC_ApplyBoolOperator)         
    bpy.utils.unregister_class(FC_Main_Menu)
+   bpy.utils.unregister_class(FC_AddonPreferences)
     
    # remove keymap entry
    for km, kmi in addon_keymaps:
        km.keymap_items.remove(kmi)
    addon_keymaps.clear()
     
-   bpy.utils.unregister_class(FC_Immediate_Mode_Operator)
+   #bpy.utils.unregister_class(FC_Immediate_Mode_Operator)
     
 if __name__ == "__main__":
     register()
