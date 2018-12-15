@@ -18,7 +18,7 @@ class FC_MirrorOperator(Operator):
     
     def execute(self, context):
         
-        cursor_location = bpy.context.space_data.cursor_location.copy()
+        cursor_location = bpy.context.scene.cursor_location.copy()
                 
         bpy.context.scene.cursor_location = (0.0, 0.0, 0.0)
         
