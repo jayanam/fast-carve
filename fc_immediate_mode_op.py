@@ -77,10 +77,11 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
 
     def get_mouse_3d_vertex(self, event, context):
-        x, y     = event.mouse_region_x, event.mouse_region_y
-        region   = context.region
-        rv3d     = context.space_data.region_3d
-        view_rot = context.space_data.region_3d.view_rotation
+        x, y      = event.mouse_region_x, event.mouse_region_y
+        region    = context.region
+        rv3d      = context.space_data.region_3d
+        view_rot  = rv3d.view_rotation
+        overlay3d = context.space_data.overlay
         
         dir = view_rot @ mathutils.Vector((0,0,-1))
         
@@ -91,10 +92,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         # we are in ortho mode
         if not rv3d.is_perspective:
+             
+            # Now check how to snap the cursor
             ind = self.get_snap_vertex_indizes(view_rot)
             if ind is not None:
-                vec[ind[0]] = vec[ind[0]] - vec[ind[0]] % 0.1
-                vec[ind[1]] = vec[ind[1]] - vec[ind[1]] % 0.1
+                
+                ratio = overlay3d.grid_scale / overlay3d.grid_subdivisions
+                vec[ind[0]] = vec[ind[0]] - vec[ind[0]] % ratio
+                vec[ind[1]] = vec[ind[1]] - vec[ind[1]] % ratio
         return vec
         
             
