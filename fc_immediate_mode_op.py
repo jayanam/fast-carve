@@ -143,28 +143,27 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         obj  = bpy.data.objects.new("MyObject", mesh)
 
         bpy.context.scene.collection.objects.link(obj)
-        bpy.context.view_layer.objects.active = obj
-
-        bpy.ops.object.select_all(action='DESELECT')
-    
-        obj.select_set(state=True)
         
+        bpy.ops.object.select_all(action='DESELECT')
+
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(state=True)
+
         # Create a bmesh and add the vertices
         # added with mouse clicks
         bm = bmesh.new()
+        bm.from_mesh(mesh) 
 
         for v in self.vertices:
             bm.verts.new(v)
+        
+        bm.verts.index_update()
+
+        bm.faces.new( bm.verts )
 
         bm.to_mesh(mesh)  
         bm.free()
 
-        bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.select_all(action='SELECT')
-
-        bpy.ops.mesh.edge_face_add()
-
-        bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
 
     def finish(self):
