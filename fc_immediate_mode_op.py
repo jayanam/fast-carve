@@ -127,6 +127,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
  
         if event.type == "MOUSEMOVE":
             
+            # At least one vertex has been added
             if len(self.vertices) > 0:
                 self.mouse_vert = self.get_mouse_3d_vertex(event, context)
                 self.create_batch()
@@ -170,14 +171,26 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         for v in self.vertices:
             bm.verts.new(v)
+
+        bm.verts.new(self.vertices[0])
         
         bm.verts.index_update()
-
-        bm.faces.new( bm.verts )
 
         bm.to_mesh(mesh)  
         bm.free()
 
+        bpy.context.view_layer.objects.active = obj
+        obj.select_set(state=True)
+
+        # fill with faces
+        bpy.ops.object.editmode_toggle()
+        bpy.ops.mesh.select_all(action='SELECT')
+
+        bpy.ops.mesh.edge_face_add()
+        bpy.ops.mesh.remove_doubles()
+        
+        # set origin to geometry
+        bpy.ops.object.editmode_toggle()
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
 
     def finish(self):
