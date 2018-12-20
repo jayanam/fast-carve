@@ -1,6 +1,8 @@
 import bpy
 from bpy.props import *
 
+import bmesh
+
 def select_active(obj):
     bpy.ops.object.select_all(action='DESELECT')
     
@@ -12,6 +14,15 @@ def select_active(obj):
     
 def is_apply_immediate():
     return (bpy.context.scene.apply_bool == True)
+
+def recalc_normals(mesh):
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(mesh)
+    bm.clear()
+    mesh.update()
+    bm.free()
 
 def bool_mod_and_apply(obj, bool_method):
     
@@ -29,6 +40,8 @@ def bool_mod_and_apply(obj, bool_method):
     bool_mod.operation = method
     #bool_mod.solver = 'CARVE'
     bool_mod.object = obj
+
+    recalc_normals(obj.data)
     
     if is_apply_immediate() == True:
         bpy.ops.object.modifier_apply(modifier=bool_mod.name)
