@@ -69,6 +69,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         v1 = round(abs(view_rot[0]), 3)
         v2 = round(abs(view_rot[1]), 3)
 
+        # TODO: Add top / bottom snapping
         if v1== 0.5 and v2 == 0.5:
             return (1,2)
         if (v1 == 0.707 and v2== 0.707) or (v1 == 0.0 and v2 == 0.0):
@@ -90,19 +91,32 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                    
         vec = region_2d_to_location_3d(region, rv3d, (x, y), dir)
 
-        # we are in ortho mode
+        # we are in ortho mode, so we dont snap
+        # TODO: Perhaps we also want to snap in perspective mode?
+        #       Could be user-defined
         if not rv3d.is_perspective:
              
             # Now check how to snap the cursor
             ind = self.get_snap_vertex_indizes(view_rot)
-            if ind is not None:
-                
-                ratio = overlay3d.grid_scale / overlay3d.grid_subdivisions
-                vec[ind[0]] = vec[ind[0]] - vec[ind[0]] % ratio
-                vec[ind[1]] = vec[ind[1]] - vec[ind[1]] % ratio
+            if ind is not None:               
+                vec[ind[0]] = vec[ind[0]] + self.get_snap(vec[ind[0]], overlay3d)
+                vec[ind[1]] = vec[ind[1]] + self.get_snap(vec[ind[1]], overlay3d)
+
         return vec
-        
-            
+
+    
+    def get_snap(self, p, overlay3d):
+        ratio = overlay3d.grid_scale / overlay3d.grid_subdivisions
+        ratio_half = ratio / 2.0
+        mod = p % ratio
+        if mod < ratio_half:
+            mod = -mod
+        else:
+            mod = (ratio - mod)
+
+        return mod  
+
+
     def modal(self, context, event):
         if context.area:
             context.area.tag_redraw()
@@ -176,7 +190,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         
         if self.mouse_vert is not None:
             points.append(self.mouse_vert)
-                    
+           
         self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
         self.batch = batch_for_shader(self.shader, 'LINE_STRIP', 
         {"pos": points})
