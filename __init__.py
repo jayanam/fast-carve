@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 7, 0, 2),
+    "version": (0, 7, 1, 0),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -16,19 +16,20 @@ from bpy.types import AddonPreferences
 
 import rna_keymap_ui
 
-from . fc_bevel_op    import FC_BevelOperator
-from . fc_unbevel_op  import FC_UnBevelOperator
-from . fc_panel       import FC_Panel
-from . fc_bevel_panel import FC_Bevel_Panel
-from . fc_bool_op     import FC_BoolOperator_Diff
-from . fc_bool_op     import FC_BoolOperator_Union
-from . fc_bool_op     import FC_BoolOperator_Slice
-from . fc_bool_op     import FC_BoolOperator_Intersect
-from . fc_bool_op     import FC_TargetSelectOperator
-from . fc_utils_op    import FC_MirrorOperator
-from . fc_utils_op    import FC_SymmetrizeOperator
-from . fc_menus        import FC_Main_Menu
-from . fc_apply_bool_op import FC_ApplyBoolOperator
+from . fc_bevel_op          import FC_BevelOperator
+from . fc_unbevel_op        import FC_UnBevelOperator
+from . fc_panel             import FC_Panel
+from . fc_bevel_panel       import FC_Bevel_Panel
+from . fc_primitive_panel   import FC_Primitive_Panel
+from . fc_bool_op           import FC_BoolOperator_Diff
+from . fc_bool_op           import FC_BoolOperator_Union
+from . fc_bool_op           import FC_BoolOperator_Slice
+from . fc_bool_op           import FC_BoolOperator_Intersect
+from . fc_bool_op           import FC_TargetSelectOperator
+from . fc_utils_op          import FC_MirrorOperator
+from . fc_utils_op          import FC_SymmetrizeOperator
+from . fc_menus             import FC_Main_Menu
+from . fc_apply_bool_op     import FC_ApplyBoolOperator
 from . fc_immediate_mode_op import FC_Primitive_Mode_Operator
 
 # Scene properties
@@ -36,8 +37,8 @@ bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
 bpy.types.Scene.apply_bool = BoolProperty(name="Apply Immediately", description="Apply bool operation immediately")
 
-bpy.types.Scene.distance_primitives = FloatProperty(
-                                      name="Distance Primitives", 
+bpy.types.Scene.draw_distance = FloatProperty(
+                                      name="Draw Distance", 
                                       description="Distance of primitives to the origin",
                                       default = 2.0)
 
@@ -56,13 +57,13 @@ class FC_AddonPreferences(AddonPreferences):
             col.context_pointer_set("keymap", km)
             rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
     
-    
 
 addon_keymaps = []
 
 def register():
    bpy.utils.register_class(FC_Panel)
    bpy.utils.register_class(FC_Bevel_Panel)
+   bpy.utils.register_class(FC_Primitive_Panel)
    bpy.utils.register_class(FC_BevelOperator)
    bpy.utils.register_class(FC_UnBevelOperator)
    bpy.utils.register_class(FC_BoolOperator_Diff)
@@ -94,6 +95,7 @@ def register():
 def unregister():
    bpy.utils.unregister_class(FC_Panel)
    bpy.utils.unregister_class(FC_Bevel_Panel)
+   bpy.utils.unregister_class(FC_Primitive_Panel)
    bpy.utils.unregister_class(FC_BevelOperator)
    bpy.utils.unregister_class(FC_UnBevelOperator)
    bpy.utils.unregister_class(FC_BoolOperator_Diff)
