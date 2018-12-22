@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 7, 1, 0),
+    "version": (0, 7, 2, 0),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -35,12 +35,17 @@ from . fc_immediate_mode_op import FC_Primitive_Mode_Operator
 # Scene properties
 bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
-bpy.types.Scene.apply_bool = BoolProperty(name="Apply Immediately", description="Apply bool operation immediately")
+bpy.types.Scene.apply_bool    = BoolProperty(
+                                      name="Apply Immediately", 
+                                      description="Apply bool operation immediately")
 
 bpy.types.Scene.draw_distance = FloatProperty(
                                       name="Draw Distance", 
                                       description="Distance of primitives to the origin",
                                       default = 2.0)
+
+bpy.types.Scene.extrude_mesh  = BoolProperty(name="Extrude mesh", 
+                                      description="Extrude the mesh after creation")
 
 # Addon preferences
 class FC_AddonPreferences(AddonPreferences):

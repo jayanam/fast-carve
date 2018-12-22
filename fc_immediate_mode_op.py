@@ -90,8 +90,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         view_rot  = rv3d.view_rotation
         overlay3d = context.space_data.overlay
         
-        dir = view_rot @ mathutils.Vector((0,0,-1))        
-        dir = dir.normalized() * -bpy.context.scene.draw_distance
+        dir = self.get_view_direction(context) * -bpy.context.scene.draw_distance    
                
         vec = region_2d_to_location_3d(region, rv3d, (x, y), dir)
 
@@ -148,13 +147,21 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             # Return (Enter) key is pressed
             if event.type == "RET":
-                self.create_object()
+                self.create_object(context)
                 self.unregister_handlers(context)
                 return {'CANCELLED'}
                     
         return {"PASS_THROUGH"}
 
-    def create_object(self):
+    def get_view_direction(self, context):
+        rv3d      = context.space_data.region_3d
+        view_rot  = rv3d.view_rotation
+
+        dir = view_rot @ mathutils.Vector((0,0,-1))
+        return dir.normalized()
+
+
+    def create_object(self, context):
 
         # Create a mesh and an object and 
         # add the object to the scene collection
@@ -181,6 +188,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         bm.verts.index_update()
 
         bm.faces.new(bm.verts)
+
+        # Extrude the mesh if the option is enabled
+        if context.scene.extrude_mesh:
+            dir = self.get_view_direction(context) * 2 * context.scene.draw_distance
+ 
+            r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
+            verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
+            bmesh.ops.translate(bm, vec=dir, verts=verts)
 
         bm.to_mesh(mesh)  
         bm.free()

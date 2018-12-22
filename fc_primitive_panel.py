@@ -14,3 +14,6 @@ class FC_Primitive_Panel(Panel):
             
         row = layout.row()
         layout.prop(context.scene, "draw_distance")
+
+        row = layout.row()
+        layout.prop(context.scene, "extrude_mesh")
