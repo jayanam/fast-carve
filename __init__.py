@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 7, 0, 1),
+    "version": (0, 7, 0, 2),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -77,13 +77,13 @@ def register():
    if kcfg:
        km = kcfg.keymaps.new(name='3D View', space_type='VIEW_3D')
        
-       kmi = km.keymap_items.new("object.fc_immediate_mode_op", 'F', 'PRESS', shift=True, ctrl=True)
+       kmi = km.keymap_items.new("object.fc_immediate_mode_op", 'P', 'PRESS', shift=True, ctrl=True)
        
        kmi_mnu = km.keymap_items.new("wm.call_menu", "Q", "PRESS", shift=True)
        kmi_mnu.properties.name = FC_Main_Menu.bl_idname
        kmi_mnu.active = True
        
-       # addon_keymaps.append((km, kmi))
+       addon_keymaps.append((km, kmi))
        addon_keymaps.append((km, kmi_mnu))
     
 def unregister():

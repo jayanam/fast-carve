@@ -21,7 +21,7 @@ from . fc_bool_util import execute_boolean_op, execute_slice_op
 # Immediate mode operator
 class FC_Primitive_Mode_Operator(bpy.types.Operator):
     bl_idname = "object.fc_immediate_mode_op"
-    bl_label = "Immediate Mode Operator"
+    bl_label = "Primitive Mode Operator"
     bl_description = ""
     bl_options = {"REGISTER"}
 
@@ -69,9 +69,15 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         v1 = round(abs(view_rot[0]), 3)
         v2 = round(abs(view_rot[1]), 3)
 
-        # TODO: Add top / bottom snapping
+        # top / bottom
+        if (v1== 1.0 and v2 == 0.0) or (v1==0.0 and v2 == 1.0):
+            return (0,1)
+
+        # front / back
         if v1== 0.5 and v2 == 0.5:
             return (1,2)
+
+        # left / right
         if (v1 == 0.707 and v2== 0.707) or (v1 == 0.0 and v2 == 0.0):
            return (0,2)
         return None
