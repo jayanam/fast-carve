@@ -5,8 +5,8 @@ from . fc_bevel_op   import FC_BevelOperator as bo
 from . fc_unbevel_op import FC_UnBevelOperator as ubo
 
 class FC_Main_Menu(Menu):
+    bl_idname = "OBJECT_MT_fc_main_menu"
     bl_label = "Fast Carve Operations"
-    bl_idname = "fc_main_menu"
     
     def draw(self, context):
         layout = self.layout
