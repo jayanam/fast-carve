@@ -36,6 +36,11 @@ bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
 bpy.types.Scene.apply_bool = BoolProperty(name="Apply Immediately", description="Apply bool operation immediately")
 
+bpy.types.Scene.distance_primitives = FloatProperty(
+                                      name="Distance Primitives", 
+                                      description="Distance of primitives to the origin",
+                                      default = 2.0)
+
 # Addon preferences
 class FC_AddonPreferences(AddonPreferences):
     bl_idname = __name__

@@ -90,11 +90,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         view_rot  = rv3d.view_rotation
         overlay3d = context.space_data.overlay
         
-        dir = view_rot @ mathutils.Vector((0,0,-1))
-        
-        # magix number 2.0 => property?
-        dir = dir.normalized() * -2.0
-                   
+        dir = view_rot @ mathutils.Vector((0,0,-1))        
+        dir = dir.normalized() * -bpy.context.scene.distance_primitives
+               
         vec = region_2d_to_location_3d(region, rv3d, (x, y), dir)
 
         # we are in ortho mode, so we dont snap
