@@ -176,7 +176,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         obj.select_set(state=True)
 
         # Create a bmesh and add the vertices
-        # added with mouse clicks
+        # added by mouse clicks
         bm = bmesh.new()
         bm.from_mesh(mesh) 
 
@@ -189,13 +189,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         bm.faces.new(bm.verts)
 
-        # Extrude the mesh if the option is enabled
-        if context.scene.extrude_mesh:
-            dir = self.get_view_direction(context) * 2 * context.scene.draw_distance
- 
-            r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
-            verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
-            bmesh.ops.translate(bm, vec=dir, verts=verts)
+        # Extrude mesh if extrude mesh option is enabled
+        self.extrude_mesh(context, bm)
 
         bm.to_mesh(mesh)  
         bm.free()
@@ -206,12 +201,20 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         # remove doubles if exists
         bpy.ops.object.editmode_toggle()
         bpy.ops.mesh.select_all(action='SELECT')
-
         bpy.ops.mesh.remove_doubles()
         
         # set origin to geometry
         bpy.ops.object.editmode_toggle()
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
+
+    def extrude_mesh(self, context, bm):
+        if context.scene.extrude_mesh:
+            dir = self.get_view_direction(context) * 2.0 * context.scene.draw_distance
+ 
+            r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
+            verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
+            bmesh.ops.translate(bm, vec=dir, verts=verts)
+
 
     def finish(self):
         self.unregister_handlers(context)
