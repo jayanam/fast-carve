@@ -15,15 +15,19 @@ class FC_Bevel_Panel(Panel):
             if modifier.type == "BEVEL":
                 return True
         return False
+
+    @classmethod
+    def poll(cls, context):
+        return (context.object is not None)
      
     def draw(self, context):
         
         layout = self.layout
-        scene = context.scene
-   
-        # Draw type
-        row = layout.row()
-        row.prop(context.object, "display_type", text="Display As")
+        
+        if context.object is not None:
+            # Draw type
+            row = layout.row()
+            row.prop(context.object, "display_type", text="Display As")
                 
         # Bevel button
         row = layout.row()
@@ -34,7 +38,6 @@ class FC_Bevel_Panel(Panel):
                       
         if(mode == "OBJECT"):                
 
-            
             if self.has_bevel_modifier(context.active_object):
                 row = layout.row()
                 row.prop(context.object.modifiers["Bevel"], "width", text="Bevel width")
