@@ -214,7 +214,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         bpy.ops.object.editmode_toggle()
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
 
-        # Immediate bool modes
+        # Fast bool modes
         if context.scene.bool_mode != "Create":
 
             target_obj = bpy.context.scene.carver_target
@@ -231,6 +231,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             return 0
         elif bool_name == "Union":
             return 1
+
+        # TODO: Add slice operation to bool modes
         elif bool_name == "Slice":
             return 2
         return -1
