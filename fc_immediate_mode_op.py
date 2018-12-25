@@ -15,9 +15,8 @@ from gpu_extras.batch import batch_for_shader
 import mathutils
 import math
 
-from . fc_bool_util import execute_boolean_op, execute_slice_op
+from . fc_bool_util import execute_boolean_op, execute_slice_op, is_apply_immediate
 
-       
 # Immediate mode operator
 class FC_Primitive_Mode_Operator(bpy.types.Operator):
     bl_idname = "object.fc_immediate_mode_op"
@@ -125,6 +124,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             context.area.tag_redraw()
                                
         if event.type in {"ESC"}:
+            self.vertices.clear()
+            self.mouse_vert = None
             self.unregister_handlers(context)
             return {'CANCELLED'}
  
@@ -135,23 +136,32 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 self.mouse_vert = self.get_mouse_3d_vertex(event, context)
                 self.create_batch()
         
-        if event.value == "PRESS":
-            
-            # Left mouse button pressed            
-            if event.type == "LEFTMOUSE":
-                vertex = self.get_mouse_3d_vertex(event, context)
-                
-                self.vertices.append(vertex)
+        if self.can_draw(event):
+            vertex = self.get_mouse_3d_vertex(event, context)
+            self.vertices.append(vertex)
+            self.create_batch()
 
-                self.create_batch()
-
-            # Return (Enter) key is pressed
-            if event.type == "RET":
-                self.create_object(context)
-                self.unregister_handlers(context)
-                return {'CANCELLED'}
-                    
+        # Return (Enter) key is pressed
+        if event.type == "RET" and event.value == "PRESS" and self.can_create():
+            self.create_object(context)
+            self.vertices.clear()
+            self.mouse_vert = None
+            self.create_batch()
+             
         return {"PASS_THROUGH"}
+
+    def can_draw(self, event):
+
+        if event.value == "PRESS" and event.type == "LEFTMOUSE":
+            if self.can_create():
+                return True
+            else:
+                return event.ctrl == True
+
+        return False
+
+    def can_create(self):
+        return len(self.vertices) > 0
 
     def get_view_direction(self, context):
         rv3d      = context.space_data.region_3d
@@ -198,14 +208,37 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         bpy.context.view_layer.objects.active = obj
         obj.select_set(state=True)
 
-        # remove doubles if exists
-        bpy.ops.object.editmode_toggle()
-        bpy.ops.mesh.select_all(action='SELECT')
-        bpy.ops.mesh.remove_doubles()
-        
+        self.remove_doubles()
+       
         # set origin to geometry
         bpy.ops.object.editmode_toggle()
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
+
+        # Immediate bool modes
+        if context.scene.bool_mode != "Create":
+
+            target_obj = bpy.context.scene.carver_target
+            if target_obj is not None:
+                execute_boolean_op(context, target_obj, 
+                self.get_bool_mode_id(context.scene.bool_mode))
+
+                # delete the bool object of apply immediate is checked
+                if is_apply_immediate():
+                    bpy.ops.object.delete()
+
+    def get_bool_mode_id(self, bool_name):
+        if bool_name == "Difference":
+            return 0
+        elif bool_name == "Union":
+            return 1
+        elif bool_name == "Slice":
+            return 2
+        return -1
+
+    def remove_doubles(self):
+        bpy.ops.object.mode_set(mode = 'EDIT')
+        bpy.ops.mesh.select_all(action='SELECT')
+        bpy.ops.mesh.remove_doubles()       
 
     def extrude_mesh(self, context, bm):
         if context.scene.extrude_mesh:
@@ -235,8 +268,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def draw_callback_2d(self, op, context):
         # Draw text to indicate that draw mode is active
         region = context.region
-        text = "- Primitive mode active -"
-        subtext = "Esc : Close | Enter : Create"
+        text = "- Primitive mode -"
+        subtext = "Close : Esc | Apply : Enter | Add lines : {0} | Mode : {1}"
+
+        mouse_action = "Ctrl + Left click"
+        if len(self.vertices) > 0:
+            mouse_action = "Left click"
+
+        subtext = subtext.format(mouse_action, context.scene.bool_mode)
 
         xt = int(region.width / 2.0)
         
@@ -244,7 +283,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         blf.position(0, xt - blf.dimensions(0, text)[0] / 2, 60 , 0)
         blf.draw(0, text) 
 
-        blf.size(1, 20, 72)
+        blf.size(1, 18, 72)
+        blf.color(1, 1, 1, 1, 1)
         blf.position(1, xt - blf.dimensions(0, subtext)[0] / 2, 30 , 1)
         blf.draw(1, subtext) 
 
@@ -256,4 +296,3 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.shader.bind()
         self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
         self.batch.draw(self.shader)
-

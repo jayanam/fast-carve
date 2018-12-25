@@ -17,3 +17,6 @@ class FC_Primitive_Panel(Panel):
 
         row = layout.row()
         layout.prop(context.scene, "extrude_mesh")
+
+        row = layout.row()
+        layout.prop(context.scene, "bool_mode")

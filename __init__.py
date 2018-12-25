@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 7, 2, 0),
+    "version": (0, 7, 4, 0),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -37,7 +37,8 @@ bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
 bpy.types.Scene.apply_bool    = BoolProperty(
                                       name="Apply Immediately", 
-                                      description="Apply bool operation immediately")
+                                      description="Apply bool operation immediately",
+                                      default = True)
 
 bpy.types.Scene.draw_distance = FloatProperty(
                                       name="Draw Distance", 
@@ -45,7 +46,17 @@ bpy.types.Scene.draw_distance = FloatProperty(
                                       default = 2.0)
 
 bpy.types.Scene.extrude_mesh  = BoolProperty(name="Extrude mesh", 
-                                      description="Extrude the mesh after creation")
+                                      description="Extrude the mesh after creation",
+                                      default = True)
+
+mode_items = [ ("Create",     "Create", "", -1),
+               ("Difference", "Difference", "", 0),
+               ("Union",      "Union", "", 1)
+             ]
+
+bpy.types.Scene.bool_mode = bpy.props.EnumProperty(items=mode_items, 
+                                                   name="Mode",
+                                                   default="Create")
 
 # Addon preferences
 class FC_AddonPreferences(AddonPreferences):
