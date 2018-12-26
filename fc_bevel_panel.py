@@ -11,6 +11,9 @@ class FC_Bevel_Panel(Panel):
     bl_category = "Fast Carve"
     
     def has_bevel_modifier(self, obj):
+        if obj is None:
+            return False
+
         for modifier in obj.modifiers:
             if modifier.type == "BEVEL":
                 return True

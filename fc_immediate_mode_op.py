@@ -17,6 +17,13 @@ import math
 
 from . fc_bool_util import execute_boolean_op, execute_slice_op, is_apply_immediate
 
+from enum import Enum
+
+class ShapeState(Enum):
+    NONE = 0
+    PROCESSING = 1
+    CREATED = 2
+
 # Immediate mode operator
 class FC_Primitive_Mode_Operator(bpy.types.Operator):
     bl_idname = "object.fc_immediate_mode_op"
@@ -26,13 +33,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context): 
-        return context.active_object.mode  == "OBJECT"
+        return context.active_object.mode == "OBJECT"
 		
     def __init__(self):
         self.draw_handle_2d = None
         self.draw_handle_3d = None
         self.draw_event  = None
         self.mouse_vert = None
+        self.shape_state = ShapeState.NONE
 
         self.vertices = []
         self.create_batch()
@@ -132,36 +140,32 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         if event.type == "MOUSEMOVE":
             
             # At least one vertex has been added
-            if len(self.vertices) > 0:
+            if self.shape_state is ShapeState.PROCESSING:
                 self.mouse_vert = self.get_mouse_3d_vertex(event, context)
                 self.create_batch()
         
-        if self.can_draw(event):
+        if event.value == "PRESS" and event.type == "LEFTMOUSE" and self.shape_state is not ShapeState.CREATED:
+
+            self.shape_state = ShapeState.PROCESSING
+            # We can add lines
             vertex = self.get_mouse_3d_vertex(event, context)
             self.vertices.append(vertex)
             self.create_batch()
 
         # Return (Enter) key is pressed
-        if event.type == "RET" and event.value == "PRESS" and self.can_create():
-            self.create_object(context)
-            self.vertices.clear()
-            self.mouse_vert = None
+        if event.type == "RET" and event.value == "PRESS":
+            if self.shape_state is ShapeState.PROCESSING:
+                self.close_shape()
+
+            elif self.shape_state is ShapeState.CREATED:
+                self.create_object(context)
+                self.vertices.clear()
+                self.mouse_vert = None
+                self.shape_state = ShapeState.NONE
+
             self.create_batch()
              
         return {"PASS_THROUGH"}
-
-    def can_draw(self, event):
-
-        if event.value == "PRESS" and event.type == "LEFTMOUSE":
-            if self.can_create():
-                return True
-            else:
-                return event.ctrl == True
-
-        return False
-
-    def can_create(self):
-        return len(self.vertices) > 0
 
     def get_view_direction(self, context):
         rv3d      = context.space_data.region_3d
@@ -170,6 +174,19 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         dir = view_rot @ mathutils.Vector((0,0,-1))
         return dir.normalized()
 
+    def close_shape(self):
+        if len(self.vertices) > 1:
+            if self.vertices[0] is not self.vertices[-1]:
+                self.vertices.append(self.vertices[0])
+
+            self.shape_state = ShapeState.CREATED
+            self.create_batch()  
+
+        else:
+            self.vertices.clear()
+            self.mouse_vert = None
+            self.shape_state = ShapeState.NONE
+        
 
     def create_object(self, context):
 
@@ -259,7 +276,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         
         points = self.vertices.copy()
         
-        if self.mouse_vert is not None:
+        if self.mouse_vert is not None and self.shape_state is ShapeState.PROCESSING:
             points.append(self.mouse_vert)
            
         self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
@@ -268,16 +285,26 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
 	# Draw handler to paint in pixels
     def draw_callback_2d(self, op, context):
-        # Draw text to indicate that draw mode is active
+
+        # Draw text for primitive mode
         region = context.region
         text = "- Primitive mode -"
-        subtext = "Close : Esc | Apply : Enter | Add lines : {0} | Mode : {1}"
+        subtext = "Exit: Esc {0} {1} | Mode: {2}"
 
-        mouse_action = "Ctrl + Left click"
-        if len(self.vertices) > 0:
-            mouse_action = "Left click"
+        mouse_action = "| Add line: Left click"
+        enter_action = ""
 
-        subtext = subtext.format(mouse_action, context.scene.bool_mode)
+        if self.shape_state is ShapeState.CREATED:
+            mouse_action = ""
+            enter_action = "| Apply: Enter"
+        
+        if self.shape_state is ShapeState.PROCESSING:
+            enter_action = "| Close Shape: Enter"
+            mouse_action = "| Add line: Left click"
+
+
+
+        subtext = subtext.format(enter_action, mouse_action, context.scene.bool_mode)
 
         xt = int(region.width / 2.0)
         
@@ -285,7 +312,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         blf.position(0, xt - blf.dimensions(0, text)[0] / 2, 60 , 0)
         blf.draw(0, text) 
 
-        blf.size(1, 18, 72)
+        blf.size(1, 16, 72)
         blf.color(1, 1, 1, 1, 1)
         blf.position(1, xt - blf.dimensions(0, subtext)[0] / 2, 30 , 1)
         blf.draw(1, subtext) 
