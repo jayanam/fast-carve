@@ -11,12 +11,15 @@ class FC_Primitive_Panel(Panel):
     def draw(self, context):
         
         layout = self.layout
-            
+
+        row = layout.row()
+        layout.prop(context.scene, "primitive_type")
+
+        row = layout.row()
+        layout.prop(context.scene, "bool_mode")
+        
         row = layout.row()
         layout.prop(context.scene, "draw_distance")
 
         row = layout.row()
         layout.prop(context.scene, "extrude_mesh")
-
-        row = layout.row()
-        layout.prop(context.scene, "bool_mode")

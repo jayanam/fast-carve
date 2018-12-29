@@ -1,7 +1,7 @@
 import bpy
 from bpy.types import Operator
 
-from . fc_bool_util import execute_boolean_op, execute_slice_op
+from .utils.fc_bool_util import execute_boolean_op, execute_slice_op
 
 def check_cutter_selected(context):
     result = len(context.selected_objects) > 0
