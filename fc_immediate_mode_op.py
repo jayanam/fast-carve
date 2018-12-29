@@ -63,7 +63,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             context.area.tag_redraw()
                                
         if event.type in {"ESC"}:
-            self.reset_shape()
+            self.shape.reset()
             self.unregister_handlers(context)
             return {'CANCELLED'}
 
