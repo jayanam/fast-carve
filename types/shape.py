@@ -10,7 +10,6 @@ class Shape:
     def __init__(self):
         self._state = ShapeState.NONE
         self._vertices = []
-        self._mouse_pos = None
 
     def is_none(self):
         return self._state is ShapeState.NONE
@@ -42,7 +41,6 @@ class Shape:
 
     def reset(self):
         self._vertices.clear()     
-        self._mouse_pos = None 
         self._state = ShapeState.NONE
 
     def close(self):
@@ -53,16 +51,16 @@ class Shape:
                 return True
         return False
 
-    def get_vertices_copy(self):
+    def get_vertices_copy(self, mouse_pos = None):
         result = self._vertices.copy()
-        if self._mouse_pos is not None and self.is_processing():
-            result.append(self._mouse_pos)
+
+        if mouse_pos is not None and self.is_processing():
+            result.append(mouse_pos)
 
         return result
 
     def handle_mouse_move(self, mouse_pos):
         if self.is_processing():
-            self._mouse_pos = mouse_pos
             return True
 
         return False
@@ -70,8 +68,7 @@ class Shape:
     def handle_mouse_press(self, mouse_pos):
 
         if not self.is_created():
-            self._mouse_pos = mouse_pos
-            self.add_vertex(self._mouse_pos)
+            self.add_vertex(mouse_pos)
             self.state = ShapeState.PROCESSING
             return True
 

@@ -30,7 +30,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_event  = None
         self.shape = Shape()
 
-        self.create_batch()
+        self.create_batch(None)
                 
     def invoke(self, context, event):
         args = (self, context)                   
@@ -73,14 +73,18 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             # TODO: Handling for different shapes           
             # 1. Polyline
             # 2. Circle
-            if self.shape.handle_mouse_move(get_mouse_3d_vertex(event, context)):
-                self.create_batch()
+            mouse_pos = get_mouse_3d_vertex(event, context)
+
+            if self.shape.handle_mouse_move(mouse_pos):
+                self.create_batch(mouse_pos)
         
         # Left mouse button is pressed
         if event.value == "PRESS" and event.type == "LEFTMOUSE":
             
-            if self.shape.handle_mouse_press(get_mouse_3d_vertex(event, context)):
-                self.create_batch()
+            mouse_pos = get_mouse_3d_vertex(event, context)
+
+            if self.shape.handle_mouse_press(mouse_pos):
+                self.create_batch(mouse_pos)
 
         # Return (Enter) key is pressed
         if event.type == "RET" and event.value == "PRESS":
@@ -89,7 +93,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 self.create_object(context)
                 self.shape.reset()
 
-            self.create_batch()
+            self.create_batch(get_mouse_3d_vertex(event, context))
              
         return {"PASS_THROUGH"}
            
@@ -173,12 +177,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
 
     def finish(self):
-        self.unregister_handlers(context)
+        self.unregister_handlers(bpy.context)
         return {"FINISHED"}
 
-    def create_batch(self):
+    def create_batch(self, mouse_pos = None):
         
-        points = self.shape.get_vertices_copy()
+        points = self.shape.get_vertices_copy(mouse_pos)
                   
         self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
         self.batch = batch_for_shader(self.shader, 'LINE_STRIP', 
