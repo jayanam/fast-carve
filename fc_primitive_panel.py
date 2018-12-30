@@ -12,8 +12,8 @@ class FC_Primitive_Panel(Panel):
         
         layout = self.layout
 
-        row = layout.row()
-        layout.prop(context.scene, "primitive_type")
+        #row = layout.row()
+        #layout.prop(context.scene, "primitive_type")
 
         row = layout.row()
         layout.prop(context.scene, "bool_mode")
