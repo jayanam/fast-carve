@@ -28,15 +28,19 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_handle_2d = None
         self.draw_handle_3d = None
         self.draw_event  = None
-        self.shape = Shape()
+        self.shape = Polyline_Shape()
 
         self.create_batch(None)
                 
     def invoke(self, context, event):
-        args = (self, context)                   
+        args = (self, context)  
+
+        self.create_shape(context)                 
+
         self.register_handlers(args, context)
                    
         context.window_manager.modal_handler_add(self)
+
         return {"RUNNING_MODAL"}
     
     def register_handlers(self, args, context):
@@ -75,7 +79,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             # 2. Circle
             mouse_pos = get_mouse_3d_vertex(event, context)
 
-            if self.shape.handle_mouse_move(mouse_pos):
+            if self.shape.handle_mouse_move(mouse_pos, context):
                 self.create_batch(mouse_pos)
         
         # Left mouse button is pressed
@@ -83,7 +87,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             
             mouse_pos = get_mouse_3d_vertex(event, context)
 
-            if self.shape.handle_mouse_press(mouse_pos):
+            self.create_shape(context)
+
+            if self.shape.handle_mouse_press(mouse_pos, context):
                 self.create_batch(mouse_pos)
 
         # Return (Enter) key is pressed
@@ -96,7 +102,13 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             self.create_batch(get_mouse_3d_vertex(event, context))
              
         return {"PASS_THROUGH"}
-           
+
+    def create_shape(self, context):
+        if self.shape.is_none():
+            if context.scene.primitive_type == "Circle":
+                self.shape = Circle_Shape()
+            else:
+                self.shape = Polyline_Shape()
 
     def create_object(self, context):
 
@@ -183,26 +195,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def create_batch(self, mouse_pos = None):
         
         points = self.shape.get_vertices_copy(mouse_pos)
-                  
-        self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+
+        self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')         
         self.batch = batch_for_shader(self.shader, 'LINE_STRIP', 
-        {"pos": points})
-
-    def get_subtext(self, context):
-        subtext = "Exit: Esc {0} {1} | Mode: {2}"
-
-        mouse_action = "| Add line: Left click"
-        enter_action = ""
-
-        if self.shape.is_created():
-            mouse_action = ""
-            enter_action = "| Apply: Enter"
-        
-        if self.shape.is_processing():
-            enter_action = "| Close Shape: Enter"
-            mouse_action = "| Add line: Left click"
-
-        return subtext.format(enter_action, mouse_action, context.scene.bool_mode)
+            {"pos": points})
 
 	# Draw handler to paint in pixels
     def draw_callback_2d(self, op, context):
@@ -211,7 +207,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         region = context.region
         text = "- Primitive mode -"
 
-        subtext = self.get_subtext(context)
+        subtext = self.shape.get_text(context)
 
         xt = int(region.width / 2.0)
         
