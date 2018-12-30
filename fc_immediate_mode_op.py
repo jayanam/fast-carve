@@ -217,7 +217,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         blf.size(1, 16, 72)
         blf.color(1, 1, 1, 1, 1)
-        blf.position(1, xt - blf.dimensions(0, subtext)[0] / 2, 30 , 1)
+        blf.position(1, xt - blf.dimensions(1, subtext)[0] / 2, 30 , 1)
         blf.draw(1, subtext) 
 
 	# Draw handler to paint onto the screen

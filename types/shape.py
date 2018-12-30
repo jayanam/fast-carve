@@ -4,8 +4,6 @@ from math import sin, cos, pi
 
 from mathutils import Vector
 
-from ..utils.fc_view_3d_utils import get_view_direction
-
 class ShapeState(Enum):
     NONE = 0
     PROCESSING = 1
@@ -68,11 +66,14 @@ class Shape:
             if not self.close():
                 self.reset()
 
-        # The shape is created, apply the shape (e.g. create object)
+        # The shape is created, apply the shape
         elif self.is_created():
             return True
 
         return False
+
+    def get_title(self, context):
+        pass
 
     def get_text(self, context):
         pass
@@ -116,11 +117,15 @@ class Polyline_Shape(Shape):
 
         return False
 
+    def get_title(self, context):
+        return "Polyline"
+
     def get_text(self, context):
-        text = "Exit: Esc {0} {1} | Mode: {2}"
+        text = "Exit: Esc {0} {1} | Mode: {2} | Type: {3}"
 
         mouse_action = "| Add line: Left click"
         enter_action = ""
+        p_type = "Polyline"
 
         if self.is_created():
             mouse_action = ""
@@ -133,7 +138,7 @@ class Polyline_Shape(Shape):
 
             mouse_action = "| Add line: Left click"
 
-        return text.format(enter_action, mouse_action, context.scene.bool_mode)
+        return text.format(enter_action, mouse_action, context.scene.bool_mode, p_type)
 
 class Circle_Shape(Shape):
 
@@ -176,17 +181,20 @@ class Circle_Shape(Shape):
 
         elif self.is_processing:
 
-            self.create_circle(context)
             self.state = ShapeState.CREATED
             return True
 
         return False
 
+    def get_title(self, context):
+        return "Circle"
+
     def get_text(self, context):
-        text = "Exit: Esc {0} {1} | Mode: {2}"
+        text = "Exit: Esc {0} {1} | Mode: {2} | Type: {3}"
 
         mouse_action = "| Set center: Left click"
         enter_action = ""
+        p_type = "Circle"
 
         if self.is_created():
             mouse_action = ""
@@ -196,4 +204,4 @@ class Circle_Shape(Shape):
             enter_action = "| Undo: Enter"
             mouse_action = "| Create: Left click"
 
-        return text.format(enter_action, mouse_action, context.scene.bool_mode)
+        return text.format(enter_action, mouse_action, context.scene.bool_mode, p_type)

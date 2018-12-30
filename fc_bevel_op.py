@@ -62,8 +62,11 @@ class FC_BevelOperator(Operator):
                 
                 # switch to edit mode and select sharp edges
                 bpy.ops.object.editmode_toggle()
+
+                bpy.context.tool_settings.mesh_select_mode = (False, True, False)
+
                 bpy.ops.mesh.select_all(action='DESELECT')
-                bpy.ops.mesh.edges_select_sharp(sharpness=1.0471975512)
+                bpy.ops.mesh.edges_select_sharp()
                 
                 # Mark edges as sharp
                 bpy.ops.mesh.mark_sharp()
