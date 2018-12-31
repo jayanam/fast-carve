@@ -68,21 +68,18 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                                
         if event.type == "ESC" and event.value == "PRESS":
 
-            is_none = self.shape.is_none()
+            was_none = self.shape.is_none()
 
             self.shape.reset()
             self.create_batch(None)
 
-            if is_none:
+            if was_none:
                 self.unregister_handlers(context)
                 return {'CANCELLED'}
 
         # The mouse is moved
         if event.type == "MOUSEMOVE":
 
-            # TODO: Handling for different shapes           
-            # 1. Polyline
-            # 2. Circle
             mouse_pos = get_mouse_3d_vertex(event, context)
 
             if self.shape.handle_mouse_move(mouse_pos, event, context):
@@ -100,15 +97,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 self.shape.reset()
                 
             self.create_batch(mouse_pos)
-
-        # Return (Enter) key is pressed
-        # if event.type == "RET" and event.value == "PRESS":
-
-        #     if self.shape.handle_apply():
-        #         self.create_object(context)
-        #         self.shape.reset()
-
-        #     self.create_batch(get_mouse_3d_vertex(event, context))
              
         return {"PASS_THROUGH"}
 
