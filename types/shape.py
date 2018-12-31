@@ -50,14 +50,6 @@ class Shape:
     def close(self):            
         return False
 
-    def can_create(self, event, context):
-        if self.is_processing():
-            return True
-        elif self.is_none():
-            return event.ctrl
-        
-        return False
-
     def get_vertices_copy(self, mouse_pos = None):
         result = self._vertices.copy()
 
@@ -112,10 +104,18 @@ class Polyline_Shape(Shape):
 
     def handle_mouse_press(self, mouse_pos, event, context):
 
-        if self.can_create(event, context):
+        if (self.is_none() and event.ctrl) or (self.is_processing() and not event.ctrl):
 
             self.add_vertex(mouse_pos)
             self.state = ShapeState.PROCESSING
+            return False
+
+        elif self.is_processing() and event.ctrl and self.can_close():
+            self.add_vertex(mouse_pos)
+            self.close()
+            return False
+
+        elif self.is_created() and event.ctrl:
             return True
 
         return False
@@ -130,24 +130,24 @@ class Polyline_Shape(Shape):
         return "Polyline"
 
     def get_text(self, context):
-        text = "Exit: Esc {0} {1} | Mode: {2} | Type: {3}"
+        text = "{0} | Mode: {1} | Type: {2} | Esc : {3}"
 
-        mouse_action = "| Add line: Ctrl + Left click"
-        enter_action = ""
+        escape_action = "Exit"
+        mouse_action = "Add line: Ctrl + Left click"
         p_type = "Polyline"
 
         if self.is_created():
-            mouse_action = ""
-            enter_action = "| Apply: Enter"
+            mouse_action = "Apply: Ctrl + Left Click"
+            escape_action = "Undo"
         
         if self.is_processing():
-            enter_action = "| Close Shape: Enter"
-            if not self.can_close():
-                enter_action = "| Undo: Enter"    
-
-            mouse_action = "| Add line: Left Click"
+            escape_action = "Undo"
+            if self.can_close():
+                mouse_action = "Close Shape: Ctrl + Left Click"
+            else:
+                mouse_action = "Add line: Left Click"
             
-        return text.format(enter_action, mouse_action, context.scene.bool_mode, p_type)
+        return text.format(mouse_action, context.scene.bool_mode, p_type, escape_action)
 
 class Circle_Shape(Shape):
 
@@ -180,23 +180,21 @@ class Circle_Shape(Shape):
         self._vertices = [view_rot @ Vector(point) + 
                           self._center for point in points]
 
-    def can_create(self, event, context):
-        if self.is_none():
-            return event.ctrl
-        
-        return False
 
     def handle_mouse_press(self, mouse_pos, event, context):
 
-        if self.can_create(event, context):
+        if self.is_none() and event.ctrl:
 
             self._center = mouse_pos
             self.state = ShapeState.PROCESSING
-            return True
+            return False
 
         elif self.is_processing():
 
             self.state = ShapeState.CREATED
+            return False
+
+        elif self.is_created() and event.ctrl:
             return True
 
         return False
@@ -205,18 +203,18 @@ class Circle_Shape(Shape):
         return "Circle"
 
     def get_text(self, context):
-        text = "Exit: Esc {0} {1} | Mode: {2} | Type: {3}"
+        text = "{0} | Mode: {1} | Type: {2} | Esc : {3}"
 
-        mouse_action = "| Set center: Ctrl + Left click"
-        enter_action = ""
+        escape_action = "Exit"
+        mouse_action = "Set center: Ctrl + Left click"
         p_type = "Circle"
 
         if self.is_created():
-            mouse_action = ""
-            enter_action = "| Apply: Enter"
-        
+            escape_action = "Undo"
+            mouse_action = "Apply: Ctrl + Left Click"
+   
         if self.is_processing():
-            enter_action = "| Undo: Enter"
-            mouse_action = "| Create: Left click"
+            mouse_action = "Create: Left click"
+            escape_action = "Undo"
 
-        return text.format(enter_action, mouse_action, context.scene.bool_mode, p_type)
+        return text.format(mouse_action, context.scene.bool_mode, p_type, escape_action)

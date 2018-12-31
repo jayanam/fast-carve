@@ -66,10 +66,16 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         if context.area:
             context.area.tag_redraw()
                                
-        if event.type in {"ESC"}:
+        if event.type == "ESC" and event.value == "PRESS":
+
+            is_none = self.shape.is_none()
+
             self.shape.reset()
-            self.unregister_handlers(context)
-            return {'CANCELLED'}
+            self.create_batch(None)
+
+            if is_none:
+                self.unregister_handlers(context)
+                return {'CANCELLED'}
 
         # The mouse is moved
         if event.type == "MOUSEMOVE":
@@ -90,16 +96,19 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             self.create_shape(context)
 
             if self.shape.handle_mouse_press(mouse_pos, event, context):
-                self.create_batch(mouse_pos)
-
-        # Return (Enter) key is pressed
-        if event.type == "RET" and event.value == "PRESS":
-
-            if self.shape.handle_apply():
                 self.create_object(context)
                 self.shape.reset()
+                
+            self.create_batch(mouse_pos)
 
-            self.create_batch(get_mouse_3d_vertex(event, context))
+        # Return (Enter) key is pressed
+        # if event.type == "RET" and event.value == "PRESS":
+
+        #     if self.shape.handle_apply():
+        #         self.create_object(context)
+        #         self.shape.reset()
+
+        #     self.create_batch(get_mouse_3d_vertex(event, context))
              
         return {"PASS_THROUGH"}
 
@@ -159,7 +168,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 execute_boolean_op(context, target_obj, 
                 self.get_bool_mode_id(context.scene.bool_mode))
 
-                # delete the bool object of apply immediate is checked
+                # delete the bool object if apply immediate is checked
                 if is_apply_immediate():
                     bpy.ops.object.delete()
                     select_active(target_obj)
