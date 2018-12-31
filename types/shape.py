@@ -50,15 +50,23 @@ class Shape:
     def close(self):            
         return False
 
+    def can_create(self, event, context):
+        if self.is_processing():
+            return True
+        elif self.is_none():
+            return event.ctrl
+        
+        return False
+
     def get_vertices_copy(self, mouse_pos = None):
         result = self._vertices.copy()
 
         return result
 
-    def handle_mouse_move(self, mouse_pos, context):
+    def handle_mouse_move(self, mouse_pos, event, context):
         return False
 
-    def handle_mouse_press(self, mouse_pos, context):
+    def handle_mouse_press(self, mouse_pos, event, context):
         return False
 
     def handle_apply(self):
@@ -101,9 +109,10 @@ class Polyline_Shape(Shape):
 
         return result
 
-    def handle_mouse_press(self, mouse_pos, context):
 
-        if not self.is_created():
+    def handle_mouse_press(self, mouse_pos, event, context):
+
+        if self.can_create(event, context):
 
             self.add_vertex(mouse_pos)
             self.state = ShapeState.PROCESSING
@@ -111,7 +120,7 @@ class Polyline_Shape(Shape):
 
         return False
 
-    def handle_mouse_move(self, mouse_pos, context):
+    def handle_mouse_move(self, mouse_pos, event, context):
         if self.is_processing():
             return True
 
@@ -123,7 +132,7 @@ class Polyline_Shape(Shape):
     def get_text(self, context):
         text = "Exit: Esc {0} {1} | Mode: {2} | Type: {3}"
 
-        mouse_action = "| Add line: Left click"
+        mouse_action = "| Add line: Ctrl + Left click"
         enter_action = ""
         p_type = "Polyline"
 
@@ -136,8 +145,8 @@ class Polyline_Shape(Shape):
             if not self.can_close():
                 enter_action = "| Undo: Enter"    
 
-            mouse_action = "| Add line: Left click"
-
+            mouse_action = "| Add line: Left Click"
+            
         return text.format(enter_action, mouse_action, context.scene.bool_mode, p_type)
 
 class Circle_Shape(Shape):
@@ -147,7 +156,7 @@ class Circle_Shape(Shape):
         self._center = None
         self._radius = 0
 
-    def handle_mouse_move(self, mouse_pos, context):
+    def handle_mouse_move(self, mouse_pos, event, context):
 
         if self.is_processing():
 
@@ -171,15 +180,21 @@ class Circle_Shape(Shape):
         self._vertices = [view_rot @ Vector(point) + 
                           self._center for point in points]
 
-    def handle_mouse_press(self, mouse_pos, context):
-
+    def can_create(self, event, context):
         if self.is_none():
+            return event.ctrl
+        
+        return False
+
+    def handle_mouse_press(self, mouse_pos, event, context):
+
+        if self.can_create(event, context):
 
             self._center = mouse_pos
             self.state = ShapeState.PROCESSING
             return True
 
-        elif self.is_processing:
+        elif self.is_processing():
 
             self.state = ShapeState.CREATED
             return True
@@ -192,7 +207,7 @@ class Circle_Shape(Shape):
     def get_text(self, context):
         text = "Exit: Esc {0} {1} | Mode: {2} | Type: {3}"
 
-        mouse_action = "| Set center: Left click"
+        mouse_action = "| Set center: Ctrl + Left click"
         enter_action = ""
         p_type = "Circle"
 

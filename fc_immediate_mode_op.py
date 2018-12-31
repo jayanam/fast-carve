@@ -9,7 +9,7 @@ import bmesh
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-from .utils.fc_bool_util import execute_boolean_op, execute_slice_op, is_apply_immediate
+from .utils.fc_bool_util import select_active, execute_boolean_op, execute_slice_op, is_apply_immediate
 from .utils.fc_view_3d_utils import *
 from .types.shape import *
 
@@ -18,7 +18,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     bl_idname = "object.fc_immediate_mode_op"
     bl_label = "Primitive Mode Operator"
     bl_description = ""
-    bl_options = {"REGISTER"}
+    bl_options = {"REGISTER", "UNDO", "BLOCKING"}
 
     @classmethod
     def poll(cls, context): 
@@ -79,7 +79,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             # 2. Circle
             mouse_pos = get_mouse_3d_vertex(event, context)
 
-            if self.shape.handle_mouse_move(mouse_pos, context):
+            if self.shape.handle_mouse_move(mouse_pos, event, context):
                 self.create_batch(mouse_pos)
         
         # Left mouse button is pressed
@@ -89,7 +89,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             self.create_shape(context)
 
-            if self.shape.handle_mouse_press(mouse_pos, context):
+            if self.shape.handle_mouse_press(mouse_pos, event, context):
                 self.create_batch(mouse_pos)
 
         # Return (Enter) key is pressed
@@ -162,6 +162,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 # delete the bool object of apply immediate is checked
                 if is_apply_immediate():
                     bpy.ops.object.delete()
+                    select_active(target_obj)
 
     def get_bool_mode_id(self, bool_name):
         if bool_name == "Difference":
