@@ -78,6 +78,9 @@ class Shape:
     def get_text(self, context):
         pass
 
+    def draw_points(self):
+        return True
+
 class Polyline_Shape(Shape):
 
     def can_close(self):
@@ -197,6 +200,9 @@ class Circle_Shape(Shape):
         elif self.is_created() and event.ctrl:
             return True
 
+        return False
+
+    def draw_points(self):
         return False
 
     def get_title(self, context):

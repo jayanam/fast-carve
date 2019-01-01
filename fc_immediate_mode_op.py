@@ -210,9 +210,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         
         points = self.shape.get_vertices_copy(mouse_pos)
 
-        self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')         
+        self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+         
         self.batch = batch_for_shader(self.shader, 'LINE_STRIP', 
             {"pos": points})
+
+        self.batch_points = batch_for_shader(self.shader, 'POINTS', {"pos": points})
 
 	# Draw handler to paint in pixels
     def draw_callback_2d(self, op, context):
@@ -238,7 +241,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def draw_callback_3d(self, op, context):
 
         # Draw lines
-        bgl.glLineWidth(5)
+        bgl.glLineWidth(3)
         self.shader.bind()
         self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
         self.batch.draw(self.shader)
+
+        if self.shape.draw_points():
+            bgl.glPointSize(10)
+            self.batch_points.draw(self.shader)
+
