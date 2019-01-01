@@ -1,6 +1,8 @@
 import bpy
 from bpy.types import Operator
 
+from bpy.props import *
+
 import bgl
 import blf
 
@@ -30,10 +32,19 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_event  = None
         self.shape = Polyline_Shape()
 
+        self.use_snapping = True
+
         self.create_batch(None)
+
+    def draw(self, context):
+        layout = self.layout
+        row = col.row()
+        row.prop(self, "use_snapping")
                 
     def invoke(self, context, event):
         args = (self, context)  
+
+        context.scene.in_primitive_mode = True
 
         self.create_shape(context)                 
 
@@ -65,6 +76,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def modal(self, context, event):
         if context.area:
             context.area.tag_redraw()
+
+        use_snapping = context.scene.use_snapping
                                
         if event.type == "ESC" and event.value == "PRESS":
 
@@ -74,13 +87,16 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             self.create_batch(None)
 
             if was_none:
+
+                context.scene.in_primitive_mode = False
                 self.unregister_handlers(context)
+
                 return {'CANCELLED'}
 
         # The mouse is moved
         if event.type == "MOUSEMOVE":
 
-            mouse_pos = get_mouse_3d_vertex(event, context)
+            mouse_pos = get_mouse_3d_vertex(event, context, use_snapping)
 
             if self.shape.handle_mouse_move(mouse_pos, event, context):
                 self.create_batch(mouse_pos)
@@ -88,7 +104,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         # Left mouse button is pressed
         if event.value == "PRESS" and event.type == "LEFTMOUSE":
             
-            mouse_pos = get_mouse_3d_vertex(event, context)
+            mouse_pos = get_mouse_3d_vertex(event, context, use_snapping)
 
             self.create_shape(context)
 

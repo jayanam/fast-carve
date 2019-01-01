@@ -39,7 +39,7 @@ def get_view_direction(context):
     dir = view_rot @ mathutils.Vector((0,0,-1))
     return dir.normalized()
 
-def get_mouse_3d_vertex(event, context):
+def get_mouse_3d_vertex(event, context, use_snapping = True):
     x, y      = event.mouse_region_x, event.mouse_region_y
     region    = context.region
     rv3d      = context.space_data.region_3d
@@ -53,7 +53,7 @@ def get_mouse_3d_vertex(event, context):
     # we are in ortho mode, so we dont snap
     # TODO: Perhaps we also want to snap in perspective mode?
     #       Could be user-defined
-    if not rv3d.is_perspective:
+    if not rv3d.is_perspective and use_snapping:
             
         # Now check how to snap the cursor
         ind = get_snap_vertex_indizes(view_rot)

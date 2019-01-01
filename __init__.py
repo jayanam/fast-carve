@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 7, 8, 1),
+    "version": (0, 7, 8, 2),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -39,6 +39,13 @@ bpy.types.Scene.apply_bool    = BoolProperty(
                                       name="Apply Immediately", 
                                       description="Apply bool operation immediately",
                                       default = True)
+
+bpy.types.Scene.use_snapping   = BoolProperty(name="Snapping", 
+                                        description="Use snapping to the grid",
+                                        default = True)
+
+bpy.types.Scene.in_primitive_mode   = BoolProperty(name="Primitive Mode",
+                                        default = False)
 
 bpy.types.Scene.draw_distance = FloatProperty(
                                       name="Draw Distance", 

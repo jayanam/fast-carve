@@ -23,3 +23,11 @@ class FC_Primitive_Panel(Panel):
 
         row = layout.row()
         layout.prop(context.scene, "extrude_mesh")
+
+        row = layout.row()
+        layout.prop(context.scene, "use_snapping")
+
+        row = layout.row()
+
+        if not context.scene.in_primitive_mode:
+            row.operator("object.fc_immediate_mode_op", text="Primitive Mode")
