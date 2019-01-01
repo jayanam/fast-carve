@@ -113,6 +113,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 self.shape.reset()
                 
             self.create_batch(mouse_pos)
+
+        # Keyboard
              
         return {"PASS_THROUGH"}
 
@@ -212,7 +214,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
          
-        self.batch = batch_for_shader(self.shader, 'LINE_STRIP', 
+        self.batch = batch_for_shader(self.shader, 'LINE_LOOP', 
             {"pos": points})
 
         self.batch_points = batch_for_shader(self.shader, 'POINTS', {"pos": points})

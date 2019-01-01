@@ -89,7 +89,6 @@ class Polyline_Shape(Shape):
     def close(self):
             
         if self.can_close():
-            self._vertices.append(self._vertices[0])
             self._state = ShapeState.CREATED
             return True
             
@@ -100,7 +99,6 @@ class Polyline_Shape(Shape):
 
         if mouse_pos is not None and self.is_processing():
             result.append(mouse_pos)
-            result.append(self._vertices[0])
 
         return result
 
