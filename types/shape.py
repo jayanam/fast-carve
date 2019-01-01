@@ -14,6 +14,8 @@ class Shape:
     def __init__(self):
         self._state = ShapeState.NONE
         self._vertices = []
+        self._is_moving = False
+        self._move_offset = 0.0
 
     def is_none(self):
         return self._state is ShapeState.NONE
@@ -55,7 +57,20 @@ class Shape:
 
         return result
 
+    def start_move(self, mouse_pos):
+        self._is_moving = True
+        self._move_offset = mouse_pos
+
+    def stop_move(self):
+        self._is_moving = False
+        self._move_offset = 0.0
+
     def handle_mouse_move(self, mouse_pos, event, context):
+        if self.is_created() and self._is_moving:
+            diff = mouse_pos - self._move_offset
+            self._vertices = [vertex + diff for vertex in self._vertices]           
+            self._move_offset = mouse_pos
+            return True
         return False
 
     def handle_mouse_press(self, mouse_pos, event, context):
@@ -122,33 +137,36 @@ class Polyline_Shape(Shape):
         return False
 
     def handle_mouse_move(self, mouse_pos, event, context):
+
         if self.is_processing():
             return True
 
-        return False
+        result = super().handle_mouse_move(mouse_pos, event, context)
+
+        return result
 
     def get_title(self, context):
         return "Polyline"
 
     def get_text(self, context):
-        text = "{0} | Mode: {1} | Type: {2} | Esc : {3}"
+        text = "{0} | Mode: {1} | Type: {2} | {3}"
 
-        escape_action = "Exit"
+        keyboard = "Esc: Exit"
         mouse_action = "Add line: Ctrl + Left click"
         p_type = "Polyline"
 
         if self.is_created():
             mouse_action = "Apply: Ctrl + Left Click"
-            escape_action = "Undo"
+            keyboard = "Esc: Undo | G: Move"
         
         if self.is_processing():
-            escape_action = "Undo"
+            keyboard = "Esc: Undo"
             if self.can_close():
                 mouse_action = "Close Shape: Ctrl + Left Click"
             else:
                 mouse_action = "Add line: Left Click"
             
-        return text.format(mouse_action, context.scene.bool_mode, p_type, escape_action)
+        return text.format(mouse_action, context.scene.bool_mode, p_type, keyboard)
 
 class Circle_Shape(Shape):
 
@@ -166,8 +184,10 @@ class Circle_Shape(Shape):
 
             self.create_circle(context)
             return True
+           
+        result = super().handle_mouse_move(mouse_pos, event, context)
 
-        return False
+        return result
 
     def create_circle(self, context):
         rv3d      = context.space_data.region_3d
@@ -207,18 +227,18 @@ class Circle_Shape(Shape):
         return "Circle"
 
     def get_text(self, context):
-        text = "{0} | Mode: {1} | Type: {2} | Esc : {3}"
+        text = "{0} | Mode: {1} | Type: {2} | {3}"
 
-        escape_action = "Exit"
+        keyboard = "Esc: Exit"
         mouse_action = "Set center: Ctrl + Left click"
         p_type = "Circle"
 
         if self.is_created():
-            escape_action = "Undo"
+            keyboard = "Esc: Undo | G: Move"
             mouse_action = "Apply: Ctrl + Left Click"
    
         if self.is_processing():
             mouse_action = "Create: Left click"
-            escape_action = "Undo"
+            keyboard = "Esc: Undo"
 
-        return text.format(mouse_action, context.scene.bool_mode, p_type, escape_action)
+        return text.format(mouse_action, context.scene.bool_mode, p_type, keyboard)

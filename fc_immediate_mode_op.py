@@ -35,11 +35,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.use_snapping = True
 
         self.create_batch(None)
-
-    def draw(self, context):
-        layout = self.layout
-        row = col.row()
-        row.prop(self, "use_snapping")
                 
     def invoke(self, context, event):
         args = (self, context)  
@@ -91,7 +86,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 context.scene.in_primitive_mode = False
                 self.unregister_handlers(context)
 
-                return {'CANCELLED'}
+                return {'FINISHED'}
 
         # The mouse is moved
         if event.type == "MOUSEMOVE":
@@ -108,6 +103,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             self.create_shape(context)
 
+            self.shape.stop_move()
+
             if self.shape.handle_mouse_press(mouse_pos, event, context):
                 self.create_object(context)
                 self.shape.reset()
@@ -115,6 +112,11 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             self.create_batch(mouse_pos)
 
         # Keyboard
+        if event.value == "PRESS" and event.type == "G":
+            if self.shape.is_created():
+                mouse_pos = get_mouse_3d_vertex(event, context, use_snapping)
+                self.shape.start_move(mouse_pos)
+                return {"RUNNING_MODAL"}
              
         return {"PASS_THROUGH"}
 
