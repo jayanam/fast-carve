@@ -13,7 +13,9 @@ from gpu_extras.batch import batch_for_shader
 
 from .utils.fc_bool_util import select_active, execute_boolean_op, execute_slice_op, is_apply_immediate
 from .utils.fc_view_3d_utils import *
+
 from .types.shape import *
+from .types.enums import *
 
 # Immediate mode operator
 class FC_Primitive_Mode_Operator(bpy.types.Operator):
@@ -112,13 +114,37 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             self.create_batch(mouse_pos)
 
         # Keyboard
-        if event.value == "PRESS" and event.type == "G":
-            if self.shape.is_created():
+        if event.value == "PRESS":
+
+            # try to move the shape
+            if event.type == "G":
                 mouse_pos = get_mouse_3d_vertex(event, context, use_snapping)
-                self.shape.start_move(mouse_pos)
+                if self.shape.start_move(mouse_pos):
+                    return {"RUNNING_MODAL"}
+
+            # toggle bool mode
+            if event.type == "M":
+                context.scene.bool_mode = next_enum(context.scene.bool_mode, 
+                                                    context.scene, "bool_mode")
+
                 return {"RUNNING_MODAL"}
+
+            # toggle primitve  
+            if event.type == "P":
+                if self.shape.is_none():
+                    context.scene.primitive_type = next_enum(context.scene.primitive_type, 
+                                                        context.scene, "primitive_type")
+
+                    self.create_shape(context)
+                    return {"RUNNING_MODAL"}
+
+
+        
              
         return {"PASS_THROUGH"}
+
+
+
 
     def create_shape(self, context):
         if self.shape.is_none():

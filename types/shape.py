@@ -58,8 +58,11 @@ class Shape:
         return result
 
     def start_move(self, mouse_pos):
-        self._is_moving = True
-        self._move_offset = mouse_pos
+        if self.is_created():
+            self._is_moving = True
+            self._move_offset = mouse_pos
+            return True
+        return False
 
     def stop_move(self):
         self._is_moving = False
@@ -149,7 +152,7 @@ class Polyline_Shape(Shape):
         return "Polyline"
 
     def get_text(self, context):
-        text = "{0} | Mode: {1} | Type: {2} | {3}"
+        text = "{0} | Mode (M): {1} | Primitive (P): {2} | {3}"
 
         keyboard = "Esc: Exit"
         mouse_action = "Add line: Ctrl + Left click"
@@ -227,7 +230,7 @@ class Circle_Shape(Shape):
         return "Circle"
 
     def get_text(self, context):
-        text = "{0} | Mode: {1} | Type: {2} | {3}"
+        text = "{0} | Mode (M): {1} | Primitive (P): {2} | {3}"
 
         keyboard = "Esc: Exit"
         mouse_action = "Set center: Ctrl + Left click"

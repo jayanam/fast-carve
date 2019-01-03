@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 7, 8, 5),
+    "version": (0, 7, 9, 0),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -32,6 +32,8 @@ from . fc_menus             import FC_Main_Menu
 from . fc_apply_bool_op     import FC_ApplyBoolOperator
 from . fc_immediate_mode_op import FC_Primitive_Mode_Operator
 
+from .types.enums import *
+
 # Scene properties
 bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 
@@ -56,9 +58,9 @@ bpy.types.Scene.extrude_mesh  = BoolProperty(name="Extrude mesh",
                                       description="Extrude the mesh after creation",
                                       default = True)
 
-mode_items = [ ("Create",     "Create", "", -1),
-               ("Difference", "Difference", "", 0),
-               ("Union",      "Union", "", 1)
+mode_items = [ ("Create",     "Create", "", 0),
+               ("Difference", "Difference", "", 1),
+               ("Union",      "Union", "", 2)
              ]
 
 bpy.types.Scene.bool_mode = bpy.props.EnumProperty(items=mode_items, 
@@ -70,7 +72,7 @@ primitive_types = [ ("Polyline",  "Polyline", "", 0),
                   ]
 
 bpy.types.Scene.primitive_type = bpy.props.EnumProperty(items=primitive_types, 
-                                                        name="Type",
+                                                        name="Primitive",
                                                         default="Polyline")
 
 # Addon preferences
