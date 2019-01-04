@@ -90,9 +90,6 @@ class Shape:
 
         return False
 
-    def get_title(self, context):
-        pass
-
     def get_text(self, context):
         pass
 
@@ -147,9 +144,6 @@ class Polyline_Shape(Shape):
         result = super().handle_mouse_move(mouse_pos, event, context)
 
         return result
-
-    def get_title(self, context):
-        return "Polyline"
 
     def get_text(self, context):
         text = "{0} | Mode (M): {1} | Primitive (P): {2} | {3}"
@@ -226,9 +220,6 @@ class Circle_Shape(Shape):
     def draw_points(self):
         return False
 
-    def get_title(self, context):
-        return "Circle"
-
     def get_text(self, context):
         text = "{0} | Mode (M): {1} | Primitive (P): {2} | {3}"
 
@@ -245,3 +236,77 @@ class Circle_Shape(Shape):
             keyboard = "Esc: Undo"
 
         return text.format(mouse_action, context.scene.bool_mode, p_type, keyboard)
+
+class Rectangle_Shape(Shape):
+    
+    def __init__(self):
+        super().__init__()
+        self._vertex1 = None
+        self._vertex3 = None
+
+    def handle_mouse_move(self, mouse_pos, event, context):
+
+        if self.is_processing():
+
+            self._vertex3 = mouse_pos
+            self.create_rect(context)
+            return True
+
+        result = super().handle_mouse_move(mouse_pos, event, context)
+
+        return result
+
+
+    def create_rect(self, context):
+        rv3d      = context.space_data.region_3d
+        view_rot  = rv3d.view_rotation
+
+        self._vertices.clear()
+        self._vertices.append(self._vertex1)
+        vertex2 = self._vertex1.copy()
+        vertex2[2] = self._vertex3[2]
+
+        vertex4 = self._vertex3.copy()
+        vertex4[2] = self._vertex1[2]
+        
+        self._vertices.extend([vertex2, self._vertex3, vertex4])
+        print(self._vertex1)
+        print(self._vertex3)
+        
+    def handle_mouse_press(self, mouse_pos, event, context):
+
+        if self.is_none() and event.ctrl:
+
+            self._vertex1 = mouse_pos
+            self.state = ShapeState.PROCESSING
+            return False
+
+        elif self.is_processing():
+            self.state = ShapeState.CREATED
+            return False
+
+        elif self.is_created() and event.ctrl:
+            return True
+
+        return False
+
+    def draw_points(self):
+        return True
+
+    def get_text(self, context):
+        text = "{0} | Mode (M): {1} | Primitive (P): {2} | {3}"
+
+        keyboard = "Esc: Exit"
+        mouse_action = "Set point 1: Ctrl + Left click"
+        p_type = "Rectangle"
+
+        if self.is_created():
+            keyboard = "Esc: Undo | G: Move"
+            mouse_action = "Apply: Ctrl + Left Click"
+   
+        if self.is_processing():
+            mouse_action = "Set point 2: Left click"
+            keyboard = "Esc: Undo"
+
+        return text.format(mouse_action, context.scene.bool_mode, p_type, keyboard)
+

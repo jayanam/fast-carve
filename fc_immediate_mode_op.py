@@ -137,21 +137,17 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
                     self.create_shape(context)
                     return {"RUNNING_MODAL"}
-
-
-        
              
         return {"PASS_THROUGH"}
-
-
-
 
     def create_shape(self, context):
         if self.shape.is_none():
             if context.scene.primitive_type == "Circle":
                 self.shape = Circle_Shape()
-            else:
+            elif context.scene.primitive_type == "Polyline":
                 self.shape = Polyline_Shape()
+            else:
+                self.shape = Rectangle_Shape()
 
     def create_object(self, context):
 

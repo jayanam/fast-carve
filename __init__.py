@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 7, 9, 0),
+    "version": (0, 7, 9, 1),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -67,8 +67,9 @@ bpy.types.Scene.bool_mode = bpy.props.EnumProperty(items=mode_items,
                                                    name="Mode",
                                                    default="Create")
 
-primitive_types = [ ("Polyline",  "Polyline", "", 0),
-                    ("Circle",    "Circle",   "", 1)
+primitive_types = [ ("Polyline",   "Polyline",  "", 0),
+                    ("Circle",     "Circle",    "", 1),
+                    ("Rectangle",  "Rectangle", "", 2)
                   ]
 
 bpy.types.Scene.primitive_type = bpy.props.EnumProperty(items=primitive_types, 
