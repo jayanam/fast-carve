@@ -2,7 +2,9 @@ from enum import Enum
 
 from math import sin, cos, pi
 
-from mathutils import Vector
+from mathutils import Vector, geometry
+
+from ..utils.fc_view_3d_utils import get_3d_vertex
 
 class ShapeState(Enum):
     NONE = 0
@@ -16,6 +18,9 @@ class Shape:
         self._vertices = []
         self._is_moving = False
         self._move_offset = 0.0
+        self._is_rotating = False
+        self._rotation = 0.0
+
         self._dir = Vector((0,0,0))
 
     def is_none(self):
@@ -75,15 +80,22 @@ class Shape:
         self._is_moving = False
         self._move_offset = 0.0
 
-    def handle_mouse_move(self, mouse_pos, event, context):
+    def start_rotate(self, mouse_pos):
+        return False
+
+    def stop_rotate(self):
+        self._is_rotating = False
+        self._rotation = 0.0
+
+    def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
         if self.is_created() and self._is_moving:
-            diff = mouse_pos - self._move_offset
+            diff = mouse_pos_3d - self._move_offset
             self._vertices = [vertex + diff for vertex in self._vertices]           
-            self._move_offset = mouse_pos
+            self._move_offset = mouse_pos_3d
             return True
         return False
 
-    def handle_mouse_press(self, mouse_pos, event, context):
+    def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
         return False
 
     def handle_apply(self):
@@ -125,16 +137,16 @@ class Polyline_Shape(Shape):
         return result
 
 
-    def handle_mouse_press(self, mouse_pos, event, context):
+    def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if (self.is_none() and event.ctrl) or (self.is_processing() and not event.ctrl):
 
-            self.add_vertex(mouse_pos)
+            self.add_vertex(mouse_pos_3d)
             self.state = ShapeState.PROCESSING
             return False
 
         elif self.is_processing() and event.ctrl and self.can_close():
-            self.add_vertex(mouse_pos)
+            self.add_vertex(mouse_pos_3d)
             self.close()
             return False
 
@@ -143,12 +155,12 @@ class Polyline_Shape(Shape):
 
         return False
 
-    def handle_mouse_move(self, mouse_pos, event, context):
+    def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if self.is_processing():
             return True
 
-        result = super().handle_mouse_move(mouse_pos, event, context)
+        result = super().handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context)
 
         return result
 
@@ -179,17 +191,17 @@ class Circle_Shape(Shape):
         self._center = None
         self._radius = 0
 
-    def handle_mouse_move(self, mouse_pos, event, context):
+    def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if self.is_processing():
 
             # Distance center to mouse pos
-            self._radius = (self._center - mouse_pos).length
+            self._radius = (self._center - mouse_pos_3d).length
 
             self.create_circle(context)
             return True
            
-        result = super().handle_mouse_move(mouse_pos, event, context)
+        result = super().handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context)
 
         return result
 
@@ -206,11 +218,11 @@ class Circle_Shape(Shape):
                           self._center for point in points]
 
 
-    def handle_mouse_press(self, mouse_pos, event, context):
+    def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if self.is_none() and event.ctrl:
 
-            self._center = mouse_pos
+            self._center = mouse_pos_3d
             self.state = ShapeState.PROCESSING
             return False
 
@@ -250,16 +262,20 @@ class Rectangle_Shape(Shape):
         super().__init__()
         self._vertex1 = None
         self._vertex3 = None
+        self._vertex1_2d = None
+        self._vertex3_2d = None
 
-    def handle_mouse_move(self, mouse_pos, event, context):
+    def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if self.is_processing():
 
-            self._vertex3 = mouse_pos
+            self._vertex3 = mouse_pos_3d
+            self._vertex3_2d = mouse_pos_2d
+
             self.create_rect(context)
             return True
 
-        result = super().handle_mouse_move(mouse_pos, event, context)
+        result = super().handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context)
 
         return result
 
@@ -270,19 +286,22 @@ class Rectangle_Shape(Shape):
 
         self._vertices.clear()
         self._vertices.append(self._vertex1)
-        vertex2 = self._vertex1.copy()
-        vertex2[2] = self._vertex3[2]
 
-        vertex4 = self._vertex3.copy()
-        vertex4[2] = self._vertex1[2]
+        vertex2 = (self._vertex1_2d[0], self._vertex3_2d[1])
+        vertex2 = get_3d_vertex(context, vertex2)
+
+        vertex4 = (self._vertex3_2d[0], self._vertex1_2d[1])
+        vertex4 = get_3d_vertex(context, vertex4)  
         
         self._vertices.extend([vertex2, self._vertex3, vertex4])
         
-    def handle_mouse_press(self, mouse_pos, event, context):
+    def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if self.is_none() and event.ctrl:
 
-            self._vertex1 = mouse_pos
+            self._vertex1 = mouse_pos_3d
+            self._vertex1_2d = mouse_pos_2d
+
             self.state = ShapeState.PROCESSING
             return False
 
@@ -293,6 +312,12 @@ class Rectangle_Shape(Shape):
         elif self.is_created() and event.ctrl:
             return True
 
+        return False
+
+    def start_rotate(self, mouse_pos):
+        if self.is_created():
+            n = geometry.normal( [Vector(v) for v in self._vertices])
+        
         return False
 
     def draw_points(self):

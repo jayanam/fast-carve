@@ -93,21 +93,24 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         # The mouse is moved
         if event.type == "MOUSEMOVE":
 
-            mouse_pos = get_mouse_3d_vertex(event, context, use_snapping)
+            mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
+            mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 
-            if self.shape.handle_mouse_move(mouse_pos, event, context):
-                self.create_batch(mouse_pos)
+            if self.shape.handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context):
+                self.create_batch(mouse_pos_3d)
         
         # Left mouse button is pressed
         if event.value == "PRESS" and event.type == "LEFTMOUSE":
-            
-            mouse_pos = get_mouse_3d_vertex(event, context, use_snapping)
+
+            mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)            
+            mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 
             self.create_shape(context)
 
             self.shape.stop_move()
+            self.shape.stop_rotate()
 
-            if self.shape.handle_mouse_press(mouse_pos, event, context):
+            if self.shape.handle_mouse_press(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_object(context)
                 self.shape.reset()
             else:
@@ -115,16 +118,24 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 # creation, not when it is extruded
                 self.shape.set_dir(get_view_direction(context))
                 
-            self.create_batch(mouse_pos)
+            self.create_batch(mouse_pos_3d)
 
         # Keyboard
         if event.value == "PRESS":
 
             # try to move the shape
             if event.type == "G":
-                mouse_pos = get_mouse_3d_vertex(event, context, use_snapping)
-                if self.shape.start_move(mouse_pos):
+                mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
+                mouse_pos_3d = get_mouse_3d_vertex(context, mouse_pos_2d)
+                if self.shape.start_move(mouse_pos_3d):
                     return {"RUNNING_MODAL"}
+
+            # try to rotate the shape
+            if event.type == "R":
+                mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
+                mouse_pos_3d = get_mouse_3d_vertex(context, mouse_pos_2d)
+                if self.shape.start_rotate(mouse_pos_3d):
+                    return {"RUNNING_MODAL"}               
 
             # toggle bool mode
             if event.type == "M":

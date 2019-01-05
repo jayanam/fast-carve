@@ -32,30 +32,26 @@ def get_grid_snap_pos(pos, overlay3d):
 
     return mod
 
-def get_view_direction(context):
+def get_view_rotation(context):
     rv3d      = context.space_data.region_3d
     view_rot  = rv3d.view_rotation
+    return view_rot    
 
+def get_view_direction(context):
+    view_rot  = get_view_rotation(context)
     dir = view_rot @ mathutils.Vector((0,0,-1))
     return dir.normalized()
 
-def get_mouse_3d_vertex(event, context, use_snapping = True):
-    x, y      = event.mouse_region_x, event.mouse_region_y
+def get_3d_vertex(context, vertex_2d):
     region    = context.region
     rv3d      = context.space_data.region_3d
     view_rot  = rv3d.view_rotation
     overlay3d = context.space_data.overlay
-    
-    dir = get_view_direction(context) * -context.scene.draw_distance    
-            
-    vec = region_2d_to_location_3d(region, rv3d, (x, y), dir)
 
-    # we are in ortho mode, so we dont snap
-    # TODO: Perhaps we also want to snap in perspective mode?
-    #       Could be user-defined
-    if not rv3d.is_perspective and use_snapping:
-            
-        # Now check how to snap the cursor
+    dir = get_view_direction(context) * -context.scene.draw_distance    
+    vec = region_2d_to_location_3d(region, rv3d, vertex_2d, dir)   
+
+    if not rv3d.is_perspective and context.scene.use_snapping:
         ind = get_snap_vertex_indizes(view_rot)
         if ind is not None:               
             vec[ind[0]] = vec[ind[0]] + get_grid_snap_pos(vec[ind[0]], overlay3d)
