@@ -110,6 +110,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             if self.shape.handle_mouse_press(mouse_pos, event, context):
                 self.create_object(context)
                 self.shape.reset()
+            else:
+                # So that the direction is defined during shape
+                # creation, not when it is extruded
+                self.shape.set_dir(get_view_direction(context))
                 
             self.create_batch(mouse_pos)
 
@@ -185,6 +189,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         obj.select_set(state=True)
 
         self.remove_doubles()
+
        
         # set origin to geometry
         bpy.ops.object.editmode_toggle()
@@ -221,8 +226,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
     def extrude_mesh(self, context, bm):
         if context.scene.extrude_mesh:
-            dir = get_view_direction(context) * 2.0 * context.scene.draw_distance
- 
+            
+            dir = self.shape.get_dir() * 2 * context.scene.draw_distance
+
             r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
             verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
             bmesh.ops.translate(bm, vec=dir, verts=verts)

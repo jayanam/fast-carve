@@ -16,15 +16,22 @@ class Shape:
         self._vertices = []
         self._is_moving = False
         self._move_offset = 0.0
+        self._dir = Vector((0,0,0))
 
     def is_none(self):
         return self._state is ShapeState.NONE
-
+ 
     def is_processing(self):
         return self._state is ShapeState.PROCESSING
 
     def is_created(self):
         return self._state is ShapeState.CREATED
+
+    def get_dir(self):
+        return self._dir
+
+    def set_dir(self, value):
+        self._dir = value
 
     @property
     def vertices(self):
@@ -270,8 +277,6 @@ class Rectangle_Shape(Shape):
         vertex4[2] = self._vertex1[2]
         
         self._vertices.extend([vertex2, self._vertex3, vertex4])
-        print(self._vertex1)
-        print(self._vertex3)
         
     def handle_mouse_press(self, mouse_pos, event, context):
 
