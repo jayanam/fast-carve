@@ -126,14 +126,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             # try to move the shape
             if event.type == "G":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
-                mouse_pos_3d = get_mouse_3d_vertex(context, mouse_pos_2d)
+                mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
                 if self.shape.start_move(mouse_pos_3d):
                     return {"RUNNING_MODAL"}
 
             # try to rotate the shape
             if event.type == "R":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
-                mouse_pos_3d = get_mouse_3d_vertex(context, mouse_pos_2d)
+                mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
                 if self.shape.start_rotate(mouse_pos_3d):
                     return {"RUNNING_MODAL"}               
 
