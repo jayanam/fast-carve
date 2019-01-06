@@ -42,7 +42,14 @@ def get_view_direction(context):
     dir = view_rot @ mathutils.Vector((0,0,-1))
     return dir.normalized()
 
-def get_3d_vertex(context, vertex_2d):
+def get_3d_vertex_dir(context, vertex_2d, dir):
+    region    = context.region
+    rv3d      = context.space_data.region_3d
+  
+    vec = region_2d_to_location_3d(region, rv3d, vertex_2d, dir)  
+    return vec  
+
+def get_3d_vertex(context, vertex_2d, consider_snapping = True):
     region    = context.region
     rv3d      = context.space_data.region_3d
     view_rot  = rv3d.view_rotation
@@ -51,7 +58,7 @@ def get_3d_vertex(context, vertex_2d):
     dir = get_view_direction(context) * -context.scene.draw_distance    
     vec = region_2d_to_location_3d(region, rv3d, vertex_2d, dir)   
 
-    if not rv3d.is_perspective and context.scene.use_snapping:
+    if (not rv3d.is_perspective and context.scene.use_snapping and consider_snapping):
         ind = get_snap_vertex_indizes(view_rot)
         if ind is not None:               
             vec[ind[0]] = vec[ind[0]] + get_grid_snap_pos(vec[ind[0]], overlay3d)

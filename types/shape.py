@@ -1,10 +1,10 @@
 from enum import Enum
 
-from math import sin, cos, pi
+from math import sin, cos, pi, radians
 
 from mathutils import Vector, geometry
 
-from ..utils.fc_view_3d_utils import get_3d_vertex
+from ..utils.fc_view_3d_utils import get_3d_vertex, get_3d_vertex_dir
 
 class ShapeState(Enum):
     NONE = 0
@@ -80,7 +80,7 @@ class Shape:
         self._is_moving = False
         self._move_offset = 0.0
 
-    def start_rotate(self, mouse_pos):
+    def start_rotate(self, mouse_pos, context):
         return False
 
     def stop_rotate(self):
@@ -262,15 +262,40 @@ class Rectangle_Shape(Shape):
         super().__init__()
         self._vertex1 = None
         self._vertex3 = None
-        self._vertex1_2d = None
-        self._vertex3_2d = None
+        self._vertices_2d = [None, None, None, None]
+        self._center_2d = None
+
+    def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
+
+        if self.is_none() and event.ctrl:
+            self._vertices_2d[0] = mouse_pos_2d
+
+            self._vertex1 = mouse_pos_3d
+
+            self.state = ShapeState.PROCESSING
+            return False
+
+        elif self.is_processing():
+            self.state = ShapeState.CREATED
+            return False
+
+        elif self.is_created() and event.ctrl:
+            return True
+
+        return False
 
     def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if self.is_processing():
 
             self._vertex3 = mouse_pos_3d
-            self._vertex3_2d = mouse_pos_2d
+            self._vertices_2d[2] = mouse_pos_2d
+
+            self._vertices_2d[1] = (self._vertices_2d[0][0], self._vertices_2d[2][1])
+            self._vertices_2d[3] = (self._vertices_2d[2][0], self._vertices_2d[0][1])
+
+            self._center_2d = (self._vertices_2d[0][0] +  (self._vertices_2d[3][0] - self._vertices_2d[0][0]) / 2, 
+                               self._vertices_2d[0][1] +  (self._vertices_2d[1][1] - self._vertices_2d[0][1]) / 2)
 
             self.create_rect(context)
             return True
@@ -285,38 +310,39 @@ class Rectangle_Shape(Shape):
         view_rot  = rv3d.view_rotation
 
         self._vertices.clear()
-        self._vertices.append(self._vertex1)
 
-        vertex2 = (self._vertex1_2d[0], self._vertex3_2d[1])
-        vertex2 = get_3d_vertex(context, vertex2)
-
-        vertex4 = (self._vertex3_2d[0], self._vertex1_2d[1])
-        vertex4 = get_3d_vertex(context, vertex4)  
+        # get missing 3d vertices
+        vertex2 = get_3d_vertex(context, self._vertices_2d[1])
+        vertex4 = get_3d_vertex(context, self._vertices_2d[3])  
         
-        self._vertices.extend([vertex2, self._vertex3, vertex4])
+        self._vertices.extend([self._vertex1, vertex2, self._vertex3, vertex4])
         
-    def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
-
-        if self.is_none() and event.ctrl:
-
-            self._vertex1 = mouse_pos_3d
-            self._vertex1_2d = mouse_pos_2d
-
-            self.state = ShapeState.PROCESSING
-            return False
-
-        elif self.is_processing():
-            self.state = ShapeState.CREATED
-            return False
-
-        elif self.is_created() and event.ctrl:
-            return True
-
-        return False
-
-    def start_rotate(self, mouse_pos):
+    def start_rotate(self, mouse_pos, context):
         if self.is_created():
-            n = geometry.normal( [Vector(v) for v in self._vertices])
+
+            # TODO: Enable this when snapping for
+            #       2d vertices is implemented
+            
+            # tmp_vertices_2d = []
+            # ox = self._center_2d[0]
+            # oy = self._center_2d[1]
+
+            # for i, vertex2d in enumerate(self._vertices_2d):
+            #     px = vertex2d[0]
+            #     py = vertex2d[1]
+
+            #     # 5 degree steps (TODO: parametrize?)
+            #     angle = radians(5)
+               
+            #     x = ox + cos(angle) * (px - ox) - sin(angle) * (py - oy)
+            #     y = oy + sin(angle) * (px - ox) + cos(angle) * (py - oy)
+
+            #     tmp_vertices_2d.append((x,y))
+            #     self._vertices[i] = get_3d_vertex_dir(context, (x,y), -self._dir)
+            
+            # self._vertices_2d = tmp_vertices_2d
+
+            return False
         
         return False
 

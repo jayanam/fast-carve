@@ -116,7 +116,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             else:
                 # So that the direction is defined during shape
                 # creation, not when it is extruded
-                self.shape.set_dir(get_view_direction(context))
+                self.shape.set_dir(get_view_direction(context) * context.scene.draw_distance)
                 
             self.create_batch(mouse_pos_3d)
 
@@ -134,7 +134,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             if event.type == "R":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
                 mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
-                if self.shape.start_rotate(mouse_pos_3d):
+                if self.shape.start_rotate(mouse_pos_3d, context):
+                    self.create_batch()
                     return {"RUNNING_MODAL"}               
 
             # toggle bool mode
@@ -238,7 +239,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def extrude_mesh(self, context, bm):
         if context.scene.extrude_mesh:
             
-            dir = self.shape.get_dir() * 2 * context.scene.draw_distance
+            dir = self.shape.get_dir() * 2
 
             r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
             verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
