@@ -319,30 +319,27 @@ class Rectangle_Shape(Shape):
         
     def start_rotate(self, mouse_pos, context):
         if self.is_created():
+           
+            tmp_vertices_2d = []
+            ox = self._center_2d[0]
+            oy = self._center_2d[1]
 
-            # TODO: Enable this when snapping for
-            #       2d vertices is implemented
-            
-            # tmp_vertices_2d = []
-            # ox = self._center_2d[0]
-            # oy = self._center_2d[1]
+            for i, vertex2d in enumerate(self._vertices_2d):
+                px = vertex2d[0]
+                py = vertex2d[1]
 
-            # for i, vertex2d in enumerate(self._vertices_2d):
-            #     px = vertex2d[0]
-            #     py = vertex2d[1]
-
-            #     # 5 degree steps (TODO: parametrize?)
-            #     angle = radians(5)
+                # 15 degree steps (TODO: parametrize?)
+                angle = radians(15)
                
-            #     x = ox + cos(angle) * (px - ox) - sin(angle) * (py - oy)
-            #     y = oy + sin(angle) * (px - ox) + cos(angle) * (py - oy)
+                x = ox + cos(angle) * (px - ox) - sin(angle) * (py - oy)
+                y = oy + sin(angle) * (px - ox) + cos(angle) * (py - oy)
 
-            #     tmp_vertices_2d.append((x,y))
-            #     self._vertices[i] = get_3d_vertex_dir(context, (x,y), -self._dir)
+                tmp_vertices_2d.append((x,y))
+                self._vertices[i] = get_3d_vertex_dir(context, (x,y), -self._dir)
             
-            # self._vertices_2d = tmp_vertices_2d
+            self._vertices_2d = tmp_vertices_2d
 
-            return False
+            return True
         
         return False
 
@@ -357,7 +354,7 @@ class Rectangle_Shape(Shape):
         p_type = "Rectangle"
 
         if self.is_created():
-            keyboard = "Esc: Undo | G: Move"
+            keyboard = "Esc: Undo | G: Move | R: Rotate"
             mouse_action = "Apply: Ctrl + Left Click"
    
         if self.is_processing():
@@ -365,4 +362,3 @@ class Rectangle_Shape(Shape):
             keyboard = "Esc: Undo"
 
         return text.format(mouse_action, context.scene.bool_mode, p_type, keyboard)
-

@@ -34,8 +34,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_event  = None
         self.shape = Polyline_Shape()
 
-        self.use_snapping = True
-
         self.create_batch(None)
                 
     def invoke(self, context, event):
@@ -73,8 +71,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def modal(self, context, event):
         if context.area:
             context.area.tag_redraw()
-
-        use_snapping = context.scene.use_snapping
                                
         if event.type == "ESC" and event.value == "PRESS":
 
@@ -96,14 +92,20 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
             mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 
+            if context.scene.use_snapping:
+                mouse_pos_2d = get_2d_vertex(context, mouse_pos_3d)
+
             if self.shape.handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_batch(mouse_pos_3d)
         
         # Left mouse button is pressed
         if event.value == "PRESS" and event.type == "LEFTMOUSE":
 
-            mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)            
+            mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
             mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
+
+            if context.scene.use_snapping:
+                mouse_pos_2d = get_2d_vertex(context, mouse_pos_3d)
 
             self.create_shape(context)
 

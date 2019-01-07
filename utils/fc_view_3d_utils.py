@@ -1,7 +1,7 @@
 import mathutils
 
 from bpy_extras.view3d_utils import region_2d_to_origin_3d
-from bpy_extras.view3d_utils import region_2d_to_location_3d
+from bpy_extras.view3d_utils import region_2d_to_location_3d, location_3d_to_region_2d
 
 def get_snap_vertex_indizes(view_rot):
     v1 = round(abs(view_rot[0]), 3)
@@ -47,9 +47,15 @@ def get_3d_vertex_dir(context, vertex_2d, dir):
     rv3d      = context.space_data.region_3d
   
     vec = region_2d_to_location_3d(region, rv3d, vertex_2d, dir)  
-    return vec  
+    return vec
 
-def get_3d_vertex(context, vertex_2d, consider_snapping = True):
+def get_2d_vertex(context, vertex_3d):
+    region    = context.region
+    rv3d      = context.space_data.region_3d
+    return location_3d_to_region_2d(region, rv3d, vertex_3d)
+
+
+def get_3d_vertex(context, vertex_2d):
     region    = context.region
     rv3d      = context.space_data.region_3d
     view_rot  = rv3d.view_rotation
@@ -58,7 +64,7 @@ def get_3d_vertex(context, vertex_2d, consider_snapping = True):
     dir = get_view_direction(context) * -context.scene.draw_distance    
     vec = region_2d_to_location_3d(region, rv3d, vertex_2d, dir)   
 
-    if (not rv3d.is_perspective and context.scene.use_snapping and consider_snapping):
+    if (not rv3d.is_perspective and context.scene.use_snapping):
         ind = get_snap_vertex_indizes(view_rot)
         if ind is not None:               
             vec[ind[0]] = vec[ind[0]] + get_grid_snap_pos(vec[ind[0]], overlay3d)
