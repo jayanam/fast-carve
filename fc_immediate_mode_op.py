@@ -15,6 +15,10 @@ from .utils.fc_bool_util import select_active, execute_boolean_op, execute_slice
 from .utils.fc_view_3d_utils import *
 
 from .types.shape import *
+from .types.rectangle_shape import *
+from .types.polyline_shape import *
+from .types.circle_shape import *
+
 from .types.enums import *
 
 # Immediate mode operator
