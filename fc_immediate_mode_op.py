@@ -109,12 +109,15 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             self.create_shape(context)
 
-            self.shape.stop_move()
-            self.shape.stop_rotate()
+            if self.shape.is_moving():
+                self.shape.stop_move(context)
+
+            if self.shape.is_rotating():
+                self.shape.stop_rotate(context)
 
             if self.shape.handle_mouse_press(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_object(context)
-                self.shape.reset()
+                # self.shape.reset()
             else:
                 # So that the direction is defined during shape
                 # creation, not when it is extruded

@@ -4,7 +4,7 @@ from math import sin, cos, pi, radians
 
 from mathutils import Vector, geometry
 
-from ..utils.fc_view_3d_utils import get_3d_vertex, get_3d_vertex_dir
+from ..utils.fc_view_3d_utils import get_3d_vertex, get_3d_vertex_dir, get_2d_vertex
 
 class ShapeState(Enum):
     NONE = 0
@@ -31,6 +31,12 @@ class Shape:
 
     def is_created(self):
         return self._state is ShapeState.CREATED
+
+    def is_moving(self):
+        return self._is_moving
+
+    def is_rotating(self):
+        return self._is_rotating
 
     def get_dir(self):
         return self._dir
@@ -76,14 +82,14 @@ class Shape:
             return True
         return False
 
-    def stop_move(self):
+    def stop_move(self, context):
         self._is_moving = False
         self._move_offset = 0.0
 
     def start_rotate(self, mouse_pos, context):
         return False
 
-    def stop_rotate(self):
+    def stop_rotate(self, context):
         self._is_rotating = False
         self._rotation = 0.0
 
@@ -294,15 +300,27 @@ class Rectangle_Shape(Shape):
             self._vertices_2d[1] = (self._vertices_2d[0][0], self._vertices_2d[2][1])
             self._vertices_2d[3] = (self._vertices_2d[2][0], self._vertices_2d[0][1])
 
-            self._center_2d = (self._vertices_2d[0][0] +  (self._vertices_2d[3][0] - self._vertices_2d[0][0]) / 2, 
-                               self._vertices_2d[0][1] +  (self._vertices_2d[1][1] - self._vertices_2d[0][1]) / 2)
-
+            self.calc_center_2d()
+ 
             self.create_rect(context)
             return True
 
         result = super().handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context)
 
         return result
+
+    def calc_center_2d(self):
+        self._center_2d = (self._vertices_2d[0][0] +  (self._vertices_2d[3][0] - self._vertices_2d[0][0]) / 2, 
+                            self._vertices_2d[0][1] +  (self._vertices_2d[1][1] - self._vertices_2d[0][1]) / 2)
+
+
+    def stop_move(self, context):
+        super().stop_move(context)
+
+        for index, vertex_3d in enumerate(self._vertices):
+            self._vertices_2d[index] = get_2d_vertex(context, vertex_3d)
+
+        self.calc_center_2d()
 
 
     def create_rect(self, context):
