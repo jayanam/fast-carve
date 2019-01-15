@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 8, 0, 2),
+    "version": (0, 8, 0, 3),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -40,6 +40,11 @@ bpy.types.Scene.carver_target = PointerProperty(type=bpy.types.Object)
 bpy.types.Scene.apply_bool    = BoolProperty(
                                       name="Apply Immediately", 
                                       description="Apply bool operation immediately",
+                                      default = True)
+
+bpy.types.Scene.delete_on_apply   = BoolProperty(
+                                      name="Delete after apply", 
+                                      description="Delete the object after apply",
                                       default = True)
 
 bpy.types.Scene.use_snapping   = BoolProperty(name="Snapping", 

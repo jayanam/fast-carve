@@ -40,6 +40,10 @@ class FC_Panel(Panel):
         # Apply immediately
         row = layout.row()
         layout.prop(context.scene, "apply_bool")
+
+        # Delete object after immediately
+        row = layout.row()
+        layout.prop(context.scene, "delete_on_apply")
         
         # Apply all booleans
         row = layout.row()

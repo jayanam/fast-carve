@@ -1,6 +1,7 @@
 import bpy
 from bpy.types import Operator
 
+from .utils.fc_bool_util import *
 
 class FC_ApplyBoolOperator(Operator):
     bl_idname = "object.apply_bool"
@@ -22,6 +23,10 @@ class FC_ApplyBoolOperator(Operator):
                     # API change 2.8: bpy.context.scene.objects.active = obj
                     bpy.context.view_layer.objects.active = obj
                     bpy.ops.object.modifier_apply(modifier=modifier.name)
-        
+
         bpy.context.view_layer.objects.active = active_obj
+        
+        if is_delete_after_apply():
+            bpy.ops.object.delete()
+        
         return {'FINISHED'}
