@@ -221,8 +221,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             target_obj = bpy.context.scene.carver_target
             if target_obj is not None:
-                execute_boolean_op(context, target_obj, 
-                self.get_bool_mode_id(context.scene.bool_mode))
+
+                bool_mode_id = self.get_bool_mode_id(context.scene.bool_mode)
+                if bool_mode_id != 3:
+                    execute_boolean_op(context, target_obj, bool_mode_id)
+                else:
+                    execute_slice_op(context, target_obj)
 
                 # delete the bool object if apply immediate is checked
                 if is_apply_immediate():
@@ -234,10 +238,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             return 0
         elif bool_name == "Union":
             return 1
-
-        # TODO: Add slice operation to bool modes
-        elif bool_name == "Slice":
+        elif bool_name == "Intersect":
             return 2
+        elif bool_name == "Slice":
+            return 3
         return -1
 
     def remove_doubles(self):

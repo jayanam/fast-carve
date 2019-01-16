@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 8, 0, 3),
+    "version": (0, 8, 0, 4),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -65,7 +65,9 @@ bpy.types.Scene.extrude_mesh  = BoolProperty(name="Extrude mesh",
 
 mode_items = [ ("Create",     "Create", "", 0),
                ("Difference", "Difference", "", 1),
-               ("Union",      "Union", "", 2)
+               ("Union",      "Union", "", 2),
+               ("Intersect",  "Intersect", "", 3),
+               ("Slice",      "Slice", "", 4)
              ]
 
 bpy.types.Scene.bool_mode = bpy.props.EnumProperty(items=mode_items, 
