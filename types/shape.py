@@ -6,8 +6,6 @@ from mathutils import Vector, geometry
 
 from ..utils.fc_view_3d_utils import get_3d_vertex, get_view_direction_by_rot_matrix, get_3d_vertex_dir, get_2d_vertex
 
-from bpy.types import RegionView3D
-
 class ShapeState(Enum):
     NONE = 0
     PROCESSING = 1
