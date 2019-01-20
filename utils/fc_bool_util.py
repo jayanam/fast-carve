@@ -74,12 +74,8 @@ def execute_slice_op(context, target_obj):
     bpy.ops.object.duplicate(linked=True)
     
     clone_target = bpy.context.view_layer.objects.active
-    # Blender 2.8 API change 
-    # context.scene.objects.link(clone_target)
-    # ??? bpy.context.view_layer.objects.link(clone_target)
     
-    # Intersect for clone
-    # select_active(clone_target)            
+    # Intersect for clone     
     bpy.ops.object.make_single_user(object=True, obdata=True)
     
     bool_mod_and_apply(current_obj, 2, False)

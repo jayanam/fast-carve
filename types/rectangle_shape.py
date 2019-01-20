@@ -1,4 +1,5 @@
 from .shape import *
+from ..utils.fc_view_3d_utils import get_view_direction_by_rot_matrix, get_3d_vertex_for_2d
 
 class Rectangle_Shape(Shape):
     
@@ -91,7 +92,10 @@ class Rectangle_Shape(Shape):
                 y = oy + sin(angle) * (px - ox) + cos(angle) * (py - oy)
 
                 tmp_vertices_2d.append((x,y))
-                self._vertices[i] = get_3d_vertex_dir(context, (x,y), -self._dir)
+
+                direction = get_view_direction_by_rot_matrix(self._view_context.view_rotation) * context.scene.draw_distance
+                
+                self._vertices[i] = get_3d_vertex_for_2d(self._view_context, (x,y), -direction)
             
             self._vertices_2d = tmp_vertices_2d
 

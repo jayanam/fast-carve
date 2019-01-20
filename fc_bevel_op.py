@@ -29,8 +29,6 @@ class FC_BevelOperator(Operator):
         # Sharpen and bevel in object mode
         if(mode == "OBJECT"):
 
-            # We know that we are in object mode
-            # cause the operator is for OM only
             execute_bevel(context.selected_objects)
         
         # Sharpen edges in edit mode

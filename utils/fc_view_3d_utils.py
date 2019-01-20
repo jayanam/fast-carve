@@ -42,6 +42,16 @@ def get_view_direction(context):
     dir = view_rot @ mathutils.Vector((0,0,-1))
     return dir.normalized()
 
+def get_view_direction_by_rot_matrix(view_rotation):
+    dir = view_rotation @ mathutils.Vector((0,0,-1))
+    return dir.normalized()   
+
+
+def get_3d_vertex_for_2d(view_context, vertex_2d, dir):
+ 
+    vec = region_2d_to_location_3d(view_context.region, view_context, vertex_2d, dir)
+    return vec    
+
 def get_3d_vertex_dir(context, vertex_2d, dir):
     region    = context.region
     rv3d      = context.space_data.region_3d

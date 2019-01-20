@@ -4,12 +4,64 @@ from math import sin, cos, pi, radians
 
 from mathutils import Vector, geometry
 
-from ..utils.fc_view_3d_utils import get_3d_vertex, get_3d_vertex_dir, get_2d_vertex
+from ..utils.fc_view_3d_utils import get_3d_vertex, get_view_direction_by_rot_matrix, get_3d_vertex_dir, get_2d_vertex
+
+from bpy.types import RegionView3D
 
 class ShapeState(Enum):
     NONE = 0
     PROCESSING = 1
     CREATED = 2
+
+class ViewRegion():
+    def __init__(self, region):
+        self._width = region.width
+        self._height = region.height
+
+    @property
+    def width(self):
+        return self._width
+
+    @property
+    def height(self):
+        return self._height
+
+
+class ViewContext():
+
+    def __init__(self, context):
+        rv3d           = context.space_data.region_3d
+        self._view_rot = rv3d.view_rotation.copy()
+        self._view_mat = rv3d.view_matrix.copy()
+        self._pers_mat = rv3d.perspective_matrix.copy()
+        self._view_pers = rv3d.view_perspective
+        self._is_perspective = rv3d.is_perspective
+        self._region = ViewRegion(context.region)
+
+    @property
+    def region(self):
+        return self._region
+
+    @property
+    def view_rotation(self):
+        return self._view_rot
+
+    @property
+    def view_perspective(self):
+        return self._view_pers
+
+    @property
+    def perspective_matrix(self):
+        return self._pers_mat
+
+    @property
+    def view_matrix(self):
+        return self._view_mat
+
+    @property
+    def is_perspective(self):
+        return self._is_perspective
+
 
 class Shape:
 
@@ -19,9 +71,9 @@ class Shape:
         self._is_moving = False
         self._move_offset = 0.0
         self._is_rotating = False
+        self._is_extruding = False
         self._rotation = 0.0
-
-        self._dir = Vector((0,0,0))
+        self._view_context = None 
 
     def is_none(self):
         return self._state is ShapeState.NONE
@@ -38,11 +90,19 @@ class Shape:
     def is_rotating(self):
         return self._is_rotating
 
-    def get_dir(self):
-        return self._dir
+    def is_extruding(self):
+        return self._is_extruding
 
-    def set_dir(self, value):
-        self._dir = value
+    def get_dir(self):
+        view_rot = self._view_context.view_rotation
+        
+        return get_view_direction_by_rot_matrix(view_rot)
+
+    def get_view_context(self):
+        return self._view_context
+
+    def set_view_context(self, value):
+        self._view_context = value
 
     @property
     def vertices(self):
@@ -92,6 +152,12 @@ class Shape:
     def stop_rotate(self, context):
         self._is_rotating = False
         self._rotation = 0.0
+
+    def start_extrude(self, mouse_pos, context):
+        return False
+
+    def stop_extrude(self, context):
+        self._is_extruding = False
 
     def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
         if self.is_created() and self._is_moving:

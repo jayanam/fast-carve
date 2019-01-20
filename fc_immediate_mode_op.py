@@ -116,6 +116,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             if self.shape.is_moving():
                 self.shape.stop_move(context)
 
+            if self.shape.is_extruding():
+                self.shape.stop_extrude(context)
+
             if self.shape.is_rotating():
                 self.shape.stop_rotate(context)
 
@@ -125,7 +128,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             else:
                 # So that the direction is defined during shape
                 # creation, not when it is extruded
-                self.shape.set_dir(get_view_direction(context) * context.scene.draw_distance)
+               
+                view_context = ViewContext(context)
+
+                self.shape.set_view_context(view_context)
                 
             self.create_batch(mouse_pos_3d)
 
@@ -146,6 +152,15 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 if self.shape.start_rotate(mouse_pos_3d, context):
                     self.create_batch()
                     return {"RUNNING_MODAL"}               
+
+            # try to extrude the shape
+            if event.type == "E":
+                mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
+                mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
+
+                if self.shape.start_extrude(mouse_pos_3d, context):
+                    self.create_batch()
+                    return {"RUNNING_MODAL"}  
 
             # toggle bool mode
             if event.type == "M":
@@ -252,7 +267,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def extrude_mesh(self, context, bm):
         if context.scene.extrude_mesh:
             
-            dir = self.shape.get_dir() * 2
+            dir = self.shape.get_dir() * context.scene.draw_distance * 2
 
             r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
             verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
