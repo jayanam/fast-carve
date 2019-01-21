@@ -328,17 +328,19 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def draw_callback_3d(self, op, context):
 
         # Draw lines
-        bgl.glLineWidth(3)
+        bgl.glEnable(bgl.GL_LINE_SMOOTH)
         self.shader.bind()
-        self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
-        self.batch.draw(self.shader)
 
         self.shader.uniform_float("color", (0.2, 0.5, 0.8, 1.0))
         bgl.glLineWidth(2)
         self.batch_extruded.draw(self.shader)
 
-        bgl.glLineWidth(2)
+        bgl.glLineWidth(1)
         self.batch_lines_extruded.draw(self.shader)
+
+        bgl.glLineWidth(3)
+        self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
+        self.batch.draw(self.shader)
 
         if self.shape.draw_points():
             bgl.glPointSize(10)
