@@ -213,7 +213,7 @@ class Shape:
 
         if self.is_extruding():
             
-            self._extrusion += (mouse_pos_2d[0] - self._mouse_pos_2d[0]) / 10
+            self._extrusion += (mouse_pos_2d[0] - self._mouse_pos_2d[0]) / 40
 
             self.extrude_vertices(context)
 
