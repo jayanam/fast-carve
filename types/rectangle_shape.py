@@ -56,9 +56,6 @@ class Rectangle_Shape(Shape):
     def stop_move(self, context):
         super().stop_move(context)
 
-        for index, vertex_3d in enumerate(self._vertices):
-            self._vertices_2d[index] = get_2d_vertex(context, vertex_3d)
-
         self.calc_center_2d()
 
 

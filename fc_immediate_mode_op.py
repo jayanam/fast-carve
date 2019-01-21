@@ -128,10 +128,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             else:
                 # So that the direction is defined during shape
                 # creation, not when it is extruded
-               
-                view_context = ViewContext(context)
+                if self.shape.is_processing():
+                    view_context = ViewContext(context)
 
-                self.shape.set_view_context(view_context)
+                    self.shape.set_view_context(view_context)
                 
             self.create_batch(mouse_pos_3d)
 
@@ -154,11 +154,11 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                     return {"RUNNING_MODAL"}               
 
             # try to extrude the shape
-            if event.type == "E":
+            if event.type == "E" and not self.shape.is_extruded():
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
                 mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 
-                if self.shape.start_extrude(mouse_pos_3d, context):
+                if self.shape.start_extrude(mouse_pos_2d, mouse_pos_3d, context):
                     self.create_batch()
                     return {"RUNNING_MODAL"}  
 
@@ -269,6 +269,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             
             dir = self.shape.get_dir() * context.scene.draw_distance * 2
 
+            if self.shape.is_extruded():
+                dir = self.shape.get_dir() * self.shape.extrusion
+
             r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
             verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
             bmesh.ops.translate(bm, vec=dir, verts=verts)
@@ -282,10 +285,23 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         
         points = self.shape.get_vertices_copy(mouse_pos)
 
+        extrude_points = self.shape.get_vertices_extruded_copy(mouse_pos)
+
+        extrude_lines = []
+        for index, vertex in enumerate(extrude_points):
+            extrude_lines.append(points[index])
+            extrude_lines.append(vertex)
+
         self.shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
          
         self.batch = batch_for_shader(self.shader, 'LINE_LOOP', 
             {"pos": points})
+
+        self.batch_extruded = batch_for_shader(self.shader, 'LINE_LOOP', 
+            {"pos": extrude_points})
+
+        self.batch_lines_extruded = batch_for_shader(self.shader, 'LINES', 
+            {"pos": extrude_lines})
 
         self.batch_points = batch_for_shader(self.shader, 'POINTS', {"pos": points})
 
@@ -317,6 +333,13 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.shader.bind()
         self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
         self.batch.draw(self.shader)
+
+        self.shader.uniform_float("color", (0.2, 0.5, 0.8, 1.0))
+        bgl.glLineWidth(2)
+        self.batch_extruded.draw(self.shader)
+
+        bgl.glLineWidth(2)
+        self.batch_lines_extruded.draw(self.shader)
 
         if self.shape.draw_points():
             bgl.glPointSize(10)

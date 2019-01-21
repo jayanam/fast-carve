@@ -33,6 +33,8 @@ class Circle_Shape(Shape):
         self._vertices = [view_rot @ Vector(point) + 
                           self._center for point in points]
 
+        self._vertices_2d = [get_2d_vertex(context, vertex) for vertex in self._vertices]
+
 
     def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 

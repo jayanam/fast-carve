@@ -27,11 +27,13 @@ class Polyline_Shape(Shape):
         if (self.is_none() and event.ctrl) or (self.is_processing() and not event.ctrl):
 
             self.add_vertex(mouse_pos_3d)
+            self._vertices_2d.append(get_2d_vertex(context, mouse_pos_3d))
             self.state = ShapeState.PROCESSING
             return False
 
         elif self.is_processing() and event.ctrl and self.can_close():
             self.add_vertex(mouse_pos_3d)
+            self._vertices_2d.append(get_2d_vertex(context, mouse_pos_3d))
             self.close()
             return False
 
