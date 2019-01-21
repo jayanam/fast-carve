@@ -153,7 +153,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                     return {"RUNNING_MODAL"}               
 
             # try to extrude the shape
-            if event.type == "E" and not self.shape.is_extruded():
+            if event.type == "E":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
                 mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 

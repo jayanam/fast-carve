@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 8, 1, 1),
+    "version": (0, 8, 1, 2),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}

@@ -194,16 +194,14 @@ class Shape:
         return True
 
     def extrude_vertices(self, context):
-        pos = -self.get_dir() * context.scene.draw_distance
-        dir = pos + (self.get_dir() * self._extrusion)
 
-        for index, vertex_2d in enumerate(self._vertices_2d):
-            vertex3d = get_3d_vertex_for_2d(self._view_context, vertex_2d, dir)
-            
+        dir = self.get_dir() * self._extrusion
+
+        for index, vertex3d in enumerate(self._vertices):    
             if not self._is_extruded:
-                self._vertices_extruded.append(vertex3d)
+                self._vertices_extruded.append(vertex3d + dir)
             else:
-                self._vertices_extruded[index] = vertex3d
+                self._vertices_extruded[index] = vertex3d + dir
 
         self._is_extruded = True
 
