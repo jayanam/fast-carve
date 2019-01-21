@@ -130,7 +130,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 # creation, not when it is extruded
                 if self.shape.is_processing():
                     view_context = ViewContext(context)
-
                     self.shape.set_view_context(view_context)
                 
             self.create_batch(mouse_pos_3d)
