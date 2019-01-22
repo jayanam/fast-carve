@@ -65,10 +65,7 @@ class Circle_Shape(Shape):
         p_type = "Circle"
 
         if self.is_created():
-            keyboard = "Esc: Undo | G: Move"
-            if not self._is_extruded:
-                keyboard += " | E: Extrude"
-                
+            keyboard = "Esc: Undo | G: Move | E: Extrude"              
             mouse_action = "Apply: Ctrl + Left Click"
    
         if self.is_processing():

@@ -60,9 +60,7 @@ class Polyline_Shape(Shape):
 
         if self.is_created():
             mouse_action = "Apply: Ctrl + Left Click"
-            keyboard = "Esc: Undo | G: Move"
-            if not self._is_extruded:
-                keyboard += " | E: Extrude"
+            keyboard = "Esc: Undo | G: Move | E: Extrude"
         
         if self.is_processing():
             keyboard = "Esc: Undo"

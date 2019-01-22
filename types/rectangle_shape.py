@@ -111,9 +111,7 @@ class Rectangle_Shape(Shape):
         p_type = "Rectangle"
 
         if self.is_created():
-            keyboard = "Esc: Undo | G: Move | R: Rotate"
-            if not self._is_extruded:
-                keyboard += " | E: Extrude"
+            keyboard = "Esc: Undo | G: Move | R: Rotate | E: Extrude"
             mouse_action = "Apply: Ctrl + Left Click"
    
         if self.is_processing():
