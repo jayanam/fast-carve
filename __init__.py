@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 8, 1, 5),
+    "version": (0, 8, 1, 6),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -83,79 +83,78 @@ bpy.types.Scene.primitive_type = bpy.props.EnumProperty(items=primitive_types,
                                                         name="Primitive",
                                                         default="Polyline")
 
+addon_keymaps = []
+
 # Addon preferences
 class FC_AddonPreferences(AddonPreferences):
     bl_idname = __name__
     
     def draw(self, context):
-        layout = self.layout
-        
-        col = layout.column()
-        kc = bpy.context.window_manager.keyconfigs.addon
-        for km, kmi in addon_keymaps:
-            km = km.active()
-            kmi.show_expanded = False
-            col.context_pointer_set("keymap", km)
-            rna_keymap_ui.draw_kmi([], kc, km, kmi, col, 0)
     
+        wm = bpy.context.window_manager 
+        km_items = wm.keyconfigs.addon.keymaps['3D View'].keymap_items         
+        km_item = km_items['object.fc_immediate_mode_op']
 
-addon_keymaps = []
+        row = self.layout.row()
+        row.label(text=km_item.name)
+        row.prop(km_item, 'type', text='', full_event=True)
+
+        km_mnu_item = km_items['wm.call_menu']
+        row = self.layout.row()
+        row.label(text=km_mnu_item.name)
+        row.prop(km_mnu_item, 'type', text='', full_event=True)       
+    
 
 def register():
-   bpy.utils.register_class(FC_Panel)
-   bpy.utils.register_class(FC_Bevel_Panel)
-   bpy.utils.register_class(FC_Primitive_Panel)
-   bpy.utils.register_class(FC_BevelOperator)
-   bpy.utils.register_class(FC_UnBevelOperator)
-   bpy.utils.register_class(FC_BoolOperator_Diff)
-   bpy.utils.register_class(FC_BoolOperator_Union)
-   bpy.utils.register_class(FC_BoolOperator_Slice)
-   bpy.utils.register_class(FC_BoolOperator_Intersect)
-   bpy.utils.register_class(FC_TargetSelectOperator)
-   bpy.utils.register_class(FC_MirrorOperator)
-   bpy.utils.register_class(FC_SymmetrizeOperator)
-   bpy.utils.register_class(FC_ApplyBoolOperator)
-   bpy.utils.register_class(FC_Primitive_Mode_Operator)
-   bpy.utils.register_class(FC_Main_Menu)
-   bpy.utils.register_class(FC_AddonPreferences)
-   
-   # add keymap entry
-   kcfg = bpy.context.window_manager.keyconfigs.addon
-   km = kcfg.keymaps.new(name='3D View', space_type='VIEW_3D')
+    bpy.utils.register_class(FC_Panel)
+    bpy.utils.register_class(FC_Bevel_Panel)
+    bpy.utils.register_class(FC_Primitive_Panel)
+    bpy.utils.register_class(FC_BevelOperator)
+    bpy.utils.register_class(FC_UnBevelOperator)
+    bpy.utils.register_class(FC_BoolOperator_Diff)
+    bpy.utils.register_class(FC_BoolOperator_Union)
+    bpy.utils.register_class(FC_BoolOperator_Slice)
+    bpy.utils.register_class(FC_BoolOperator_Intersect)
+    bpy.utils.register_class(FC_TargetSelectOperator)
+    bpy.utils.register_class(FC_MirrorOperator)
+    bpy.utils.register_class(FC_SymmetrizeOperator)
+    bpy.utils.register_class(FC_ApplyBoolOperator)
+    bpy.utils.register_class(FC_Primitive_Mode_Operator)
+    bpy.utils.register_class(FC_Main_Menu)
+    bpy.utils.register_class(FC_AddonPreferences)
 
-   kmi = km.keymap_items.new("object.fc_immediate_mode_op", 'P', 'PRESS', shift=True, ctrl=True)
-   kmi.active = True
-   addon_keymaps.append((km, kmi))
+    # add keymap entry
+    kc = bpy.context.window_manager.keyconfigs.addon
+    km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
 
-   kmi_mnu = km.keymap_items.new("wm.call_menu", "Q", "PRESS", shift=True)
-   kmi_mnu.properties.name = FC_Main_Menu.bl_idname
-   kmi_mnu.active = True
+    kmi = km.keymap_items.new("object.fc_immediate_mode_op", 'P', 'PRESS', shift=True, ctrl=True)
+    addon_keymaps.append((km, kmi))
 
-   addon_keymaps.append((km, kmi_mnu))
+    kmi_mnu = km.keymap_items.new("wm.call_menu", "Q", "PRESS", shift=True)
+    kmi_mnu.properties.name = FC_Main_Menu.bl_idname
+
+    addon_keymaps.append((km, kmi_mnu))
     
 def unregister():
-   bpy.utils.unregister_class(FC_Panel)
-   bpy.utils.unregister_class(FC_Bevel_Panel)
-   bpy.utils.unregister_class(FC_Primitive_Panel)
-   bpy.utils.unregister_class(FC_BevelOperator)
-   bpy.utils.unregister_class(FC_UnBevelOperator)
-   bpy.utils.unregister_class(FC_BoolOperator_Diff)
-   bpy.utils.unregister_class(FC_BoolOperator_Union)
-   bpy.utils.unregister_class(FC_BoolOperator_Slice)
-   bpy.utils.unregister_class(FC_BoolOperator_Intersect)
-   bpy.utils.unregister_class(FC_TargetSelectOperator)
-   bpy.utils.unregister_class(FC_MirrorOperator)
-   bpy.utils.unregister_class(FC_SymmetrizeOperator)
-   bpy.utils.unregister_class(FC_ApplyBoolOperator)         
-   bpy.utils.unregister_class(FC_Main_Menu)
-   bpy.utils.unregister_class(FC_AddonPreferences)
-    
-   # remove keymap entry
-   for km, kmi in addon_keymaps:
-       km.keymap_items.remove(kmi)
-   addon_keymaps.clear()
-    
-   bpy.utils.unregister_class(FC_Primitive_Mode_Operator)
-    
-if __name__ == "__main__":
-    register()
+    bpy.utils.unregister_class(FC_Panel)
+    bpy.utils.unregister_class(FC_Bevel_Panel)
+    bpy.utils.unregister_class(FC_Primitive_Panel)
+    bpy.utils.unregister_class(FC_BevelOperator)
+    bpy.utils.unregister_class(FC_UnBevelOperator)
+    bpy.utils.unregister_class(FC_BoolOperator_Diff)
+    bpy.utils.unregister_class(FC_BoolOperator_Union)
+    bpy.utils.unregister_class(FC_BoolOperator_Slice)
+    bpy.utils.unregister_class(FC_BoolOperator_Intersect)
+    bpy.utils.unregister_class(FC_TargetSelectOperator)
+    bpy.utils.unregister_class(FC_MirrorOperator)
+    bpy.utils.unregister_class(FC_SymmetrizeOperator)
+    bpy.utils.unregister_class(FC_ApplyBoolOperator)         
+    bpy.utils.unregister_class(FC_Main_Menu)
+    bpy.utils.unregister_class(FC_AddonPreferences)    
+    bpy.utils.unregister_class(FC_Primitive_Mode_Operator)
+
+    # remove keymap entry
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+
+    addon_keymaps.clear()
