@@ -24,6 +24,9 @@ class Polyline_Shape(Shape):
 
     def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
+        if mouse_pos_3d is None:
+            return False
+
         if (self.is_none() and event.ctrl) or (self.is_processing() and not event.ctrl):
 
             self.add_vertex(mouse_pos_3d)

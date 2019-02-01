@@ -22,6 +22,9 @@ class Circle_Shape(Shape):
         return result
 
     def create_circle(self, context):
+
+        from mathutils import Matrix
+
         rv3d      = context.space_data.region_3d
         view_rot  = rv3d.view_rotation
 
@@ -30,13 +33,21 @@ class Circle_Shape(Shape):
         points = [(sin(i * mul) * self._radius, cos(i * mul) * self._radius, 0) 
         for i in range(segments)]
 
-        self._vertices = [view_rot @ Vector(point) + 
+        rot_mat = view_rot
+
+        if self._normal is not None:
+            rot_mat = self._normal.to_track_quat('Z', 'X').to_matrix()
+
+        self._vertices = [rot_mat @ Vector(point) + 
                           self._center for point in points]
 
         self._vertices_2d = [get_2d_vertex(context, vertex) for vertex in self._vertices]
 
 
     def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
+
+        if mouse_pos_3d is None:
+            return False
 
         if self.is_none() and event.ctrl:
 

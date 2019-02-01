@@ -4,9 +4,13 @@ from math import sin, cos, pi, radians
 
 from mathutils import Vector, geometry
 
+from mathutils.geometry import intersect_line_plane
+
 from ..utils.fc_view_3d_utils import *
 
-from bpy_extras.view3d_utils import region_2d_to_location_3d, location_3d_to_region_2d
+from bpy_extras.view3d_utils import (
+    region_2d_to_location_3d, 
+    location_3d_to_region_2d )
 
 class ShapeState(Enum):
     NONE = 0
@@ -83,7 +87,30 @@ class Shape:
         self._view_context = None
         self._mouse_pos_2d = (0,0)
         self._is_extruded = False
+        self._snap_to_target = True
+        self._bvhtree = None
+        self._hit = None
+        self._normal = None
 
+    def get_3d_for_2d(self, pos_2d, context):
+        origin, direction = get_origin_and_direction(pos_2d, context)
+        result = None
+
+        if self._hit is None:
+            self._hit, self._normal, *_ = self._bvhtree.ray_cast(origin, direction)
+            result =  self._hit.copy()
+        else:
+            result = intersect_line_plane(origin, origin + direction, self._hit, self._normal)
+        
+        if result is not None:
+            result += self._normal.normalized() * 0.01
+
+        return result
+
+
+    def initialize(self, context, target, snap_to_target):
+        self._bvhtree = bvhtree_from_object(context, target)
+        self._snap_to_target = snap_to_target
 
     def is_none(self):
         return self._state is ShapeState.NONE
@@ -107,9 +134,11 @@ class Shape:
         return self._is_extruding
 
     def get_dir(self):
-        view_rot = self._view_context.view_rotation
-        
-        return get_view_direction_by_rot_matrix(view_rot)
+        if self._normal is None:
+            view_rot = self._view_context.view_rotation
+            return get_view_direction_by_rot_matrix(view_rot)
+
+        return -self._normal
 
     def get_view_context(self):
         return self._view_context
@@ -188,7 +217,7 @@ class Shape:
         self._is_rotating = False
         self._rotation = 0.0
 
-    def start_extrude(self, mouse_pos_2d, mouse_pos_3d, context):
+    def start_extrude(self, mouse_pos_2d, context):
         self._mouse_pos_2d = mouse_pos_2d
         self._is_extruding = True
         return True

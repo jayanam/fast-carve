@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 8, 1, 6),
+    "version": (0, 9, 0, 1),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -47,17 +47,21 @@ bpy.types.Scene.delete_on_apply   = BoolProperty(
                                       description="Delete the object after apply",
                                       default = True)
 
-bpy.types.Scene.use_snapping   = BoolProperty(name="Snapping", 
+bpy.types.Scene.use_snapping   = BoolProperty(name="Snap to grid", 
                                         description="Use snapping to the grid",
                                         default = True)
 
-bpy.types.Scene.in_primitive_mode   = BoolProperty(name="Primitive Mode",
-                                        default = False)
+bpy.types.Scene.snap_to_target   = BoolProperty(name="Snap to target", 
+                                        description="Snap the primitive to the target",
+                                        default = True)
 
 bpy.types.Scene.draw_distance = FloatProperty(
                                       name="Draw Distance", 
                                       description="Distance of primitives to the origin",
                                       default = 2.0)
+
+bpy.types.Scene.in_primitive_mode   = BoolProperty(name="Primitive Mode",
+                                        default = False)
 
 bpy.types.Scene.extrude_mesh  = BoolProperty(name="Extrude mesh", 
                                       description="Extrude the mesh after creation",

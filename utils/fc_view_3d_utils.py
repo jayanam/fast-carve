@@ -1,7 +1,16 @@
+import bpy
+import bmesh
 import mathutils
+from mathutils import Vector
+from mathutils.bvhtree import BVHTree
+from mathutils.geometry import intersect_line_plane
 
-from bpy_extras.view3d_utils import region_2d_to_origin_3d
-from bpy_extras.view3d_utils import region_2d_to_location_3d, location_3d_to_region_2d
+from bpy_extras.view3d_utils import (
+    region_2d_to_origin_3d,
+    region_2d_to_location_3d, 
+    region_2d_to_vector_3d,
+    location_3d_to_region_2d
+)
 
 def get_snap_vertex_indizes(view_rot):
     v1 = round(abs(view_rot[0]), 3)
@@ -44,7 +53,28 @@ def get_view_direction(context):
 
 def get_view_direction_by_rot_matrix(view_rotation):
     dir = view_rotation @ mathutils.Vector((0,0,-1))
-    return dir.normalized()   
+    return dir.normalized()
+
+def get_origin_and_direction(pos_2d, context):
+    region    = context.region
+    region_3d = context.space_data.region_3d
+    
+    origin    = region_2d_to_origin_3d(region, region_3d, pos_2d)
+    direction = region_2d_to_vector_3d(region, region_3d, pos_2d)
+    return origin, direction
+
+def get_3d_on_mesh(pos_2d, bvhtree, context):
+    
+    origin, direction = get_origin_and_direction(pos_2d, context)
+    hit, normal, *_ = bvhtree.ray_cast(origin, direction)
+    return hit, normal
+
+def get_3d_on_plane(pos_2d, hit, normal, context):
+    
+    origin, direction = get_origin_and_direction(pos_2d, context)
+            
+    # get the intersection point on infinite plane
+    return intersect_line_plane(origin, origin + direction, hit, normal)
 
 
 def get_3d_vertex_for_2d(view_context, vertex_2d, dir):
@@ -64,6 +94,30 @@ def get_2d_vertex(context, vertex_3d):
     rv3d      = context.space_data.region_3d
     return location_3d_to_region_2d(region, rv3d, vertex_3d)
 
+def bvhtree_from_object(context, obj):
+    bm = bmesh.new()
+
+    mesh = obj.to_mesh(context.depsgraph, True)
+    bm.from_mesh(mesh)
+    bm.transform(obj.matrix_world)
+
+    bvhtree = BVHTree.FromBMesh(bm)
+    bpy.data.meshes.remove(mesh)
+    return bvhtree
+
+def get_snap_3d_vertex(context, vertex_3d):
+
+    rv3d = context.space_data.region_3d
+    overlay3d = context.space_data.overlay
+    view_rot  = rv3d.view_rotation
+
+    if (not rv3d.is_perspective and vertex_3d is not None):
+        ind = get_snap_vertex_indizes(view_rot)
+        if ind is not None:               
+            vertex_3d[ind[0]] = vertex_3d[ind[0]] + get_grid_snap_pos(vertex_3d[ind[0]], overlay3d)
+            vertex_3d[ind[1]] = vertex_3d[ind[1]] + get_grid_snap_pos(vertex_3d[ind[1]], overlay3d)
+    return vertex_3d
+
 
 def get_3d_vertex(context, vertex_2d):
     region    = context.region
@@ -74,10 +128,10 @@ def get_3d_vertex(context, vertex_2d):
     dir = get_view_direction(context) * -context.scene.draw_distance    
     vec = region_2d_to_location_3d(region, rv3d, vertex_2d, dir)   
 
-    if (not rv3d.is_perspective and context.scene.use_snapping):
-        ind = get_snap_vertex_indizes(view_rot)
-        if ind is not None:               
-            vec[ind[0]] = vec[ind[0]] + get_grid_snap_pos(vec[ind[0]], overlay3d)
-            vec[ind[1]] = vec[ind[1]] + get_grid_snap_pos(vec[ind[1]], overlay3d)
+    # if (not rv3d.is_perspective and context.scene.use_snapping):
+    #     ind = get_snap_vertex_indizes(view_rot)
+    #     if ind is not None:               
+    #         vec[ind[0]] = vec[ind[0]] + get_grid_snap_pos(vec[ind[0]], overlay3d)
+    #         vec[ind[1]] = vec[ind[1]] + get_grid_snap_pos(vec[ind[1]], overlay3d)
 
     return vec

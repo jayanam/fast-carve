@@ -43,9 +43,17 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def invoke(self, context, event):
         args = (self, context)  
 
+        target_obj = context.scene.carver_target
+        snap_to_target = context.scene.snap_to_target
+
+        if target_obj is None:
+            self.report({'ERROR'}, 'Please define a target object.')
+            context.scene.in_primitive_mode = False
+            return {"FINISHED"}
+
         context.scene.in_primitive_mode = True
 
-        self.create_shape(context)                 
+        self.create_shape(context, target_obj, snap_to_target)                 
 
         self.register_handlers(args, context)
                    
@@ -72,9 +80,19 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_handle_3d = None
         self.draw_event  = None
 
+    def get_3d_for_mouse(self, mouse_pos_2d, context):
+        if context.scene.snap_to_target:
+            mouse_pos_3d = self.shape.get_3d_for_2d(mouse_pos_2d, context)
+        else:
+            mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
+        return mouse_pos_3d
+
     def modal(self, context, event):
         if context.area:
             context.area.tag_redraw()
+
+        target_obj = context.scene.carver_target
+        snap_to_target = context.scene.snap_to_target
                                
         if event.type == "ESC" and event.value == "PRESS":
 
@@ -91,12 +109,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 return {'FINISHED'}
 
         # The mouse is moved
-        if event.type == "MOUSEMOVE":
+        if event.type == "MOUSEMOVE" and not self.shape.is_none():
 
             mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
-            mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 
-            if context.scene.use_snapping:
+            mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
+
+            if context.scene.use_snapping and mouse_pos_3d is not None:
+                mouse_pos_3d = get_snap_3d_vertex(context, mouse_pos_3d)
                 mouse_pos_2d = get_2d_vertex(context, mouse_pos_3d)
 
             if self.shape.handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context):
@@ -105,13 +125,21 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         # Left mouse button is pressed
         if event.value == "PRESS" and event.type == "LEFTMOUSE":
 
+            if target_obj is None:
+                self.report({'ERROR'}, 'Please define a target object.')
+                return {"PASS_THROUGH"}
+
+            self.create_shape(context, target_obj, snap_to_target)
+
             mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
-            mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 
-            if context.scene.use_snapping:
+            
+
+            mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
+                
+            if context.scene.use_snapping and mouse_pos_3d is not None:
+                mouse_pos_3d = get_snap_3d_vertex(context, mouse_pos_3d)
                 mouse_pos_2d = get_2d_vertex(context, mouse_pos_3d)
-
-            self.create_shape(context)
 
             if self.shape.is_moving():
                 self.shape.stop_move(context)
@@ -124,7 +152,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             if self.shape.handle_mouse_press(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_object(context)
-                # self.shape.reset()
             else:
                 # So that the direction is defined during shape
                 # creation, not when it is extruded
@@ -140,14 +167,18 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             # try to move the shape
             if event.type == "G":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
-                mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
+
+                mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
+
                 if self.shape.start_move(mouse_pos_3d):
                     return {"RUNNING_MODAL"}
 
             # try to rotate the shape
             if event.type == "R":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
-                mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
+
+                mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
+
                 if self.shape.start_rotate(mouse_pos_3d, context):
                     self.create_batch()
                     return {"RUNNING_MODAL"}               
@@ -155,9 +186,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             # try to extrude the shape
             if event.type == "E":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
-                mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
 
-                if self.shape.start_extrude(mouse_pos_2d, mouse_pos_3d, context):
+                if self.shape.start_extrude(mouse_pos_2d, context):
                     self.create_batch()
                     return {"RUNNING_MODAL"}  
 
@@ -174,12 +204,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                     context.scene.primitive_type = next_enum(context.scene.primitive_type, 
                                                         context.scene, "primitive_type")
 
-                    self.create_shape(context)
+                    self.create_shape(context, target_obj, snap_to_target)
                     return {"RUNNING_MODAL"}
              
         return {"PASS_THROUGH"}
 
-    def create_shape(self, context):
+    def create_shape(self, context, target_obj, snap_to_target):
         if self.shape.is_none():
             if context.scene.primitive_type == "Circle":
                 self.shape = Circle_Shape()
@@ -187,6 +217,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 self.shape = Polyline_Shape()
             else:
                 self.shape = Rectangle_Shape()
+
+            self.shape.initialize(context, target_obj, snap_to_target)
 
     def create_object(self, context):
 

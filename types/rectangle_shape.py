@@ -12,6 +12,9 @@ class Rectangle_Shape(Shape):
 
     def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
+        if mouse_pos_3d is None:
+            return False
+
         if self.is_none() and event.ctrl:
             self._vertices_2d[0] = mouse_pos_2d
 
@@ -66,8 +69,12 @@ class Rectangle_Shape(Shape):
         self._vertices.clear()
 
         # get missing 3d vertices
-        vertex2 = get_3d_vertex(context, self._vertices_2d[1])
-        vertex4 = get_3d_vertex(context, self._vertices_2d[3])  
+        if self._normal is None:
+            vertex2 = get_3d_vertex(context, self._vertices_2d[1])
+            vertex4 = get_3d_vertex(context, self._vertices_2d[3])
+        else:
+            vertex2 = self.get_3d_for_2d(self._vertices_2d[1], context)
+            vertex4 = self.get_3d_for_2d(self._vertices_2d[3], context)  
         
         self._vertices.extend([self._vertex1, vertex2, self._vertex3, vertex4])
         
@@ -89,10 +96,12 @@ class Rectangle_Shape(Shape):
                 y = oy + sin(angle) * (px - ox) + cos(angle) * (py - oy)
 
                 tmp_vertices_2d.append((x,y))
-
-                direction = get_view_direction_by_rot_matrix(self._view_context.view_rotation) * context.scene.draw_distance
                 
-                self._vertices[i] = get_3d_vertex_for_2d(self._view_context, (x,y), -direction)
+                if self._normal is None:
+                    direction = get_view_direction_by_rot_matrix(self._view_context.view_rotation) * context.scene.draw_distance
+                    self._vertices[i] = get_3d_vertex_for_2d(self._view_context, (x,y), -direction)
+                else:
+                    self._vertices[i] = self.get_3d_for_2d((x,y), context) 
             
             self._vertices_2d = tmp_vertices_2d
 
