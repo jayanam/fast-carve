@@ -194,7 +194,7 @@ class Shape:
         return self._vertices_extruded.copy()
 
     def start_move(self, mouse_pos):
-        if self.is_created():
+        if self.is_created() and mouse_pos is not None:
             self._is_moving = True
             self._move_offset = mouse_pos
             return True
