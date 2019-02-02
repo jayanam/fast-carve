@@ -98,7 +98,8 @@ class Shape:
 
         if self._hit is None:
             self._hit, self._normal, *_ = self._bvhtree.ray_cast(origin, direction)
-            result =  self._hit.copy()
+            if self._hit is not None:
+                result =  self._hit.copy()
         else:
             result = intersect_line_plane(origin, origin + direction, self._hit, self._normal)
         
@@ -134,7 +135,7 @@ class Shape:
         return self._is_extruding
 
     def get_dir(self):
-        if self._normal is None:
+        if not self._snap_to_target:
             view_rot = self._view_context.view_rotation
             return get_view_direction_by_rot_matrix(view_rot)
 

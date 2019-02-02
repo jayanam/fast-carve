@@ -69,7 +69,7 @@ class Rectangle_Shape(Shape):
         self._vertices.clear()
 
         # get missing 3d vertices
-        if self._normal is None:
+        if not self._snap_to_target:
             vertex2 = get_3d_vertex(context, self._vertices_2d[1])
             vertex4 = get_3d_vertex(context, self._vertices_2d[3])
         else:
@@ -97,7 +97,7 @@ class Rectangle_Shape(Shape):
 
                 tmp_vertices_2d.append((x,y))
                 
-                if self._normal is None:
+                if not self._snap_to_target:
                     direction = get_view_direction_by_rot_matrix(self._view_context.view_rotation) * context.scene.draw_distance
                     self._vertices[i] = get_3d_vertex_for_2d(self._view_context, (x,y), -direction)
                 else:

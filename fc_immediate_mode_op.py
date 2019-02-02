@@ -133,8 +133,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
 
-            
-
             mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
                 
             if context.scene.use_snapping and mouse_pos_3d is not None:

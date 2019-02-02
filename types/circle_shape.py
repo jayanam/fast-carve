@@ -35,7 +35,7 @@ class Circle_Shape(Shape):
 
         rot_mat = view_rot
 
-        if self._normal is not None:
+        if self._snap_to_target:
             rot_mat = self._normal.to_track_quat('Z', 'X').to_matrix()
 
         self._vertices = [rot_mat @ Vector(point) + 
