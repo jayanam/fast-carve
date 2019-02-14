@@ -76,3 +76,11 @@ class FC_Bevel_Panel(Panel):
         
         col = split.column()
         col.operator('object.sym', text="Z", icon='MOD_MESHDEFORM').sym_axis = "POSITIVE_Z"
+
+        row = layout.row()
+        split = row.split(factor=0.5)
+        col = split.column()
+        col.operator('view3d.dissolve_edges', text='Dissolve', icon='LINENUMBERS_OFF')
+
+        col = split.column()
+        col.operator('view3d.cursor_center', text='Center', icon='PIVOT_CURSOR')

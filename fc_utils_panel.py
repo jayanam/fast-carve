@@ -14,9 +14,6 @@ class FC_Utils_Panel(Panel):
         layout = self.layout
         scene = context.scene
             
-        # New row
-        row = layout.row()
-
         # Mirror
         row = layout.row()
         row.operator('object.mirror', text='Center Origin & Mirror', icon='MOD_MESHDEFORM')

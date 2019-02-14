@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 0, 3),
+    "version": (0, 9, 0, 5),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -28,6 +28,8 @@ from . fc_bool_op           import FC_BoolOperator_Intersect
 from . fc_bool_op           import FC_TargetSelectOperator
 from . fc_utils_op          import FC_MirrorOperator
 from . fc_utils_op          import FC_SymmetrizeOperator
+from . fc_utils_op          import FC_3DCursorOperator
+from . fc_utils_op          import FC_DissolveEdgesOperator
 from . fc_menus             import FC_Main_Menu
 from . fc_apply_bool_op     import FC_ApplyBoolOperator
 from . fc_immediate_mode_op import FC_Primitive_Mode_Operator
@@ -122,6 +124,8 @@ def register():
     bpy.utils.register_class(FC_TargetSelectOperator)
     bpy.utils.register_class(FC_MirrorOperator)
     bpy.utils.register_class(FC_SymmetrizeOperator)
+    bpy.utils.register_class(FC_3DCursorOperator)
+    bpy.utils.register_class(FC_DissolveEdgesOperator)
     bpy.utils.register_class(FC_ApplyBoolOperator)
     bpy.utils.register_class(FC_Primitive_Mode_Operator)
     bpy.utils.register_class(FC_Main_Menu)
@@ -152,6 +156,8 @@ def unregister():
     bpy.utils.unregister_class(FC_TargetSelectOperator)
     bpy.utils.unregister_class(FC_MirrorOperator)
     bpy.utils.unregister_class(FC_SymmetrizeOperator)
+    bpy.utils.unregister_class(FC_3DCursorOperator)
+    bpy.utils.unregister_class(FC_DissolveEdgesOperator)
     bpy.utils.unregister_class(FC_ApplyBoolOperator)         
     bpy.utils.unregister_class(FC_Main_Menu)
     bpy.utils.unregister_class(FC_AddonPreferences)    

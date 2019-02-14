@@ -93,7 +93,9 @@ class Shape:
         self._normal = None
 
     def get_3d_for_2d(self, pos_2d, context):
+
         origin, direction = get_origin_and_direction(pos_2d, context)
+            
         result = None
 
         if self._hit is None:

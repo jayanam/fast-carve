@@ -61,6 +61,7 @@ def get_origin_and_direction(pos_2d, context):
     
     origin    = region_2d_to_origin_3d(region, region_3d, pos_2d)
     direction = region_2d_to_vector_3d(region, region_3d, pos_2d)
+
     return origin, direction
 
 def get_3d_on_mesh(pos_2d, bvhtree, context):
