@@ -51,8 +51,8 @@ def execute_bevel(bevel_objects):
         bevel.profile = 0.7
         
         # switch to edit mode and select sharp edges
-        bpy.ops.object.editmode_toggle() 
-
+        bpy.ops.object.editmode_toggle()
+        
         bpy.context.tool_settings.mesh_select_mode = (False, True, False)
 
         bpy.ops.mesh.select_all(action='DESELECT')
