@@ -52,7 +52,7 @@ class FC_DissolveEdgesOperator(Operator):
     def poll(cls, context):
         
         mode = context.active_object.mode       
-        return len(context.selected_objects) == 1 and mode == "EDIT"
+        return mode == "EDIT"
 
     def execute(self, context):       
         bpy.ops.mesh.dissolve_edges()

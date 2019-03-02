@@ -9,7 +9,7 @@ class FC_Utils_Panel(Panel):
     bl_category = "Fast Carve"
     
     def draw(self, context):
-        global custom_icons;
+        global custom_icons
         
         layout = self.layout
         scene = context.scene

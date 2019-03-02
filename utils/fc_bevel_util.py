@@ -44,14 +44,14 @@ def execute_bevel(bevel_objects):
         # get the last added modifier
         bevel = target_obj.modifiers[-1]
         bevel.limit_method = 'WEIGHT'
-        bevel.edge_weight_method = 'LARGEST'
+        #bevel.edge_weight_method = 'LARGEST'
         bevel.use_clamp_overlap = False
         bevel.width = width
         bevel.segments = 3
         bevel.profile = 0.7
         
         # switch to edit mode and select sharp edges
-        bpy.ops.object.editmode_toggle()
+        bpy.ops.object.editmode_toggle() 
 
         bpy.context.tool_settings.mesh_select_mode = (False, True, False)
 
