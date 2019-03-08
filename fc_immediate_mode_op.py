@@ -30,6 +30,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context): 
+        if context.object is None:
+            return False
+            
         return context.object.mode == "OBJECT"
 		
     def __init__(self):
