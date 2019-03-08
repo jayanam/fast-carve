@@ -83,4 +83,4 @@ class FC_Bevel_Panel(Panel):
         col.operator('view3d.dissolve_edges', text='Dissolve', icon='LINENUMBERS_OFF')
 
         col = split.column()
-        col.operator('view3d.cursor_center', text='Center', icon='PIVOT_CURSOR')
+        col.operator('view3d.origin_active', text='Center', icon='PIVOT_CURSOR')
