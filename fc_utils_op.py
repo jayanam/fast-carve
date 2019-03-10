@@ -78,9 +78,8 @@ class FC_SymmetrizeOperator(Operator):
     bl_description = "Symmetrize selected object" 
     bl_options = {'REGISTER', 'UNDO'}
     
-    sym_axis = StringProperty(name="Symmetry axis", options={'HIDDEN'}, default="NEGATIVE_X")
-    
-        
+    sym_axis : StringProperty(name="Symmetry axis", options={'HIDDEN'}, default="NEGATIVE_X")
+          
     @classmethod
     def poll(cls, context):
         
