@@ -33,8 +33,8 @@ class FC_MirrorOperator(Operator):
 #3D cursor center
 class FC_OriginActiveOperator(Operator):
     bl_idname = "view3d.origin_active"
-    bl_label = "Set origin to center of active selection"
-    bl_description = "Set the 3D cursor to center" 
+    bl_label = "Set origin to center"
+    bl_description = "Set origin to center of active selection" 
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
