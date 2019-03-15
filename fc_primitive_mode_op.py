@@ -21,7 +21,7 @@ from .types.circle_shape import *
 
 from .types.enums import *
 
-# Immediate mode operator
+# Primitive mode operator
 class FC_Primitive_Mode_Operator(bpy.types.Operator):
     bl_idname = "object.fc_immediate_mode_op"
     bl_label = "Primitive Mode Operator"
