@@ -32,7 +32,7 @@ from . fc_utils_op          import FC_OriginActiveOperator
 from . fc_utils_op          import FC_DissolveEdgesOperator
 from . fc_menus             import FC_Main_Menu
 from . fc_apply_bool_op     import FC_ApplyBoolOperator
-from . fc_immediate_mode_op import FC_Primitive_Mode_Operator
+from . fc_primitive_mode_op import FC_Primitive_Mode_Operator
 
 from .types.enums import *
 
