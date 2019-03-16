@@ -7,37 +7,59 @@ class BL_UI_Button(BL_UI_Widget):
     
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height)
-        self.__text_color        = (1.0, 1.0, 1.0, 1.0)
-        self.__hover_bg_color    = (0.5, 0.5, 0.5, 1.0)
-        self.__select_bg_color   = (0.7, 0.7, 0.7, 1.0)
+        self._text_color        = (1.0, 1.0, 1.0, 1.0)
+        self._hover_bg_color    = (0.5, 0.5, 0.5, 1.0)
+        self._select_bg_color   = (0.7, 0.7, 0.7, 1.0)
         
-        self.__text = "Button"
-        self.__text_size = 16
+        self._text = "Button"
+        self._text_size = 16
+        self._textpos = (x, y)
+
         self.__state = 0
-        self.__textpos = (x, y)
         self.__image = None
         self.__image_size = (24, 24)
         self.__image_position = (4, 2)
 
-    def set_text_color(self, color):
-        self.__text_color = color
+    @property
+    def text_color(self):
+        return self._text_color
+
+    @text_color.setter
+    def text_color(self, value):
+        self._text_color = value
 
     @property
     def text(self):
-        return self.__text
-    
-    def set_text(self, text):
-        self.__text = text
-            
-    def set_text_size(self, size):
-        self.__text_size = size
-        
-    def set_hover_bg_color(self, color):
-        self.__hover_bg_color = color
-        
-    def set_select_bg_color(self, color):
-        self.__select_bg_color = color
+        return self._text
 
+    @text.setter
+    def text(self, value):
+        self._text = value
+                
+    @property
+    def text_size(self):
+        return self._text_size
+
+    @text_size.setter
+    def text_size(self, value):
+        self._text_size = value
+
+    @property
+    def hover_bg_color(self):
+        return self._hover_bg_color
+
+    @hover_bg_color.setter
+    def hover_bg_color(self, value):
+        self._hover_bg_color = value
+
+    @property
+    def select_bg_color(self):
+        return self._select_bg_color
+
+    @select_bg_color.setter
+    def select_bg_color(self, value):
+        self._select_bg_color = value 
+        
     def set_image_size(self, imgage_size):
         self.__image_size = imgage_size
 
@@ -53,7 +75,7 @@ class BL_UI_Button(BL_UI_Widget):
 
     def update(self, x, y):        
         super().update(x, y)
-        self.__textpos = [x, y]
+        self._textpos = [x, y]
 
         area_height = self.get_area_height()
         
@@ -95,30 +117,30 @@ class BL_UI_Button(BL_UI_Widget):
         self.draw_text(area_height)
 
     def set_colors(self):
-        color = self.bg_color
-        text_color = self.__text_color
+        color = self._bg_color
+        text_color = self._text_color
 
         # pressed
         if self.__state == 1:
-            color = self.__select_bg_color
+            color = self._select_bg_color
 
         # hover
         elif self.__state == 2:
-            color = self.__hover_bg_color
+            color = self._hover_bg_color
 
         self.shader.uniform_float("color", color)
 
     def draw_text(self, area_height):
-        blf.size(0, self.__text_size, 72)
-        size = blf.dimensions(0, self.__text)
+        blf.size(0, self._text_size, 72)
+        size = blf.dimensions(0, self._text)
 
-        textpos_y = area_height - self.__textpos[1] - (self.height + size[1]) / 2.0
-        blf.position(0, self.__textpos[0] + (self.width - size[0]) / 2.0, textpos_y + 1, 0)
+        textpos_y = area_height - self._textpos[1] - (self.height + size[1]) / 2.0
+        blf.position(0, self._textpos[0] + (self.width - size[0]) / 2.0, textpos_y + 1, 0)
 
-        r, g, b, a = self.__text_color
+        r, g, b, a = self._text_color
         blf.color(0, r, g, b, a)
 
-        blf.draw(0, self.__text)
+        blf.draw(0, self._text)
 
     def draw_image(self):
         if self.__image is not None:

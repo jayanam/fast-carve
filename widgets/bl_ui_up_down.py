@@ -12,50 +12,90 @@ class BL_UI_Up_Down(BL_UI_Widget):
         super().__init__(x, y, self.__up_down_width * 2, self.__up_down_height)
 
         # Text of the numbers
-        self.text_color        = (1.0, 1.0, 1.0, 1.0)
+        self._text_color        = (1.0, 1.0, 1.0, 1.0)
 
         # Color of the up/down graphics
-        self.color          = (0.5, 0.5, 0.7, 1.0)
+        self._color          = (0.5, 0.5, 0.7, 1.0)
 
         # Hover % select colors of the up/down graphics
-        self.hover_color    = (0.5, 0.5, 0.8, 1.0)
-        self.select_color   = (0.7, 0.7, 0.7, 1.0)
+        self._hover_color    = (0.5, 0.5, 0.8, 1.0)
+        self._select_color   = (0.7, 0.7, 0.7, 1.0)
 
-        self.__min = 0
-        self.__max = 100
+        self._min = 0
+        self._max = 100
 
         self.x_screen = x
         self.y_screen = y
         
-        self.__text_size = 14
-        self.__decimals = 2
+        self._text_size = 14
+        self._decimals = 2
+
         self.__state = 0
+        self.__up_down_value = round(0, self._decimals)
 
-        self.__up_down_value = round(0, self.__decimals)
+    @property
+    def text_color(self):
+        return self._text_color
 
-    def set_text_color(self, color):
-        self.text_color = color
-            
-    def set_text_size(self, size):
-        self.__text_size = size
+    @text_color.setter
+    def text_color(self, value):
+        self._text_color = value
 
-    def set_color(self, color):
-        self.color = color
+    @property
+    def text_size(self):
+        return self._text_size
 
-    def set_hover_color(self, color):
-        self.hover_color = color
-        
-    def set_select_color(self, color):
-        self.select_color = color
+    @text_size.setter
+    def text_size(self, value):
+        self._text_size = value
 
-    def set_min(self, min):
-        self.__min = min
+    @property
+    def color(self):
+        return self._color
 
-    def set_max(self, max):
-        self.__max = max
+    @color.setter
+    def color(self, value):
+        self._color = value
 
-    def set_decimals(self, decimals):
-        self.__decimals = decimals
+    @property
+    def hover_color(self):
+        return self._hover_color
+
+    @hover_color.setter
+    def hover_color(self, value):
+        self._hover_color = value
+
+    @property
+    def select_color(self):
+        return self._select_color
+
+    @select_color.setter
+    def select_color(self, value):
+        self._select_color = value
+
+    @property
+    def min(self):
+        return self._min
+
+    @min.setter
+    def min(self, value):
+        self._min = value
+
+    @property
+    def max(self):
+        return self._max
+
+    @max.setter
+    def max(self, value):
+        self._max = value
+
+    @property
+    def decimals(self):
+        return self._decimals
+
+    @decimals.setter
+    def decimals(self, value):
+        self._decimals = value
 
     def draw(self):
 
@@ -63,37 +103,37 @@ class BL_UI_Up_Down(BL_UI_Widget):
 
         self.shader.bind()
         
-        color = self.color
-        text_color = self.text_color
+        color = self._color
+        text_color = self._text_color
         
         # pressed
         if self.__state == 1:
-            color = self.select_color
+            color = self._select_color
 
         # hover
         elif self.__state == 2:
-            color = self.hover_color
+            color = self._hover_color
 
         self.shader.uniform_float("color", color)
         
         self.batch_up.draw(self.shader)
 
-        color = self.color
+        color = self._color
 
         # pressed (down button)
         if self.__state == 3:
-            color = self.select_color
+            color = self._select_color
 
         # hover (down button)
         elif self.__state == 4:
-            color = self.hover_color
+            color = self._hover_color
 
         self.shader.uniform_float("color", color)
         self.batch_down.draw(self.shader)        
         
         # Draw value text
-        sFormat = "{:0." + str(self.__decimals) + "f}"
-        blf.size(0, self.__text_size, 72)
+        sFormat = "{:0." + str(self._decimals) + "f}"
+        blf.size(0, self._text_size, 72)
         
         sValue = sFormat.format(self.__up_down_value)
         size = blf.dimensions(0, sValue)
@@ -103,7 +143,7 @@ class BL_UI_Up_Down(BL_UI_Widget):
                       
         blf.position(0, x_pos, y_pos, 0)
 
-        r, g, b, a = self.text_color
+        r, g, b, a = self._text_color
         blf.color(0, r, g, b, a)
             
         blf.draw(0, sValue)
@@ -184,13 +224,13 @@ class BL_UI_Up_Down(BL_UI_Widget):
         return self.is_in_up(x,y) or self.is_in_down(x,y)
 
     def set_value(self, value):
-        if value < self.__min:
-            value = self.__min
-        if value > self.__max:
-            value = self.__max
+        if value < self._min:
+            value = self._min
+        if value > self._max:
+            value = self._max
 
         if value != self.__up_down_value:
-            self.__up_down_value = round(value, self.__decimals)
+            self.__up_down_value = round(value, self._decimals)
 
             try:
                 self.value_change_func(self, self.__up_down_value)

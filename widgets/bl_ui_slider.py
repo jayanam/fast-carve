@@ -6,51 +6,103 @@ class BL_UI_Slider(BL_UI_Widget):
     
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height)
-        self.text_color        = (1.0, 1.0, 1.0, 1.0)
-        self.color          = (0.5, 0.5, 0.7, 1.0)
-        self.hover_color    = (0.5, 0.5, 0.8, 1.0)
-        self.select_color   = (0.7, 0.7, 0.7, 1.0)
-        self.bg_color       = (0.8, 0.8, 0.8, 0.6)
+        self._text_color        = (1.0, 1.0, 1.0, 1.0)
+        self._color          = (0.5, 0.5, 0.7, 1.0)
+        self._hover_color    = (0.5, 0.5, 0.8, 1.0)
+        self._select_color   = (0.7, 0.7, 0.7, 1.0)
+        self._bg_color       = (0.8, 0.8, 0.8, 0.6)
 
-        self.__min = 0
-        self.__max = 100
-
+        self._min = 0
+        self._max = 100
+        
         self.x_screen = x
         self.y_screen = y
         
-        self.__text_size = 14
-        self.__decimals = 2
+        self._text_size = 14
+        self._decimals = 2
+
+        self._show_min_max = True
+
         self.__state = 0
         self.__is_drag = False
         self.__slider_pos = 0
-        self.__slider_value = round(0, self.__decimals)
+        self.__slider_value = round(0, self._decimals)
         self.__slider_width = 5
         self.__slider_height = 13
         self.__slider_offset_y = 3
 
-    def set_text_color(self, color):
-        self.text_color = color
-            
-    def set_text_size(self, size):
-        self.__text_size = size
 
-    def set_color(self, color):
-        self.color = color
+    @property
+    def text_color(self):
+        return self._text_color
 
-    def set_hover_color(self, color):
-        self.hover_color = color
-        
-    def set_select_color(self, color):
-        self.select_color = color
+    @text_color.setter
+    def text_color(self, value):
+        self._text_color = value
 
-    def set_min(self, min):
-        self.__min = min
+    @property
+    def text_size(self):
+        return self._text_size
 
-    def set_max(self, max):
-        self.__max = max
+    @text_size.setter
+    def text_size(self, value):
+        self._text_size = value
 
-    def set_decimals(self, decimals):
-        self.__decimals = decimals
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+
+    @property
+    def hover_color(self):
+        return self._hover_color
+
+    @hover_color.setter
+    def hover_color(self, value):
+        self._hover_color = value
+
+    @property
+    def select_color(self):
+        return self._select_color
+
+    @select_color.setter
+    def select_color(self, value):
+        self._select_color = value
+
+    @property
+    def min(self):
+        return self._min
+
+    @min.setter
+    def min(self, value):
+        self._min = value
+
+    @property
+    def max(self):
+        return self._max
+
+    @max.setter
+    def max(self, value):
+        self._max = value
+
+    @property
+    def decimals(self):
+        return self._decimals
+
+    @decimals.setter
+    def decimals(self, value):
+        self._decimals = value
+
+    @property
+    def show_min_max(self):
+        return self._show_min_max
+
+    @show_min_max.setter
+    def show_min_max(self, value):
+        self._show_min_max = value
                 
     def draw(self):
 
@@ -58,19 +110,19 @@ class BL_UI_Slider(BL_UI_Widget):
 
         self.shader.bind()
         
-        color = self.color
-        text_color = self.text_color
+        color = self._color
+        text_color = self._text_color
         
         # pressed
         if self.__state == 1:
-            color = self.select_color
+            color = self._select_color
 
         # hover
         elif self.__state == 2:
-            color = self.hover_color
+            color = self._hover_color
 
         # Draw background
-        self.shader.uniform_float("color", self.bg_color)
+        self.shader.uniform_float("color", self._bg_color)
         bgl.glEnable(bgl.GL_BLEND)
         self.batch_bg.draw(self.shader)
 
@@ -81,8 +133,8 @@ class BL_UI_Slider(BL_UI_Widget):
         bgl.glDisable(bgl.GL_BLEND)      
         
         # Draw value text
-        sFormat = "{:0." + str(self.__decimals) + "f}"
-        blf.size(0, self.__text_size, 72)
+        sFormat = "{:0." + str(self._decimals) + "f}"
+        blf.size(0, self._text_size, 72)
         
         sValue = sFormat.format(self.__slider_value)
         size = blf.dimensions(0, sValue)
@@ -93,24 +145,25 @@ class BL_UI_Slider(BL_UI_Widget):
         blf.draw(0, sValue)
 
         # Draw min and max
-        sMin = sFormat.format(self.__min)
-        
-        size = blf.dimensions(0, sMin)
-                      
-        blf.position(0, self.x_screen - size[0] / 2.0, 
-                        area_height - self.height - self.y_screen, 0)
-        blf.draw(0, sMin)
+        if self._show_min_max:
+            sMin = sFormat.format(self._min)
+            
+            size = blf.dimensions(0, sMin)
+                        
+            blf.position(0, self.x_screen - size[0] / 2.0, 
+                            area_height - self.height - self.y_screen, 0)
+            blf.draw(0, sMin)
 
-        sMax = sFormat.format(self.__max)
-        
-        size = blf.dimensions(0, sMax)
+            sMax = sFormat.format(self._max)
+            
+            size = blf.dimensions(0, sMax)
 
-        r, g, b, a = self.text_color
-        blf.color(0, r, g, b, a)
-                      
-        blf.position(0, self.x_screen + self.width - size[0] / 2.0, 
-                        area_height - self.height - self.y_screen, 0)
-        blf.draw(0, sMax)
+            r, g, b, a = self._text_color
+            blf.color(0, r, g, b, a)
+                        
+            blf.position(0, self.x_screen + self.width - size[0] / 2.0, 
+                            area_height - self.height - self.y_screen, 0)
+            blf.draw(0, sMax)
 
 
     def update_slider(self):
@@ -189,19 +242,19 @@ class BL_UI_Slider(BL_UI_Widget):
         return False
 
     def __value_to_pos(self, value):
-        return self.width * (value - self.__min) / (self.__max - self.__min)
+        return self.width * (value - self._min) / (self._max - self._min)
 
     def __pos_to_value(self, pos):
-        return self.__min + round(((self.__max - self.__min) * self.__slider_pos / self.width), self.__decimals)
+        return self._min + round(((self._max - self._min) * self.__slider_pos / self.width), self._decimals)
 
     def set_value(self, value):
-        if value < self.__min:
-            value = self.__min
-        if value > self.__max:
-            value = self.__max
+        if value < self._min:
+            value = self._min
+        if value > self._max:
+            value = self._max
 
         if value != self.__slider_value:
-            self.__slider_value = round(value, self.__decimals)
+            self.__slider_value = round(value, self._decimals)
 
             try:
                 self.value_change_func(self, self.__slider_value)
