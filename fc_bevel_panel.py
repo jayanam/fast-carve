@@ -51,7 +51,11 @@ class FC_Bevel_Panel(Panel):
   
         # Mirror                       
         row = layout.row()
-        row.operator('object.mirror', text='Center Origin & Mirror', icon='MOD_MIRROR')
+        row.operator('object.mirror', text='Mirror', icon='MOD_MIRROR')
+
+        # Array
+        row = layout.row()
+        row.operator('object.fc_array_mode_op', text='Array', icon='MOD_ARRAY')
         
         # symmetrize negative
         row = layout.row()

@@ -95,8 +95,8 @@ class FC_Array_Mode_Operator(BL_UI_OT_draw_operator):
         self.panel.add_widgets(widgets_panel)
 
         # Open the panel at the mouse location
-        self.panel.set_location(event.mouse_x, 
-                                context.area.height - event.mouse_y + 20)
+        self.panel.set_location(context.area.height / 2.0, 
+                                context.area.height / 2.0)
 
         self.init_widget_values()
 

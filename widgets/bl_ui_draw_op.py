@@ -6,7 +6,7 @@ class BL_UI_OT_draw_operator(Operator):
     bl_idname = "object.bl_ui_ot_draw_operator"
     bl_label = "bl ui widgets operator"
     bl_description = "Operator for bl ui widgets" 
-    bl_options = {'REGISTER'}
+    bl_options = {'REGISTER', 'UNDO', 'BLOCKING' }
     	
     def __init__(self):
         self.draw_handle = None
