@@ -6,6 +6,8 @@ from .widgets . bl_ui_draw_op import *
 
 from math import radians
 
+from .utils.fc_bool_util import select_active
+
 # Array mode operator
 class FC_Circle_Array_Mode_Operator(BL_UI_OT_draw_operator):
     bl_idname = "object.fc_circle_array_mode_op"
@@ -61,13 +63,19 @@ class FC_Circle_Array_Mode_Operator(BL_UI_OT_draw_operator):
         if self.active_obj is not None:
             mod_array = self.active_obj.modifiers.get("FC_Circle_Array")
             if mod_array is None:
+
+                new_origin = bpy.context.scene.cursor.location
+
+                select_active(self.active_obj)
+                bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
+                
                 mod_array = self.active_obj.modifiers.new(type="ARRAY", name="FC_Circle_Array")
                 mod_array.use_relative_offset = False
                 mod_array.use_object_offset = True
 
                 circle_empty = bpy.data.objects.new( "circle_empty", None )
                 bpy.context.scene.collection.objects.link( circle_empty )
-                circle_empty.location = bpy.context.scene.cursor.location
+                circle_empty.location = new_origin
 
                 circle_empty.empty_display_size = 1
                 circle_empty.empty_display_type = 'ARROWS'

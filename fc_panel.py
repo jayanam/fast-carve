@@ -52,7 +52,3 @@ class FC_Panel(Panel):
         # Selected = target
         row = layout.row()
         row.operator('object.bool_target', icon='MOD_BOOLEAN')
-            
-        # Bool Immediate Mode
-        # row = layout.row()
-        # row.operator('scene.fc_immediate_mode_op', text='Immediate Mode')
