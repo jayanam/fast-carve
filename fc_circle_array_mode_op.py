@@ -64,6 +64,7 @@ class FC_Circle_Array_Mode_Operator(BL_UI_OT_draw_operator):
             mod_array = self.active_obj.modifiers.get("FC_Circle_Array")
             if mod_array is None:
 
+                # Set the origin to the 3d cursor
                 new_origin = bpy.context.scene.cursor.location
 
                 select_active(self.active_obj)
@@ -86,12 +87,15 @@ class FC_Circle_Array_Mode_Operator(BL_UI_OT_draw_operator):
             self.ud_item_count.set_value(mod_array.count)
             
     def on_item_count_value_change(self, up_down, value):
-        if self.active_obj is not None:
+        
+        # Get the circle array modifier
+        mod_array = self.active_obj.modifiers.get("FC_Circle_Array")
+        mod_array.count = value
 
-            mod_array = self.active_obj.modifiers.get("FC_Circle_Array")
-            mod_array.count = value
+        # Set the Z-Rotation for the empty to 360 / value
+        angle = 360 / value
 
-            self.active_obj["circle_empty"].rotation_euler = self.active_obj.rotation_euler
+        circle_empty = self.active_obj["circle_empty"]
+        circle_empty.rotation_euler = self.active_obj.rotation_euler
 
-            angle = 360 / value
-            self.active_obj["circle_empty"].rotation_euler.rotate_axis("Z", radians(angle))
+        circle_empty.rotation_euler.rotate_axis("Z", radians(angle))
