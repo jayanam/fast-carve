@@ -225,6 +225,9 @@ class Shape:
         self._is_extruding = True
         return True
 
+    def can_set_center_type(self):
+        return False
+
     def extrude_vertices(self, context):
 
         dir = self.get_dir() * self._extrusion

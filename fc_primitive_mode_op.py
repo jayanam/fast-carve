@@ -199,6 +199,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
                 return {"RUNNING_MODAL"}
 
+            if event.type == "C":
+                if self.shape.can_set_center_type():
+                    context.scene.center_type = next_enum(context.scene.center_type, context.scene, "center_type")
+                    return {"RUNNING_MODAL"}  
+                           
+
             # toggle primitve  
             if event.type == "P":
                 if self.shape.is_none():
@@ -348,11 +354,11 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         xt = int(region.width / 2.0)
         
-        blf.size(0, 24, 72)
+        blf.size(0, 22, 72)
         blf.position(0, xt - blf.dimensions(0, text)[0] / 2, 60 , 0)
         blf.draw(0, text) 
 
-        blf.size(1, 16, 72)
+        blf.size(1, 14, 72)
         blf.color(1, 1, 1, 1, 1)
         blf.position(1, xt - blf.dimensions(1, subtext)[0] / 2, 30 , 1)
         blf.draw(1, subtext) 
