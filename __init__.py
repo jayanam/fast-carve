@@ -18,9 +18,9 @@ import rna_keymap_ui
 
 from . fc_bevel_op          import FC_BevelOperator
 from . fc_unbevel_op        import FC_UnBevelOperator
-from . fc_panel             import FC_Panel
-from . fc_bevel_panel       import FC_Bevel_Panel
-from . fc_primitive_panel   import FC_Primitive_Panel
+from . fc_panel             import FC_PT_Panel
+from . fc_bevel_panel       import FC_PT_Bevel_Panel
+from . fc_primitive_panel   import FC_PT_Primitive_Panel
 from . fc_bool_op           import FC_BoolOperator_Diff
 from . fc_bool_op           import FC_BoolOperator_Union
 from . fc_bool_op           import FC_BoolOperator_Slice
@@ -114,9 +114,9 @@ class FC_AddonPreferences(AddonPreferences):
     
 
 def register():
-    bpy.utils.register_class(FC_Panel)
-    bpy.utils.register_class(FC_Bevel_Panel)
-    bpy.utils.register_class(FC_Primitive_Panel)
+    bpy.utils.register_class(FC_PT_Panel)
+    bpy.utils.register_class(FC_PT_Bevel_Panel)
+    bpy.utils.register_class(FC_PT_Primitive_Panel)
     bpy.utils.register_class(FC_BevelOperator)
     bpy.utils.register_class(FC_UnBevelOperator)
     bpy.utils.register_class(FC_BoolOperator_Diff)
@@ -154,9 +154,9 @@ def register():
     addon_keymaps.append((km, kmi_mnu))
     
 def unregister():
-    bpy.utils.unregister_class(FC_Panel)
-    bpy.utils.unregister_class(FC_Bevel_Panel)
-    bpy.utils.unregister_class(FC_Primitive_Panel)
+    bpy.utils.unregister_class(FC_PT_Panel)
+    bpy.utils.unregister_class(FC_PT_Bevel_Panel)
+    bpy.utils.unregister_class(FC_PT_Primitive_Panel)
     bpy.utils.unregister_class(FC_BevelOperator)
     bpy.utils.unregister_class(FC_UnBevelOperator)
     bpy.utils.unregister_class(FC_BoolOperator_Diff)
