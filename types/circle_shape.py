@@ -44,13 +44,6 @@ class Circle_Shape(Shape):
 
         self._vertices_2d = [get_2d_vertex(context, vertex) for vertex in self._vertices]
 
-
-    def get_center(self, mouse_pos_3d, context):
-        if context.scene.center_type == "Mouse":
-            return mouse_pos_3d
-        else:
-            return context.scene.cursor.location
-
     def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if mouse_pos_3d is None:
@@ -80,6 +73,12 @@ class Circle_Shape(Shape):
 
     def can_set_center_type(self):
         return True
+
+    def get_center(self, mouse_pos_3d, context):
+        if context.scene.center_type == "Mouse":
+            return mouse_pos_3d
+        else:
+            return context.scene.cursor.location
 
     def get_text(self, context):
         text = "{0} {1} | Mode (M): {2} | Primitive (P): {3} | {4}"
