@@ -7,6 +7,7 @@ class Circle_Shape(Shape):
         self._center = None
         self._radius = 0
         self._mouse_start_3d = None
+        self._segments = 32
 
     def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
@@ -29,7 +30,7 @@ class Circle_Shape(Shape):
         rv3d      = context.space_data.region_3d
         view_rot  = rv3d.view_rotation
 
-        segments = 32
+        segments = self._segments + 1
         mul = (1.0 / (segments - 1)) * (pi * 2)
         points = [(sin(i * mul) * self._radius, cos(i * mul) * self._radius, 0) 
         for i in range(segments)]
