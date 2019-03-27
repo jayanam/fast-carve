@@ -30,7 +30,7 @@ class FC_MirrorOperator(Operator):
 
         return {'FINISHED'}
 
-#3D cursor center
+#3D cursor operators
 class FC_OriginActiveOperator(Operator):
     bl_idname = "view3d.origin_active"
     bl_label = "Set origin to center"
@@ -51,6 +51,24 @@ class FC_OriginActiveOperator(Operator):
         bpy.context.view_layer.objects.active = context.object
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
         bpy.ops.object.editmode_toggle()
+        return {'FINISHED'}  
+
+#3D cursor center
+class FC_CenterActiveOperator(Operator):
+    bl_idname = "view3d.snap_active"
+    bl_label = "Snap cursor to active"
+    bl_description = "Snap the cursor to the active selection" 
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context): 
+        if context.object is None:
+            return False
+            
+        return context.object.mode == "EDIT"
+
+    def execute(self, context):    
+        bpy.ops.view3d.snap_cursor_to_active()
         return {'FINISHED'}  
 
 # Dissolve

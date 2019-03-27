@@ -35,12 +35,14 @@ class Circle_Shape(Shape):
         for i in range(segments)]
 
         rot_mat = view_rot
+        offset = Vector((0,0,0))
 
         if self._snap_to_target:
             rot_mat = self._normal.to_track_quat('Z', 'X').to_matrix()
+            offset = self._normal.normalized() * 0.01
 
         self._vertices = [rot_mat @ Vector(point) + 
-                          self._center for point in points]
+                          self._center +  offset for point in points]
 
         self._vertices_2d = [get_2d_vertex(context, vertex) for vertex in self._vertices]
 

@@ -264,7 +264,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         self.remove_doubles()
 
-       
         # set origin to geometry
         bpy.ops.object.editmode_toggle()
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')

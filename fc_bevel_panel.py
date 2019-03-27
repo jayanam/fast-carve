@@ -86,9 +86,13 @@ class FC_PT_Bevel_Panel(Panel):
         col.operator('object.sym', text="Z", icon='MOD_MESHDEFORM').sym_axis = "POSITIVE_Z"
 
         row = layout.row()
-        split = row.split(factor=0.5)
-        col = split.column()
-        col.operator('view3d.dissolve_edges', text='Dissolve', icon='LINENUMBERS_OFF')
+        #split = row.split(factor=0.5)
+        #col = split.column()
+        row.operator('view3d.dissolve_edges', text='Dissolve', icon='LINENUMBERS_OFF')
 
-        col = split.column()
-        col.operator('view3d.origin_active', text='Center', icon='PIVOT_CURSOR')
+        #col = split.column()
+        row = layout.row()
+        row.operator('view3d.origin_active', text='Set Origin', icon='PIVOT_CURSOR')
+
+        row = layout.row()
+        row.operator('view3d.snap_active', text='Cursor to Active', icon='PIVOT_CURSOR')
