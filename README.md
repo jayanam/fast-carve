@@ -13,5 +13,5 @@ If you have installed a previous version of the addon I recommend to:
 
 1. Remove the previous version in the User Preferences
 2. Save the Preferences
-3. Close and open lender
+3. Close and open Blender
 4. Install the new version like described in the video above
