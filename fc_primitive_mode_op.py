@@ -111,6 +111,20 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
                 return {'FINISHED'}
 
+        # The mouse wheel is moved
+        if not self.shape.is_none():
+            up = event.type == "WHEELUPMOUSE"
+            down = event.type == "WHEELDOWNMOUSE"
+            if up or down:
+                inc = 1 if up else -1
+                if self.shape.handle_mouse_wheel(inc, context):
+                    mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
+                    mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
+                    
+                    self.create_batch(mouse_pos_3d)
+                    return {"RUNNING_MODAL"}
+
+
         # The mouse is moved
         if event.type == "MOUSEMOVE" and not self.shape.is_none():
 

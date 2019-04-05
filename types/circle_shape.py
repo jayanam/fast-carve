@@ -7,7 +7,17 @@ class Circle_Shape(Shape):
         self._center = None
         self._radius = 0
         self._mouse_start_3d = None
-        self._segments = 32
+        self._segments = 16
+
+    def handle_mouse_wheel(self, inc, context):
+        if self.is_processing():
+            self._segments += inc
+            if self._segments < 3:
+                self._segments = 3
+
+            self.create_circle(context)
+            return True
+        return False
 
     def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
@@ -91,11 +101,11 @@ class Circle_Shape(Shape):
         p_type = "Circle"
 
         if self.is_created():
-            keyboard = "Esc: Undo | G: Move | E: Extrude"              
+            keyboard = "Esc: Undo | G: Move | E: Extrude"
             mouse_action = "Apply: Ctrl + Left Click"
    
         if self.is_processing():
             mouse_action = "Create: Left click"
-            keyboard = "Esc: Undo"
+            keyboard = "Wheel: Segments (" + str(self._segments) + ") | Esc: Undo"
 
         return text.format(mouse_action, context.scene.center_type, context.scene.bool_mode, p_type, keyboard)

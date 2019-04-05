@@ -243,6 +243,8 @@ class Shape:
     def stop_extrude(self, context):
         self._is_extruding = False
 
+    def handle_mouse_wheel(self, inc, context):
+        return False
 
     def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
