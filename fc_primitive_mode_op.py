@@ -83,6 +83,15 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_handle_3d = None
         self.draw_event  = None
 
+    def get_snapped_mouse_pos(self, mouse_pos_2d, context):
+        mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
+
+        if context.scene.use_snapping and mouse_pos_3d is not None:
+            mouse_pos_3d = get_snap_3d_vertex(context, mouse_pos_3d)
+            mouse_pos_2d = get_2d_vertex(context, mouse_pos_3d)
+
+        return mouse_pos_2d, mouse_pos_3d
+
     def get_3d_for_mouse(self, mouse_pos_2d, context):
         if context.scene.snap_to_target:
             mouse_pos_3d = self.shape.get_3d_for_2d(mouse_pos_2d, context)
@@ -93,6 +102,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def modal(self, context, event):
         if context.area:
             context.area.tag_redraw()
+
+        result = "PASS_THROUGH"
 
         target_obj = context.scene.carver_target
         snap_to_target = context.scene.snap_to_target
@@ -122,19 +133,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                     mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
                     
                     self.create_batch(mouse_pos_3d)
-                    return {"RUNNING_MODAL"}
-
+                    result = "RUNNING_MODAL"
 
         # The mouse is moved
         if event.type == "MOUSEMOVE" and not self.shape.is_none():
 
             mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
 
-            mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
-
-            if context.scene.use_snapping and mouse_pos_3d is not None:
-                mouse_pos_3d = get_snap_3d_vertex(context, mouse_pos_3d)
-                mouse_pos_2d = get_2d_vertex(context, mouse_pos_3d)
+            mouse_pos_2d, mouse_pos_3d = self.get_snapped_mouse_pos(mouse_pos_2d, context)
 
             if self.shape.handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_batch(mouse_pos_3d)
@@ -144,17 +150,13 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             if target_obj is None:
                 self.report({'ERROR'}, 'Please define a target object.')
-                return {"PASS_THROUGH"}
+                return { "PASS_THROUGH" }
 
             self.create_shape(context, target_obj, snap_to_target)
 
             mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
 
-            mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
-                
-            if context.scene.use_snapping and mouse_pos_3d is not None:
-                mouse_pos_3d = get_snap_3d_vertex(context, mouse_pos_3d)
-                mouse_pos_2d = get_2d_vertex(context, mouse_pos_3d)
+            mouse_pos_2d, mouse_pos_3d = self.get_snapped_mouse_pos(mouse_pos_2d, context)
 
             if self.shape.is_moving():
                 self.shape.stop_move(context)
@@ -164,6 +166,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             if self.shape.is_rotating():
                 self.shape.stop_rotate(context)
+
+            if self.shape.is_processing():
+                result = "RUNNING_MODAL"
 
             if self.shape.handle_mouse_press(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_object(context)
@@ -183,10 +188,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             if event.type == "G":
                 mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
 
-                mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
+                mouse_pos_2d, mouse_pos_3d = self.get_snapped_mouse_pos(mouse_pos_2d, context)
 
                 if self.shape.start_move(mouse_pos_3d):
-                    return {"RUNNING_MODAL"}
+                    result = "RUNNING_MODAL"
 
             # try to rotate the shape
             if event.type == "R":
@@ -196,7 +201,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
                 if self.shape.start_rotate(mouse_pos_3d, context):
                     self.create_batch()
-                    return {"RUNNING_MODAL"}               
+                    result = "RUNNING_MODAL"             
 
             # try to extrude the shape
             if event.type == "E":
@@ -204,21 +209,20 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
                 if self.shape.start_extrude(mouse_pos_2d, context):
                     self.create_batch()
-                    return {"RUNNING_MODAL"}  
+                    result = "RUNNING_MODAL"
 
             # toggle bool mode
             if event.type == "M":
                 context.scene.bool_mode = next_enum(context.scene.bool_mode, 
                                                     context.scene, "bool_mode")
 
-                return {"RUNNING_MODAL"}
+                result = "RUNNING_MODAL"
 
             if event.type == "C":
                 if self.shape.can_set_center_type():
                     context.scene.center_type = next_enum(context.scene.center_type, context.scene, "center_type")
-                    return {"RUNNING_MODAL"}  
+                    result = "RUNNING_MODAL"
                            
-
             # toggle primitve  
             if event.type == "P":
                 if self.shape.is_none():
@@ -226,9 +230,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                                                         context.scene, "primitive_type")
 
                     self.create_shape(context, target_obj, snap_to_target)
-                    return {"RUNNING_MODAL"}
+                    result = "RUNNING_MODAL"
              
-        return {"PASS_THROUGH"}
+        return { result }
 
     def create_shape(self, context, target_obj, snap_to_target):
         if self.shape.is_none():
@@ -397,4 +401,3 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         if self.shape.draw_points():
             bgl.glPointSize(10)
             self.batch_points.draw(self.shader)
-
