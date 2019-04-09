@@ -12,6 +12,8 @@ from bpy_extras.view3d_utils import (
     region_2d_to_location_3d, 
     location_3d_to_region_2d )
 
+from .action import Action
+
 class ShapeState(Enum):
     NONE = 0
     PROCESSING = 1
@@ -91,6 +93,7 @@ class Shape:
         self._bvhtree = None
         self._hit = None
         self._normal = None
+        self._actions = []
 
     def get_3d_for_2d(self, pos_2d, context):
 
@@ -114,6 +117,7 @@ class Shape:
     def initialize(self, context, target, snap_to_target):
         self._bvhtree = bvhtree_from_object(context, target)
         self._snap_to_target = snap_to_target
+        self.build_actions()
 
     def is_none(self):
         return self._state is ShapeState.NONE
@@ -172,6 +176,14 @@ class Shape:
     @state.setter
     def state(self, value):
         self._state = value
+        self.build_actions()
+
+    def build_actions(self):
+        pass
+
+    @property
+    def actions(self):
+        return self._actions
 
     @property
     def extrusion(self):
@@ -184,7 +196,7 @@ class Shape:
         self._vertices.clear()     
         self._vertices_extruded.clear()   
         self._vertices_2d.clear()
-        self._state = ShapeState.NONE
+        self.state = ShapeState.NONE
 
     def close(self):            
         return False

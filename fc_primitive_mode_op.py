@@ -367,6 +367,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         region = context.region
         text = "- Primitive mode -"
 
+        # TODO: Get actions here and display id, title and content
+        #       Use different colors for the ids (e.g. Keyboard shortcuts)
+
+        #for action in self.shape.actions:
+        #    text = action.title
+
         subtext = self.shape.get_text(context)
 
         xt = int(region.width / 2.0)
@@ -401,3 +407,4 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         if self.shape.draw_points():
             bgl.glPointSize(10)
             self.batch_points.draw(self.shader)
+

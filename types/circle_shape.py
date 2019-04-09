@@ -93,6 +93,10 @@ class Circle_Shape(Shape):
         else:
             return context.scene.cursor.location
 
+    def build_actions(self):
+        self._actions.clear()
+        self._actions.append(Action("P", "Primitive", "Circle"))
+
     def get_text(self, context):
         text = "{0} {1} | Mode (M): {2} | Primitive (P): {3} | {4}"
 

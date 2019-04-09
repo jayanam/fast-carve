@@ -8,7 +8,7 @@ class Polyline_Shape(Shape):
     def close(self):
             
         if self.can_close():
-            self._state = ShapeState.CREATED
+            self.state = ShapeState.CREATED
             return True
             
         return False
