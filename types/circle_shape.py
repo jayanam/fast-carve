@@ -7,7 +7,7 @@ class Circle_Shape(Shape):
         self._center = None
         self._radius = 0
         self._mouse_start_3d = None
-        self._segments = 16
+        self._segments = 24
 
     def handle_mouse_wheel(self, inc, context):
         if self.is_processing():
@@ -100,7 +100,7 @@ class Circle_Shape(Shape):
         bool_mode = bpy.context.scene.bool_mode
         center_type = bpy.context.scene.center_type
 
-        self.add_action(Action("P",                 "Primitive",          "Circle"),  ShapeState.NONE)
+        self.add_action(Action(self.get_prim_id(),  "Primitive",          "Circle"),    None)
         self.add_action(Action("M",                 "Mode",               bool_mode),   None)
         self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
         self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
@@ -110,20 +110,3 @@ class Circle_Shape(Shape):
         self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)
         self.add_action(Action("Mouse wheel",       "Segments",           str(self._segments)), ShapeState.PROCESSING)
         self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)
-
-    def get_text(self, context):
-        text = "{0} {1} | Mode (M): {2} | Primitive (P): {3} | {4}"
-
-        keyboard = "Esc: Exit"
-        mouse_action = "Start: Ctrl + Left click | Center (C):"
-        p_type = "Circle"
-
-        if self.is_created():
-            keyboard = "Esc: Undo | G: Move | E: Extrude"
-            mouse_action = "Apply: Ctrl + Left Click"
-   
-        if self.is_processing():
-            mouse_action = "Create: Left click"
-            keyboard = "Wheel: Segments (" + str(self._segments) + ") | Esc: Undo"
-
-        return text.format(mouse_action, context.scene.center_type, context.scene.bool_mode, p_type, keyboard)

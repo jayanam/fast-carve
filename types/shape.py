@@ -185,6 +185,12 @@ class Shape:
         if(self.state == shape_state or shape_state == None):
             self.actions.append(action)
 
+    def get_prim_id(self):
+        if(self.state == ShapeState.NONE):
+            return "P"
+        else:
+            return ""
+
     def get_esc_title(self):
         if(self.state == ShapeState.NONE):
             return "Exit"
@@ -302,9 +308,6 @@ class Shape:
             return True
 
         return False
-
-    def get_text(self, context):
-        pass
 
     def draw_points(self):
         return True

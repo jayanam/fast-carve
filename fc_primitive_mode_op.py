@@ -363,6 +363,19 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         self.batch_points = batch_for_shader(self.shader, 'POINTS', {"pos": points})
 
+    def draw_action_line(self, action, pos_y):
+        blf.color(1, 1, 1, 1, 1)
+        blf.position(1, 10, pos_y , 1)
+        blf.draw(1, action.title) 
+
+        if(action.content != ""):
+            blf.position(1, 110, pos_y , 1)
+            blf.draw(1, ": " + action.content) 
+
+        blf.color(1, 0, 0.5, 1, 1)
+        blf.position(1, 250, pos_y, 1)
+        blf.draw(1, action.id)
+
 	# Draw handler to paint in pixels
     def draw_callback_2d(self, op, context):
 
@@ -370,20 +383,13 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         blf.size(1, 18, 72)
 
         size = 22
-        pos_y = self.get_actions_height(size)
+        pos_y = 160 # self.get_actions_height(size)
 
-        for index, action in enumerate(self.shape.actions):
-            blf.color(1, 1, 1, 1, 1)
-            blf.position(1, 10, pos_y - index * size , 1)
-            blf.draw(1, action.title) 
+        self.draw_action_line(self.shape.actions[0], pos_y)
 
-            if(action.content != ""):
-                blf.position(1, 110, pos_y - index * size , 1)
-                blf.draw(1, ": " + action.content) 
-
-            blf.color(1, 0, 0.5, 1, 1)
-            blf.position(1, 250, pos_y - index * size , 1)
-            blf.draw(1, action.id)
+        for index in range(len(self.shape.actions)-1):
+            action = self.shape.actions[index+1]
+            self.draw_action_line(action, (pos_y - 10) - (index + 1) * size)
 
         blf.color(1, 1, 1, 1, 1)
 

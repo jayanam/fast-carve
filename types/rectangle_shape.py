@@ -112,7 +112,7 @@ class Rectangle_Shape(Shape):
     def build_actions(self):
         super().build_actions()
         bool_mode = bpy.context.scene.bool_mode
-        self.add_action(Action("P",                 "Primitive",          "Rectangle"), ShapeState.NONE)
+        self.add_action(Action(self.get_prim_id(),  "Primitive",          "Rectangle"), None)
         self.add_action(Action("M",                 "Mode",               bool_mode),   None)
         self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
         self.add_action(Action("R",                 "Rotate",             ""),          ShapeState.CREATED)
@@ -124,20 +124,3 @@ class Rectangle_Shape(Shape):
 
     def draw_points(self):
         return True
-
-    def get_text(self, context):
-        text = "{0} | Mode (M): {1} | Primitive (P): {2} | {3}"
-
-        keyboard = "Esc: Exit"
-        mouse_action = "Set point 1: Ctrl + Left click"
-        p_type = "Rectangle"
-
-        if self.is_created():
-            keyboard = "Esc: Undo | G: Move | R: Rotate | E: Extrude"
-            mouse_action = "Apply: Ctrl + Left Click"
-   
-        if self.is_processing():
-            mouse_action = "Set point 2: Left click"
-            keyboard = "Esc: Undo"
-
-        return text.format(mouse_action, context.scene.bool_mode, p_type, keyboard)
