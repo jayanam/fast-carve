@@ -367,22 +367,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def draw_callback_2d(self, op, context):
 
         # Draw text for primitive mode
-        #region = context.region
-        #text = "- Primitive mode -"
-
-        # TODO: Get actions here and display id, title and content
-        #       Use different colors for the ids (e.g. Keyboard shortcuts)
-
-        #subtext = self.shape.get_text(context)
-
-        #xt = int(region.width / 2.0)
-        
-        #blf.size(0, 22, 72)
-        #blf.position(0, xt - blf.dimensions(0, text)[0] / 2, 60 , 0)
-        #blf.draw(0, text) 
-
         blf.size(1, 18, 72)
-        #subtext = self.shape.get_text(context)
 
         size = 22
         pos_y = self.get_actions_height(size)
