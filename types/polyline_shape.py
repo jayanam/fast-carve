@@ -54,6 +54,22 @@ class Polyline_Shape(Shape):
 
         return result
 
+    def build_actions(self):
+        super().build_actions()
+        bool_mode = bpy.context.scene.bool_mode
+        self.add_action(Action("P",                 "Primitive",          "Polyline"),  ShapeState.NONE)
+        self.add_action(Action("M",                 "Mode",               bool_mode),   None)
+        self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
+        self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
+        self.add_action(Action("Left Click",        "Add line",           ""),          ShapeState.PROCESSING)
+        self.add_action(Action("Ctrl + Left Click", "Start",              ""),          ShapeState.NONE)
+
+        if self.can_close():
+            self.add_action(Action("Ctrl + Left Click", "Close shape",    ""),          ShapeState.PROCESSING)
+
+        self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)
+        self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)      
+
     def get_text(self, context):
         text = "{0} | Mode (M): {1} | Primitive (P): {2} | {3}"
 

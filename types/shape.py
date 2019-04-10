@@ -179,7 +179,17 @@ class Shape:
         self.build_actions()
 
     def build_actions(self):
-        pass
+        self._actions.clear()
+
+    def add_action(self, action, shape_state = None):
+        if(self.state == shape_state or shape_state == None):
+            self.actions.append(action)
+
+    def get_esc_title(self):
+        if(self.state == ShapeState.NONE):
+            return "Exit"
+        else:
+            return "Undo"
 
     @property
     def actions(self):

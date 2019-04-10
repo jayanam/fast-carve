@@ -216,11 +216,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 context.scene.bool_mode = next_enum(context.scene.bool_mode, 
                                                     context.scene, "bool_mode")
 
+                self.shape.build_actions()
+
                 result = "RUNNING_MODAL"
 
             if event.type == "C":
                 if self.shape.can_set_center_type():
                     context.scene.center_type = next_enum(context.scene.center_type, context.scene, "center_type")
+                    self.shape.build_actions()
                     result = "RUNNING_MODAL"
                            
             # toggle primitve  
@@ -364,27 +367,44 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
     def draw_callback_2d(self, op, context):
 
         # Draw text for primitive mode
-        region = context.region
-        text = "- Primitive mode -"
+        #region = context.region
+        #text = "- Primitive mode -"
 
         # TODO: Get actions here and display id, title and content
         #       Use different colors for the ids (e.g. Keyboard shortcuts)
 
-        #for action in self.shape.actions:
-        #    text = action.title
+        #subtext = self.shape.get_text(context)
 
-        subtext = self.shape.get_text(context)
-
-        xt = int(region.width / 2.0)
+        #xt = int(region.width / 2.0)
         
-        blf.size(0, 22, 72)
-        blf.position(0, xt - blf.dimensions(0, text)[0] / 2, 60 , 0)
-        blf.draw(0, text) 
+        #blf.size(0, 22, 72)
+        #blf.position(0, xt - blf.dimensions(0, text)[0] / 2, 60 , 0)
+        #blf.draw(0, text) 
 
-        blf.size(1, 14, 72)
+        blf.size(1, 18, 72)
+        #subtext = self.shape.get_text(context)
+
+        size = 22
+        pos_y = self.get_actions_height(size)
+
+        for index, action in enumerate(self.shape.actions):
+            blf.color(1, 1, 1, 1, 1)
+            blf.position(1, 10, pos_y - index * size , 1)
+            blf.draw(1, action.title) 
+
+            if(action.content != ""):
+                blf.position(1, 110, pos_y - index * size , 1)
+                blf.draw(1, ": " + action.content) 
+
+            blf.color(1, 0, 0.5, 1, 1)
+            blf.position(1, 250, pos_y - index * size , 1)
+            blf.draw(1, action.id)
+
         blf.color(1, 1, 1, 1, 1)
-        blf.position(1, xt - blf.dimensions(1, subtext)[0] / 2, 30 , 1)
-        blf.draw(1, subtext) 
+
+    def get_actions_height(self, size):
+        return len(self.shape.actions) * size
+
 
 	# Draw handler to paint onto the screen
     def draw_callback_3d(self, op, context):

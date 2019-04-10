@@ -15,8 +15,10 @@ class Circle_Shape(Shape):
             if self._segments < 3:
                 self._segments = 3
 
+            self.build_actions()
             self.create_circle(context)
             return True
+
         return False
 
     def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
@@ -94,8 +96,20 @@ class Circle_Shape(Shape):
             return context.scene.cursor.location
 
     def build_actions(self):
-        self._actions.clear()
-        self._actions.append(Action("P", "Primitive", "Circle"))
+        super().build_actions()
+        bool_mode = bpy.context.scene.bool_mode
+        center_type = bpy.context.scene.center_type
+
+        self.add_action(Action("P",                 "Primitive",          "Circle"),  ShapeState.NONE)
+        self.add_action(Action("M",                 "Mode",               bool_mode),   None)
+        self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
+        self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
+        self.add_action(Action("C",                 "Center",             center_type), ShapeState.NONE)
+        self.add_action(Action("Left Click",        "Create",             ""),          ShapeState.PROCESSING)
+        self.add_action(Action("Ctrl + Left Click", "Start",              ""),          ShapeState.NONE)
+        self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)
+        self.add_action(Action("Mouse wheel",       "Segments",           str(self._segments)), ShapeState.PROCESSING)
+        self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)
 
     def get_text(self, context):
         text = "{0} {1} | Mode (M): {2} | Primitive (P): {3} | {4}"

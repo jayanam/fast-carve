@@ -109,6 +109,19 @@ class Rectangle_Shape(Shape):
         
         return False
 
+    def build_actions(self):
+        super().build_actions()
+        bool_mode = bpy.context.scene.bool_mode
+        self.add_action(Action("P",                 "Primitive",          "Rectangle"), ShapeState.NONE)
+        self.add_action(Action("M",                 "Mode",               bool_mode),   None)
+        self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
+        self.add_action(Action("R",                 "Rotate",             ""),          ShapeState.CREATED)
+        self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
+        self.add_action(Action("Left Click",        "Set 2nd point",      ""),          ShapeState.PROCESSING)
+        self.add_action(Action("Ctrl + Left Click", "Start",              ""),          ShapeState.NONE)
+        self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)
+        self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)    
+
     def draw_points(self):
         return True
 
