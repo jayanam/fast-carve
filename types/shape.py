@@ -115,7 +115,9 @@ class Shape:
 
 
     def initialize(self, context, target, snap_to_target):
-        self._bvhtree = bvhtree_from_object(context, target)
+        if target != None:
+            self._bvhtree = bvhtree_from_object(context, target)
+            
         self._snap_to_target = snap_to_target
         self.build_actions()
 
@@ -141,7 +143,7 @@ class Shape:
         return self._is_extruding
 
     def get_dir(self):
-        if not self._snap_to_target:
+        if not self._snap_to_target or self._normal == None:
             view_rot = self._view_context.view_rotation
             return get_view_direction_by_rot_matrix(view_rot)
 

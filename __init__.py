@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 3, 0),
+    "version": (0, 9, 3, 2),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -65,11 +65,15 @@ bpy.types.Scene.draw_distance = FloatProperty(
                                       description="Distance of primitives to the origin",
                                       default = 2.0)
 
-bpy.types.Scene.in_primitive_mode   = BoolProperty(name="Primitive Mode",
+bpy.types.WindowManager.in_primitive_mode = BoolProperty(name="Primitive Mode",
                                         default = False)
 
 bpy.types.Scene.extrude_mesh  = BoolProperty(name="Extrude mesh", 
                                       description="Extrude the mesh after creation",
+                                      default = True)
+
+bpy.types.Scene.fill_mesh  = BoolProperty(name="Fill mesh", 
+                                      description="Fill the mesh after creation",
                                       default = True)
 
 mode_items = [ ("Create",     "Create", "", 0),

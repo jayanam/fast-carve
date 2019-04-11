@@ -25,14 +25,17 @@ from .types.enums import *
 class FC_Primitive_Mode_Operator(bpy.types.Operator):
     bl_idname = "object.fc_immediate_mode_op"
     bl_label = "Primitive Mode Operator"
-    bl_description = ""
+    bl_description = "Primitive Mode Operator"
     bl_options = {"REGISTER", "UNDO", "BLOCKING"}
 
     @classmethod
     def poll(cls, context): 
-        if context.object is None:
+        # if context.object is None:
+        #     return False
+
+        if context.window_manager.in_primitive_mode:
             return False
-            
+
         return context.object.mode == "OBJECT"
 		
     def __init__(self):
@@ -49,12 +52,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         target_obj = context.scene.carver_target
         snap_to_target = context.scene.snap_to_target
 
-        if target_obj is None:
-            self.report({'ERROR'}, 'Please define a target object.')
-            context.scene.in_primitive_mode = False
-            return {"FINISHED"}
+        # if target_obj is None:
+        #     self.report({'ERROR'}, 'Please define a target object.')
+        #     context.scene.in_primitive_mode = False
+        #     return {"FINISHED"}
 
-        context.scene.in_primitive_mode = True
+        context.window_manager.in_primitive_mode = True
 
         self.create_shape(context, target_obj, snap_to_target)                 
 
@@ -74,7 +77,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_event = context.window_manager.event_timer_add(0.1, window=context.window)
         
     def unregister_handlers(self, context):
-        
+
+        context.window_manager.in_primitive_mode = False
+
         context.window_manager.event_timer_remove(self.draw_event)
         bpy.types.SpaceView3D.draw_handler_remove(self.draw_handle_2d, "WINDOW")
         bpy.types.SpaceView3D.draw_handler_remove(self.draw_handle_3d, "WINDOW")
@@ -93,7 +98,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         return mouse_pos_2d, mouse_pos_3d
 
     def get_3d_for_mouse(self, mouse_pos_2d, context):
-        if context.scene.snap_to_target:
+        if context.scene.snap_to_target and context.scene.carver_target != None:
             mouse_pos_3d = self.shape.get_3d_for_2d(mouse_pos_2d, context)
         else:
             mouse_pos_3d = get_3d_vertex(context, mouse_pos_2d)
@@ -117,7 +122,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             if was_none:
 
-                context.scene.in_primitive_mode = False
                 self.unregister_handlers(context)
 
                 return {'FINISHED'}
@@ -148,9 +152,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         # Left mouse button is pressed
         if event.value == "PRESS" and event.type == "LEFTMOUSE":
 
-            if target_obj is None:
-                self.report({'ERROR'}, 'Please define a target object.')
-                return { "PASS_THROUGH" }
+            # if target_obj is None:
+            #     self.report({'ERROR'}, 'Please define a target object.')
+            #     return { "PASS_THROUGH" }
 
             self.create_shape(context, target_obj, snap_to_target)
 
@@ -272,7 +276,14 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         
         bm.verts.index_update()
 
-        bm.faces.new(bm.verts)
+        if context.scene.fill_mesh:
+            bm.faces.new(bm.verts)
+        else:
+            bm.verts.ensure_lookup_table()
+            for index in range(len(bm.verts)):
+                if index > 0:
+                    bm.edges.new((bm.verts[index-1], bm.verts[index]))
+            bm.edges.new((bm.verts[index], bm.verts[0]))
 
         # Extrude mesh if extrude mesh option is enabled
         self.extrude_mesh(context, bm)
@@ -330,7 +341,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             if self.shape.is_extruded():
                 dir = self.shape.get_dir() * self.shape.extrusion
 
-            r = bmesh.ops.extrude_face_region(bm, geom=bm.faces[:])
+            extr_geom = bm.edges[:]
+
+            if context.scene.fill_mesh:
+                extr_geom = bm.faces[:]
+
+            r = bmesh.ops.extrude_face_region(bm, geom=extr_geom)
             verts = [e for e in r['geom'] if isinstance(e, bmesh.types.BMVert)]
             bmesh.ops.translate(bm, vec=dir, verts=verts)
 
