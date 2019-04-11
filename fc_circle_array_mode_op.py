@@ -36,6 +36,10 @@ class FC_Circle_Array_Mode_Operator(BL_UI_OT_draw_operator):
         self.ud_item_count.set_value(1.0)
         self.ud_item_count.set_value_change(self.on_item_count_value_change)
 
+    @classmethod
+    def poll(cls, context):        
+        return len(context.selected_objects) > 0
+        
     def on_invoke(self, context, event):
 
         # Add new widgets here

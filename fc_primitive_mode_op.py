@@ -36,6 +36,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         if context.window_manager.in_primitive_mode:
             return False
 
+        if context.object == None:
+            return True
+
         return context.object.mode == "OBJECT"
 		
     def __init__(self):
@@ -253,69 +256,71 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             self.shape.initialize(context, target_obj, snap_to_target)
 
     def create_object(self, context):
+        try:
+            # Create a mesh and an object and 
+            # add the object to the scene collection
+            mesh = bpy.data.meshes.new("MyMesh")
+            obj  = bpy.data.objects.new("MyObject", mesh)
 
-        # Create a mesh and an object and 
-        # add the object to the scene collection
-        mesh = bpy.data.meshes.new("MyMesh")
-        obj  = bpy.data.objects.new("MyObject", mesh)
+            bpy.context.scene.collection.objects.link(obj)
+            
+            bpy.ops.object.select_all(action='DESELECT')
 
-        bpy.context.scene.collection.objects.link(obj)
-        
-        bpy.ops.object.select_all(action='DESELECT')
+            bpy.context.view_layer.objects.active = obj
+            obj.select_set(state=True)
 
-        bpy.context.view_layer.objects.active = obj
-        obj.select_set(state=True)
+            # Create a bmesh and add the vertices
+            # added by mouse clicks
+            bm = bmesh.new()
+            bm.from_mesh(mesh) 
 
-        # Create a bmesh and add the vertices
-        # added by mouse clicks
-        bm = bmesh.new()
-        bm.from_mesh(mesh) 
+            for v in self.shape.vertices:
+                bm.verts.new(v)
+            
+            bm.verts.index_update()
 
-        for v in self.shape.vertices:
-            bm.verts.new(v)
-        
-        bm.verts.index_update()
+            if context.scene.fill_mesh:
+                bm.faces.new(bm.verts)
+            else:
+                bm.verts.ensure_lookup_table()
+                for index in range(len(bm.verts)):
+                    if index > 0:
+                        bm.edges.new((bm.verts[index-1], bm.verts[index]))
+                bm.edges.new((bm.verts[index], bm.verts[0]))
 
-        if context.scene.fill_mesh:
-            bm.faces.new(bm.verts)
-        else:
-            bm.verts.ensure_lookup_table()
-            for index in range(len(bm.verts)):
-                if index > 0:
-                    bm.edges.new((bm.verts[index-1], bm.verts[index]))
-            bm.edges.new((bm.verts[index], bm.verts[0]))
+            # Extrude mesh if extrude mesh option is enabled
+            self.extrude_mesh(context, bm)
 
-        # Extrude mesh if extrude mesh option is enabled
-        self.extrude_mesh(context, bm)
+            bm.to_mesh(mesh)  
+            bm.free()
 
-        bm.to_mesh(mesh)  
-        bm.free()
+            bpy.context.view_layer.objects.active = obj
+            obj.select_set(state=True)
 
-        bpy.context.view_layer.objects.active = obj
-        obj.select_set(state=True)
+            self.remove_doubles()
 
-        self.remove_doubles()
+            # set origin to geometry
+            bpy.ops.object.editmode_toggle()
+            bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
 
-        # set origin to geometry
-        bpy.ops.object.editmode_toggle()
-        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
+            # Fast bool modes
+            if context.scene.bool_mode != "Create":
 
-        # Fast bool modes
-        if context.scene.bool_mode != "Create":
+                target_obj = bpy.context.scene.carver_target
+                if target_obj is not None:
 
-            target_obj = bpy.context.scene.carver_target
-            if target_obj is not None:
+                    bool_mode_id = self.get_bool_mode_id(context.scene.bool_mode)
+                    if bool_mode_id != 3:
+                        execute_boolean_op(context, target_obj, bool_mode_id)
+                    else:
+                        execute_slice_op(context, target_obj)
 
-                bool_mode_id = self.get_bool_mode_id(context.scene.bool_mode)
-                if bool_mode_id != 3:
-                    execute_boolean_op(context, target_obj, bool_mode_id)
-                else:
-                    execute_slice_op(context, target_obj)
-
-                # delete the bool object if apply immediate is checked
-                if is_apply_immediate():
-                    bpy.ops.object.delete()
-                    select_active(target_obj)
+                    # delete the bool object if apply immediate is checked
+                    if is_apply_immediate():
+                        bpy.ops.object.delete()
+                        select_active(target_obj)
+        except RuntimeError:
+            pass
 
     def get_bool_mode_id(self, bool_name):
         if bool_name == "Difference":

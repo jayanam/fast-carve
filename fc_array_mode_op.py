@@ -13,6 +13,10 @@ class FC_Array_Mode_Operator(BL_UI_OT_draw_operator):
     bl_description = "Array modifier utility"
     bl_options = {"REGISTER", "UNDO"}
 
+    @classmethod
+    def poll(cls, context):        
+        return len(context.selected_objects) > 0
+
     def __init__(self):
         
         super().__init__()

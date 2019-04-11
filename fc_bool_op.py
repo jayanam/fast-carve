@@ -21,9 +21,14 @@ class FC_BoolOperator_Diff(Operator):
         return check_cutter_selected(context)
         
     def execute(self, context):
-        target_obj = bpy.context.scene.carver_target
+        try:
+            target_obj = bpy.context.scene.carver_target
         
-        execute_boolean_op(context, target_obj, 0)
+            execute_boolean_op(context, target_obj, 0)
+
+        except RuntimeError:
+            pass
+
         return {'FINISHED'}
     
 class FC_BoolOperator_Union(Operator):
@@ -37,9 +42,12 @@ class FC_BoolOperator_Union(Operator):
         return check_cutter_selected(context)
        
     def execute(self, context):
-        target_obj = bpy.context.scene.carver_target
-        
-        execute_boolean_op(context, target_obj, 1)
+        try:
+            target_obj = bpy.context.scene.carver_target
+            
+            execute_boolean_op(context, target_obj, 1)
+        except RuntimeError:
+            pass
         return {'FINISHED'}
 
 class FC_BoolOperator_Intersect(Operator):
@@ -53,9 +61,13 @@ class FC_BoolOperator_Intersect(Operator):
         return check_cutter_selected(context)
        
     def execute(self, context):
-        target_obj = bpy.context.scene.carver_target
+        try:
+            target_obj = bpy.context.scene.carver_target
         
-        execute_boolean_op(context, target_obj, 2)
+            execute_boolean_op(context, target_obj, 2)
+        except RuntimeError:
+            pass
+
         return {'FINISHED'}
 
 class FC_BoolOperator_Slice(Operator):
@@ -69,9 +81,13 @@ class FC_BoolOperator_Slice(Operator):
         return check_cutter_selected(context)
            
     def execute(self, context):
-        target_obj = bpy.context.scene.carver_target
+        try:
+            target_obj = bpy.context.scene.carver_target
         
-        execute_slice_op(context, target_obj)
+            execute_slice_op(context, target_obj)
+        except RuntimeError:
+            pass
+
         return {'FINISHED'}
     
 class FC_TargetSelectOperator(Operator):
@@ -81,8 +97,8 @@ class FC_TargetSelectOperator(Operator):
     bl_options = {'REGISTER', 'UNDO'} 
          
     @classmethod
-    def poll(cls, context):
-        return True
+    def poll(cls, context):        
+        return len(context.selected_objects) > 0
        
     def execute(self, context):
         bpy.context.scene.carver_target = context.view_layer.objects.active
