@@ -97,9 +97,12 @@ class Shape:
 
     def get_3d_for_2d(self, pos_2d, context):
 
-        origin, direction = get_origin_and_direction(pos_2d, context)
-            
         result = None
+
+        if self._bvhtree is None:
+            return result
+
+        origin, direction = get_origin_and_direction(pos_2d, context)
 
         if self._hit is None:
             self._hit, self._normal, *_ = self._bvhtree.ray_cast(origin, direction)
