@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 3, 4),
+    "version": (0, 9, 4, 1),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -31,6 +31,7 @@ from . fc_utils_op          import FC_SymmetrizeOperator
 from . fc_utils_op          import FC_OriginActiveOperator
 from . fc_utils_op          import FC_CenterActiveOperator
 from . fc_utils_op          import FC_DissolveEdgesOperator
+from . fc_utils_op          import FC_UnionSelectedOperator
 from . fc_menus             import FC_Main_Menu
 from . fc_apply_bool_op     import FC_ApplyBoolOperator
 from . fc_primitive_mode_op import FC_Primitive_Mode_Operator
@@ -142,6 +143,7 @@ def register():
     bpy.utils.register_class(FC_OriginActiveOperator)
     bpy.utils.register_class(FC_CenterActiveOperator)
     bpy.utils.register_class(FC_DissolveEdgesOperator)
+    bpy.utils.register_class(FC_UnionSelectedOperator)
     bpy.utils.register_class(FC_ApplyBoolOperator)
     bpy.utils.register_class(FC_Primitive_Mode_Operator)
     bpy.utils.register_class(FC_Array_Mode_Operator)
@@ -183,6 +185,7 @@ def unregister():
     bpy.utils.unregister_class(FC_OriginActiveOperator)
     bpy.utils.unregister_class(FC_CenterActiveOperator)
     bpy.utils.unregister_class(FC_DissolveEdgesOperator)
+    bpy.utils.unregister_class(FC_UnionSelectedOperator)
     bpy.utils.unregister_class(FC_ApplyBoolOperator)         
     bpy.utils.unregister_class(FC_Main_Menu)
     bpy.utils.unregister_class(FC_AddonPreferences)    

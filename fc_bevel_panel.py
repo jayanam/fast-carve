@@ -60,6 +60,9 @@ class FC_PT_Bevel_Panel(Panel):
         # Circular Array
         row = layout.row()
         row.operator('object.fc_circle_array_mode_op', text='Circle Array', icon='MOD_ARRAY')
+
+        row = layout.row()
+        row.operator('object.union_selected_op', text='Union', icon='MOD_BOOLEAN')
         
         # symmetrize negative
         row = layout.row()

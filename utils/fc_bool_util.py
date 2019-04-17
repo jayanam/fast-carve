@@ -86,6 +86,23 @@ def execute_slice_op(context, target_obj):
             
     if not bool_mod_and_apply(current_obj, 0):
         select_active(current_obj)
+
+def union_selected(context):
+    active_obj = bpy.context.active_object
+    for obj in context.selected_objects:
+        if obj is not active_obj:          
+            bool_mod = active_obj.modifiers.new(type="BOOLEAN", name="FC_BOOL")
+            
+            bool_mod.operation = 'UNION'
+            bool_mod.object = obj
+
+            recalc_normals(obj.data)
+            
+            bpy.ops.object.modifier_apply(modifier=bool_mod.name)
+
+            select_active(obj)
+            bpy.ops.object.delete()
+            select_active(active_obj)
     
     
 def execute_boolean_op(context, target_obj, bool_method = 0):

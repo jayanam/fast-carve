@@ -2,6 +2,8 @@ import bpy
 from bpy.types import Operator
 from bpy.props import StringProperty
 
+from .utils.fc_bool_util import union_selected
+
 # Set the pivot point of the active object
 # to the center and add a mirror modifier
 class FC_MirrorOperator(Operator):
@@ -112,4 +114,25 @@ class FC_SymmetrizeOperator(Operator):
         bpy.ops.mesh.symmetrize(direction=self.sym_axis)
         bpy.ops.object.mode_set(mode="OBJECT")
         
+        return {'FINISHED'}
+
+# Union all selected objects
+class FC_UnionSelectedOperator(Operator):
+    bl_idname = "object.union_selected_op"
+    bl_label = "Union selected objects"
+    bl_description = "Union all selected objects" 
+    bl_options = {'REGISTER', 'UNDO'} 
+    
+    @classmethod
+    def poll(cls, context):
+        
+        if context.active_object == None:
+            return False
+
+        mode = context.active_object.mode       
+        return len(context.selected_objects) > 1 and mode == "OBJECT"
+    
+    def execute(self, context):
+        
+        union_selected(context)
         return {'FINISHED'}
