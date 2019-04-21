@@ -151,6 +151,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             if self.shape.handle_mouse_move(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_batch(mouse_pos_3d)
+
+        # Left mouse button is released
+        if event.value == "RELEASE" and event.type == "LEFTMOUSE":
+            self.shape.set_vertex_moving(None)
         
         # Left mouse button is pressed
         if event.value == "PRESS" and event.type == "LEFTMOUSE":
@@ -176,6 +180,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             if self.shape.is_processing():
                 result = "RUNNING_MODAL"
+
+            if self.shape.is_created():
+                if self.shape.set_vertex_moving(mouse_pos_3d):
+                    result = "RUNNING_MODAL"
 
             if self.shape.handle_mouse_press(mouse_pos_2d, mouse_pos_3d, event, context):
                 self.create_object(context)

@@ -80,6 +80,7 @@ class Shape:
         self._vertices_2d = []
         self._vertices = []
         self._vertices_extruded = []
+        self._vertex_moving = None
         self._is_moving = False
         self._is_rotating = False
         self._is_extruding = False
@@ -144,6 +145,27 @@ class Shape:
 
     def is_extruding(self):
         return self._is_extruding
+
+    def set_vertex_moving(self, mouse_pos_3d):
+
+        if mouse_pos_3d is None:
+            self._vertex_moving = None
+            return False
+
+        min_dist = 1000
+        idx = 0
+        for i, v in enumerate(self._vertices):
+            dist = (mouse_pos_3d - v).length
+            if dist < min_dist:
+                min_dist = dist
+                idx = i
+
+        if min_dist > 0.1:
+            return False
+
+        self._vertex_moving = idx
+        return True
+
 
     def get_dir(self):
         if not self._snap_to_target or self._normal == None:
@@ -289,6 +311,10 @@ class Shape:
 
             self._mouse_pos_2d = mouse_pos_2d
             return True
+
+        if self._vertex_moving is not None:
+           self._vertices[self._vertex_moving] = mouse_pos_3d
+           return True
 
         if self.is_created() and self._is_moving:
             diff = mouse_pos_3d - self._move_offset
