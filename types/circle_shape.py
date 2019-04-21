@@ -45,7 +45,7 @@ class Circle_Shape(Shape):
         segments = self._segments + 1
         mul = (1.0 / (segments - 1)) * (pi * 2)
         points = [(sin(i * mul) * self._radius, cos(i * mul) * self._radius, 0) 
-        for i in range(segments)]
+        for i in range(segments-1)]
 
         rot_mat = view_rot
         offset = Vector((0,0,0))
@@ -55,7 +55,7 @@ class Circle_Shape(Shape):
             offset = self._normal.normalized() * 0.01
 
         self._vertices = [rot_mat @ Vector(point) + 
-                          self._center +  offset for point in points]
+                          self._center + offset for point in points]
 
         self._vertices_2d = [get_2d_vertex(context, vertex) for vertex in self._vertices]
 
@@ -84,7 +84,7 @@ class Circle_Shape(Shape):
         return False
 
     def draw_points(self):
-        return False
+        return True
 
     def can_set_center_type(self):
         return True

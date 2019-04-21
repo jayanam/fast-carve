@@ -69,12 +69,12 @@ class Rectangle_Shape(Shape):
         self._vertices.clear()
 
         # get missing 3d vertices
-        if not self._snap_to_target:
-            vertex2 = get_3d_vertex(context, self._vertices_2d[1])
-            vertex4 = get_3d_vertex(context, self._vertices_2d[3])
-        else:
+        if self._snap_to_target and self._normal != None:
             vertex2 = self.get_3d_for_2d(self._vertices_2d[1], context)
             vertex4 = self.get_3d_for_2d(self._vertices_2d[3], context)  
+        else:
+            vertex2 = get_3d_vertex(context, self._vertices_2d[1])
+            vertex4 = get_3d_vertex(context, self._vertices_2d[3])
         
         self._vertices.extend([self._vertex1, vertex2, self._vertex3, vertex4])
         
