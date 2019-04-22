@@ -411,7 +411,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         # Draw text for primitive mode
         blf.size(1, 18, 72)
 
-        size = 22
+        size = 20
         pos_y = 160 # self.get_actions_height(size)
 
         self.draw_action_line(self.shape.actions[0], pos_y)
