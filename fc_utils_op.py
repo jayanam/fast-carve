@@ -14,6 +14,9 @@ class FC_MirrorOperator(Operator):
     
     @classmethod
     def poll(cls, context):
+
+        if context.active_object == None:
+            return False
         
         mode = context.active_object.mode       
         return len(context.selected_objects) == 1 and mode == "OBJECT"
@@ -41,6 +44,7 @@ class FC_OriginActiveOperator(Operator):
 
     @classmethod
     def poll(cls, context): 
+
         if context.object is None:
             return False
             
@@ -64,10 +68,11 @@ class FC_CenterActiveOperator(Operator):
 
     @classmethod
     def poll(cls, context): 
-        if context.object is None:
+
+        if context.active_object == None:
             return False
             
-        return context.object.mode == "EDIT"
+        return context.active_object.mode == "EDIT"
 
     def execute(self, context):    
         bpy.ops.view3d.snap_cursor_to_active()
@@ -83,6 +88,9 @@ class FC_DissolveEdgesOperator(Operator):
     @classmethod
     def poll(cls, context):
         
+        if context.active_object == None:
+            return False
+
         mode = context.active_object.mode       
         return mode == "EDIT"
 
@@ -102,6 +110,9 @@ class FC_SymmetrizeOperator(Operator):
           
     @classmethod
     def poll(cls, context):
+
+        if context.active_object == None:
+            return False
         
         mode = context.active_object.mode       
         return len(context.selected_objects) == 1 and mode == "OBJECT"
