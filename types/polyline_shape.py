@@ -68,4 +68,5 @@ class Polyline_Shape(Shape):
             self.add_action(Action("Ctrl + Left Click", "Close shape",    ""),          ShapeState.PROCESSING)
 
         self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)
+        self.add_action(Action("Left Drag",         "Move points",        ""),          ShapeState.CREATED)
         self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)

@@ -108,5 +108,6 @@ class Circle_Shape(Shape):
         self.add_action(Action("Left Click",        "Create",             ""),          ShapeState.PROCESSING)
         self.add_action(Action("Ctrl + Left Click", "Start",              ""),          ShapeState.NONE)
         self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)
+        self.add_action(Action("Left Drag",         "Move points",        ""),          ShapeState.CREATED)
         self.add_action(Action("Mouse wheel",       "Segments",           str(self._segments)), ShapeState.PROCESSING)
         self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)
