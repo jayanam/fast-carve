@@ -408,6 +408,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 	# Draw handler to paint in pixels
     def draw_callback_2d(self, op, context):
 
+        self.shape.draw_text()
+
         # Draw text for primitive mode
         blf.size(1, 18, 72)
 
@@ -444,7 +446,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
         self.batch.draw(self.shader)
 
-        if self.shape.draw_points():
-            bgl.glPointSize(10)
-            self.batch_points.draw(self.shader)
+        bgl.glPointSize(self.shape.get_point_size())
+        self.batch_points.draw(self.shader)
 

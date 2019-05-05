@@ -121,7 +121,4 @@ class Rectangle_Shape(Shape):
         self.add_action(Action("Ctrl + Left Click", "Start",              ""),          ShapeState.NONE)
         self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)
         self.add_action(Action("Left Drag",         "Move points",        ""),          ShapeState.CREATED)
-        self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)    
-
-    def draw_points(self):
-        return True
+        self.add_action(Action("Esc",               self.get_esc_title(), ""),          None)

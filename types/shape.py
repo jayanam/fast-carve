@@ -1,5 +1,7 @@
 from enum import Enum
 
+import blf
+
 from math import sin, cos, pi, radians
 
 from mathutils import Vector, geometry
@@ -264,7 +266,6 @@ class Shape:
             region = self._view_context.region
             self._vertices_2d[index] = location_3d_to_region_2d(region, rv3d, vertex_3d)
 
-
         self._is_moving = False
         self._move_offset = 0.0
 
@@ -340,5 +341,8 @@ class Shape:
 
         return False
 
-    def draw_points(self):
-        return True
+    def draw_text(self):
+        pass
+
+    def get_point_size(self):
+        return 10

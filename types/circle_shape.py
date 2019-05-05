@@ -27,7 +27,7 @@ class Circle_Shape(Shape):
 
             # Distance center to mouse pos
             self._radius = (self._mouse_start_3d - mouse_pos_3d).length
-
+         
             self.create_circle(context)
             return True
            
@@ -83,9 +83,28 @@ class Circle_Shape(Shape):
 
         return False
 
-    def draw_points(self):
-        return True
+    def draw_text(self):
+        if self.is_processing():
+            blf.size(2, 16, 72)
+            blf.color(2, 0.1, 0.3, 0.7, 1.0)
+            
+            rv3d = self._view_context.region_3d
+            region = self._view_context.region
+            pos_text = location_3d_to_region_2d(region, rv3d, self._center)
 
+            blf.position(2, pos_text[0], pos_text[1], 0)
+            blf.draw(2, "r: {0:.3f}".format(self._radius))
+
+    def get_point_size(self):
+        if self._radius <= 0.2:
+            return 3
+        elif self._radius <= 0.3:
+            return 5
+        elif self._radius <= 0.5:
+            return 7
+        else:
+            return super().get_point_size()
+        
     def can_set_center_type(self):
         return True
 
