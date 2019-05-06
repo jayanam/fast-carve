@@ -341,6 +341,10 @@ class Shape:
 
         return False
 
+    def init_text(self):
+        blf.size(2, 16, 72)
+        blf.color(2, 0.1, 0.3, 0.7, 1.0)
+
     def draw_text(self):
         pass
 

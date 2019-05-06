@@ -109,6 +109,23 @@ class Rectangle_Shape(Shape):
         
         return False
 
+    def get_width(self):
+        return (self._vertices[0] - self._vertices[3]).length
+
+    def get_height(self):
+        return (self._vertices[0] - self._vertices[1]).length
+
+    def draw_text(self):
+        if self.is_processing():
+            
+            self.init_text()
+            
+            x = self._vertices_2d[1][0]
+            y = self._vertices_2d[1][1]
+
+            blf.position(2, x, y - 25, 0)
+            blf.draw(2, "Width: {0:.3f} | Height: {1:.3f}".format(self.get_width(), self.get_height()))
+
     def build_actions(self):
         super().build_actions()
         bool_mode = bpy.context.scene.bool_mode
