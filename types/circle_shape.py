@@ -85,8 +85,7 @@ class Circle_Shape(Shape):
 
     def draw_text(self):
         if self.is_processing():
-            blf.size(2, 16, 72)
-            blf.color(2, 0.1, 0.3, 0.7, 1.0)
+            self.init_text()
             
             rv3d = self._view_context.region_3d
             region = self._view_context.region
