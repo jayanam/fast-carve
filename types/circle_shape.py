@@ -120,7 +120,13 @@ class Circle_Shape(Shape):
 
         self.add_action(Action(self.get_prim_id(),  "Primitive",          "Circle"),    None)
         self.add_action(Action("M",                 "Mode",               bool_mode),   None)
-        self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
+
+        self.build_move_action()
+        # if not self._is_moving:
+        #     self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
+        # else:
+        #     self.add_action(Action("X or Y",            "Move Axis lock",     ""),          ShapeState.CREATED)            
+
         self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
         self.add_action(Action("C",                 "Center",             center_type), ShapeState.NONE)
         self.add_action(Action("Left Click",        "Create",             ""),          ShapeState.PROCESSING)

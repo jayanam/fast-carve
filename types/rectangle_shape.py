@@ -118,20 +118,21 @@ class Rectangle_Shape(Shape):
     def draw_text(self):
         if self.is_processing():
             
-            self.init_text()
-            
-            x = self._vertices_2d[1][0]
-            y = self._vertices_2d[1][1]
+            if self._vertices_2d[1] is not None:
+                self.init_text()
 
-            blf.position(2, x, y - 25, 0)
-            blf.draw(2, "Width: {0:.3f} | Height: {1:.3f}".format(self.get_width(), self.get_height()))
+                x = self._vertices_2d[1][0]
+                y = self._vertices_2d[1][1]
+
+                blf.position(2, x, y - 25, 0)
+                blf.draw(2, "Width: {0:.3f} | Height: {1:.3f}".format(self.get_width(), self.get_height()))
 
     def build_actions(self):
         super().build_actions()
         bool_mode = bpy.context.scene.bool_mode
         self.add_action(Action(self.get_prim_id(),  "Primitive",          "Rectangle"), None)
         self.add_action(Action("M",                 "Mode",               bool_mode),   None)
-        self.add_action(Action("G",                 "Move",               ""),          ShapeState.CREATED)
+        self.build_move_action()
         self.add_action(Action("R",                 "Rotate",             ""),          ShapeState.CREATED)
         self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
         self.add_action(Action("Left Click",        "Set 2nd point",      ""),          ShapeState.PROCESSING)

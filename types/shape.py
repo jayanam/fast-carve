@@ -87,10 +87,11 @@ class Shape:
         self._is_rotating = False
         self._is_extruding = False
         self._move_offset = 0.0
+        self._move_axis = None
         self._rotation = 0.0
         self._extrusion = 0.0
         self._view_context = None
-        self._mouse_pos_2d = (0,0)
+        self._mouse_pos_2d = [0,0]
         self._is_extruded = False
         self._snap_to_target = True
         self._bvhtree = None
@@ -207,6 +208,13 @@ class Shape:
         self._state = value
         self.build_actions()
 
+    def build_move_action(self):
+        if not self._is_moving:
+            self.add_action(Action("G",       "Move",               ""), ShapeState.CREATED)
+        else:
+            self.add_action(Action("X or Y",  "Move Axis lock",     ""), ShapeState.CREATED)            
+
+
     def build_actions(self):
         self._actions.clear()
 
@@ -255,7 +263,9 @@ class Shape:
     def start_move(self, mouse_pos):
         if self.is_created() and mouse_pos is not None:
             self._is_moving = True
+            self._move_axis = None
             self._move_offset = mouse_pos
+            self.build_actions()
             return True
         return False
 
@@ -266,8 +276,27 @@ class Shape:
             region = self._view_context.region
             self._vertices_2d[index] = location_3d_to_region_2d(region, rv3d, vertex_3d)
 
+        self._move_axis = None
         self._is_moving = False
         self._move_offset = 0.0
+        self.build_actions()
+
+    def get_mouse_pos_2d(self, x, y):
+
+        # Check if we have an axis constraint, 
+        # if not, just write and return the 2d positions
+        if self._move_axis is None:
+            self._mouse_pos_2d = [x,y]
+        elif self._move_axis == "Y":
+            self._mouse_pos_2d[1] = y
+        else:
+            self._mouse_pos_2d[0] = x
+
+        return self._mouse_pos_2d
+
+
+    def set_move_axis(self, axis):
+        self._move_axis = axis
 
     def start_rotate(self, mouse_pos, context):
         return False

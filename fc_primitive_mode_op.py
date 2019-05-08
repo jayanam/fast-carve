@@ -144,8 +144,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         # The mouse is moved
         if event.type == "MOUSEMOVE" and not self.shape.is_none():
-
-            mouse_pos_2d = (event.mouse_region_x, event.mouse_region_y)
+            
+            mouse_pos_2d = self.shape.get_mouse_pos_2d(event.mouse_region_x, event.mouse_region_y)
 
             mouse_pos_2d, mouse_pos_3d = self.get_snapped_mouse_pos(mouse_pos_2d, context)
 
@@ -207,6 +207,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
                 if self.shape.start_move(mouse_pos_3d):
                     result = "RUNNING_MODAL"
+
+            if event.type in ["X", "Y"]:
+                self.shape.set_move_axis(event.type)
+                result = "RUNNING_MODAL"
 
             # try to rotate the shape
             if event.type == "R":
