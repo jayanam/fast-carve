@@ -408,7 +408,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         blf.draw(1, action.title) 
 
         if(action.content != ""):
-            blf.position(1, 110, pos_y , 1)
+            blf.position(1, 115, pos_y , 1)
             blf.draw(1, ": " + action.content) 
 
         blf.color(1, 0, 0.5, 1, 1)
@@ -421,7 +421,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.shape.draw_text()
 
         # Draw text for primitive mode
-        blf.size(1, 18, 72)
+        blf.size(1, 16, 72)
 
         size = 20
         pos_y = 160 # self.get_actions_height(size)
