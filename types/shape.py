@@ -99,6 +99,12 @@ class Shape:
         self._normal = None
         self._actions = []
 
+    def can_start_from_center(self):
+        return False
+        
+    def get_start_from_center(self, context):
+        return context.scene.start_center and self.can_start_from_center()
+
     def get_3d_for_2d(self, pos_2d, context):
 
         result = None

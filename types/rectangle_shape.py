@@ -10,15 +10,26 @@ class Rectangle_Shape(Shape):
         self._vertices_2d = [None, None, None, None]
         self._center_2d = None
 
+
+    def can_start_from_center(self):
+        return True
+
     def handle_mouse_press(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if mouse_pos_3d is None:
             return False
 
         if self.is_none() and event.ctrl:
-            self._vertices_2d[0] = mouse_pos_2d
 
-            self._vertex1 = mouse_pos_3d
+            if self.get_start_from_center(context):
+
+                self._center_2d = mouse_pos_2d
+
+            else:
+
+                self._vertices_2d[0] = mouse_pos_2d
+
+                self._vertex1 = mouse_pos_3d
 
             self.state = ShapeState.PROCESSING
             return False
@@ -36,13 +47,31 @@ class Rectangle_Shape(Shape):
 
         if self.is_processing():
 
-            self._vertex3 = mouse_pos_3d
-            self._vertices_2d[2] = mouse_pos_2d
+            # 0-------------1
+            # |             |
+            # 3-------------2
 
-            self._vertices_2d[1] = (self._vertices_2d[0][0], self._vertices_2d[2][1])
-            self._vertices_2d[3] = (self._vertices_2d[2][0], self._vertices_2d[0][1])
+            if self.get_start_from_center(context):
 
-            self.calc_center_2d()
+                cx = self._center_2d[0]
+                cy = self._center_2d[1]
+                w = mouse_pos_2d[0] - cx
+                h = mouse_pos_2d[1] - cy
+
+                self._vertices_2d[0] = (cx - w, cy + h)
+                self._vertices_2d[1] = (cx + w, cy + h)
+                self._vertices_2d[2] = (cx + w, cy - h)
+                self._vertices_2d[3] = (cx - w, cy - h)
+                
+
+            else:
+                self._vertex3 = mouse_pos_3d
+                self._vertices_2d[2] = mouse_pos_2d
+
+                self._vertices_2d[1] = (self._vertices_2d[0][0], self._vertices_2d[2][1])
+                self._vertices_2d[3] = (self._vertices_2d[2][0], self._vertices_2d[0][1])
+
+                self.calc_center_2d()
  
             self.create_rect(context)
             return True
@@ -52,6 +81,7 @@ class Rectangle_Shape(Shape):
         return result
 
     def calc_center_2d(self):
+
         self._center_2d = (self._vertices_2d[0][0] +  (self._vertices_2d[3][0] - self._vertices_2d[0][0]) / 2, 
                             self._vertices_2d[0][1] +  (self._vertices_2d[1][1] - self._vertices_2d[0][1]) / 2)
 
@@ -70,10 +100,16 @@ class Rectangle_Shape(Shape):
 
         # get missing 3d vertices
         if self._snap_to_target and self._normal != None:
+            self._vertex1 = self.get_3d_for_2d(self._vertices_2d[0], context)
+
             vertex2 = self.get_3d_for_2d(self._vertices_2d[1], context)
+            
+            self._vertex3 = self.get_3d_for_2d(self._vertices_2d[2], context)
             vertex4 = self.get_3d_for_2d(self._vertices_2d[3], context)  
         else:
+            self._vertex1 = get_3d_vertex(context, self._vertices_2d[0])
             vertex2 = get_3d_vertex(context, self._vertices_2d[1])
+            self._vertex3 = get_3d_vertex(context, self._vertices_2d[2])
             vertex4 = get_3d_vertex(context, self._vertices_2d[3])
         
         self._vertices.extend([self._vertex1, vertex2, self._vertex3, vertex4])
@@ -130,11 +166,18 @@ class Rectangle_Shape(Shape):
     def build_actions(self):
         super().build_actions()
         bool_mode = bpy.context.scene.bool_mode
+
+        from_center = "Yes"
+
+        if not bpy.context.scene.start_center:
+            from_center = "No"
+
         self.add_action(Action(self.get_prim_id(),  "Primitive",          "Rectangle"), None)
         self.add_action(Action("M",                 "Mode",               bool_mode),   None)
         self.build_move_action()
         self.add_action(Action("R",                 "Rotate",             ""),          ShapeState.CREATED)
         self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
+        self.add_action(Action("F",                 "From Center", from_center),        ShapeState.NONE)
         self.add_action(Action("Left Click",        "Set 2nd point",      ""),          ShapeState.PROCESSING)
         self.add_action(Action("Ctrl + Left Click", "Start",              ""),          ShapeState.NONE)
         self.add_action(Action("Ctrl + Left Click", "Apply",              ""),          ShapeState.CREATED)

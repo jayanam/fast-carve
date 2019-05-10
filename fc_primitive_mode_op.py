@@ -244,6 +244,12 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                     context.scene.center_type = next_enum(context.scene.center_type, context.scene, "center_type")
                     self.shape.build_actions()
                     result = "RUNNING_MODAL"
+
+            if event.type == "F":
+                if self.shape.can_start_from_center():
+                    context.scene.start_center = not context.scene.start_center
+                    self.shape.build_actions()
+                    result = "RUNNING_MODAL"
                            
             # toggle primitve  
             if event.type == "P":

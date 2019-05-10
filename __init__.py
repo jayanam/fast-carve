@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 5, 8),
+    "version": (0, 9, 6, 0),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -104,6 +104,11 @@ primitive_types = [ ("Polyline",   "Polyline",  "", 0),
 bpy.types.Scene.primitive_type = bpy.props.EnumProperty(items=primitive_types, 
                                                         name="Primitive",
                                                         default="Polyline")
+
+bpy.types.Scene.start_center    = BoolProperty(
+                                      name="From Center", 
+                                      description="Start primtive from center",
+                                      default = False)
 
 addon_keymaps = []
 
