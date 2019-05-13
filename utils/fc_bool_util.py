@@ -3,6 +3,21 @@ from bpy.props import *
 
 import bmesh
 
+def can_apply_bool(obj, context):
+    target = context.scene.carver_target
+    if target is None:
+        return False
+
+    bool_mod = target.modifiers.get("FC_BOOL")
+    if bool_mod is None:
+        return False
+    
+    if bool_mod.object != obj:
+        return False
+
+    return True
+    
+
 def select_active(obj):
 
     bpy.ops.object.select_all(action='DESELECT')

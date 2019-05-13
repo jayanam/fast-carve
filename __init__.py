@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 6, 1),
+    "version": (0, 9, 6, 2),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -32,7 +32,7 @@ from . fc_utils_op          import FC_OriginActiveOperator
 from . fc_utils_op          import FC_CenterActiveOperator
 from . fc_utils_op          import FC_DissolveEdgesOperator
 from . fc_utils_op          import FC_UnionSelectedOperator
-from . fc_menus             import FC_Main_Menu
+from . fc_menus             import FC_MT_Bool_Menu
 from . fc_apply_bool_op     import FC_ApplyBoolOperator
 from . fc_primitive_mode_op import FC_Primitive_Mode_Operator
 from . fc_array_mode_op     import FC_Array_Mode_Operator
@@ -153,7 +153,7 @@ def register():
     bpy.utils.register_class(FC_Primitive_Mode_Operator)
     bpy.utils.register_class(FC_Array_Mode_Operator)
     bpy.utils.register_class(FC_Circle_Array_Mode_Operator)
-    bpy.utils.register_class(FC_Main_Menu)
+    bpy.utils.register_class(FC_MT_Bool_Menu)
     bpy.utils.register_class(FC_AddonPreferences)
 
     # add keymap entry
@@ -169,8 +169,8 @@ def register():
     kmi = km.keymap_items.new("object.fc_circle_array_mode_op", 'C', 'PRESS', shift=True, ctrl=True)
     addon_keymaps.append((km, kmi))
 
-    kmi_mnu = km.keymap_items.new("wm.call_menu", "Q", "PRESS", shift=True)
-    kmi_mnu.properties.name = FC_Main_Menu.bl_idname
+    kmi_mnu = km.keymap_items.new("wm.call_menu_pie", "COMMA", "PRESS", shift=True)
+    kmi_mnu.properties.name = FC_MT_Bool_Menu.bl_idname
 
     addon_keymaps.append((km, kmi_mnu))
     
@@ -192,7 +192,7 @@ def unregister():
     bpy.utils.unregister_class(FC_DissolveEdgesOperator)
     bpy.utils.unregister_class(FC_UnionSelectedOperator)
     bpy.utils.unregister_class(FC_ApplyBoolOperator)         
-    bpy.utils.unregister_class(FC_Main_Menu)
+    bpy.utils.unregister_class(FC_MT_Bool_Menu)
     bpy.utils.unregister_class(FC_AddonPreferences)    
     bpy.utils.unregister_class(FC_Primitive_Mode_Operator)
     bpy.utils.unregister_class(FC_Array_Mode_Operator)
