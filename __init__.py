@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 6, 2),
+    "version": (0, 9, 6, 3),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -126,7 +126,7 @@ class FC_AddonPreferences(AddonPreferences):
         row.label(text=km_item.name)
         row.prop(km_item, 'type', text='', full_event=True)
 
-        km_mnu_item = km_items['wm.call_menu']
+        km_mnu_item = km_items['wm.call_menu_pie']
         row = self.layout.row()
         row.label(text=km_mnu_item.name)
         row.prop(km_mnu_item, 'type', text='', full_event=True)       
