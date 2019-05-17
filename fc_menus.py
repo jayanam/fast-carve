@@ -37,8 +37,8 @@ class FC_MT_Bool_Menu(Menu):
                 if can_apply_bool(active_object, context):
                     pie.operator("object.apply_bool", icon="MOD_BOOLEAN")
  
-
-            pie.operator("object.bool_target", icon="MOD_BOOLEAN")
+            if active_object != context.scene.carver_target:
+                pie.operator("object.bool_target", icon="MOD_BOOLEAN")
             
             pie.operator("object.bevel", text=bo.get_display(context.object.mode), icon="MOD_BEVEL")
             pie.operator("object.unbevel", text=ubo.get_display(context.object.mode), icon="MOD_BEVEL")       
