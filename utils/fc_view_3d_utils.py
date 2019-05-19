@@ -107,7 +107,7 @@ def bvhtree_from_object(context, obj):
     bm.transform(obj.matrix_world)
 
     bvhtree = BVHTree.FromBMesh(bm)
-    #bpy.data.meshes.remove(mesh)
+    ob_eval.to_mesh_clear()
     return bvhtree
 
 def get_snap_3d_vertex(context, vertex_3d):
