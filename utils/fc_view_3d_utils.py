@@ -97,8 +97,6 @@ def get_2d_vertex(context, vertex_3d):
 
 def bvhtree_from_object(context, obj):
     bm = bmesh.new()
-
-    # mesh = obj.to_mesh(context.evaluated_depsgraph_get(), True)
     depsgraph = context.evaluated_depsgraph_get()
     ob_eval = obj.evaluated_get(depsgraph)
     mesh = ob_eval.to_mesh()
