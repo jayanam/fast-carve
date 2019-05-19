@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 6, 4),
+    "version": (0, 9, 6, 5),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -110,7 +110,6 @@ bpy.types.Scene.start_center    = BoolProperty(
                                       description="Start primtive from center",
                                       default = False)
 
-addon_keymaps = []
 
 # Addon preferences
 class FC_AddonPreferences(AddonPreferences):
@@ -129,33 +128,40 @@ class FC_AddonPreferences(AddonPreferences):
         km_mnu_item = km_items['wm.call_menu_pie']
         row = self.layout.row()
         row.label(text=km_mnu_item.name)
-        row.prop(km_mnu_item, 'type', text='', full_event=True)       
+        row.prop(km_mnu_item, 'type', text='', full_event=True) 
+
+addon_keymaps = []
+
+classes = (
+    FC_PT_Panel,
+    FC_PT_Bevel_Panel,
+    FC_PT_Primitive_Panel,
+    FC_BevelOperator,
+    FC_UnBevelOperator,
+    FC_BoolOperator_Diff,
+    FC_BoolOperator_Union,
+    FC_BoolOperator_Slice,
+    FC_BoolOperator_Intersect,
+    FC_TargetSelectOperator,
+    FC_MirrorOperator,
+    FC_SymmetrizeOperator,
+    FC_OriginActiveOperator,
+    FC_CenterActiveOperator,
+    FC_DissolveEdgesOperator,
+    FC_UnionSelectedOperator,
+    FC_ApplyBoolOperator,
+    FC_Primitive_Mode_Operator,
+    FC_Array_Mode_Operator,
+    FC_Circle_Array_Mode_Operator,
+    FC_MT_Bool_Menu,
+    FC_AddonPreferences
+)
+     
     
-
 def register():
-    bpy.utils.register_class(FC_PT_Panel)
-    bpy.utils.register_class(FC_PT_Bevel_Panel)
-    bpy.utils.register_class(FC_PT_Primitive_Panel)
-    bpy.utils.register_class(FC_BevelOperator)
-    bpy.utils.register_class(FC_UnBevelOperator)
-    bpy.utils.register_class(FC_BoolOperator_Diff)
-    bpy.utils.register_class(FC_BoolOperator_Union)
-    bpy.utils.register_class(FC_BoolOperator_Slice)
-    bpy.utils.register_class(FC_BoolOperator_Intersect)
-    bpy.utils.register_class(FC_TargetSelectOperator)
-    bpy.utils.register_class(FC_MirrorOperator)
-    bpy.utils.register_class(FC_SymmetrizeOperator)
-    bpy.utils.register_class(FC_OriginActiveOperator)
-    bpy.utils.register_class(FC_CenterActiveOperator)
-    bpy.utils.register_class(FC_DissolveEdgesOperator)
-    bpy.utils.register_class(FC_UnionSelectedOperator)
-    bpy.utils.register_class(FC_ApplyBoolOperator)
-    bpy.utils.register_class(FC_Primitive_Mode_Operator)
-    bpy.utils.register_class(FC_Array_Mode_Operator)
-    bpy.utils.register_class(FC_Circle_Array_Mode_Operator)
-    bpy.utils.register_class(FC_MT_Bool_Menu)
-    bpy.utils.register_class(FC_AddonPreferences)
-
+    for c in classes:
+        bpy.utils.register_class(c)
+   
     # add keymap entry
     kc = bpy.context.window_manager.keyconfigs.addon
     km = kc.keymaps.new(name='3D View', space_type='VIEW_3D')
@@ -175,28 +181,8 @@ def register():
     addon_keymaps.append((km, kmi_mnu))
     
 def unregister():
-    bpy.utils.unregister_class(FC_PT_Panel)
-    bpy.utils.unregister_class(FC_PT_Bevel_Panel)
-    bpy.utils.unregister_class(FC_PT_Primitive_Panel)
-    bpy.utils.unregister_class(FC_BevelOperator)
-    bpy.utils.unregister_class(FC_UnBevelOperator)
-    bpy.utils.unregister_class(FC_BoolOperator_Diff)
-    bpy.utils.unregister_class(FC_BoolOperator_Union)
-    bpy.utils.unregister_class(FC_BoolOperator_Slice)
-    bpy.utils.unregister_class(FC_BoolOperator_Intersect)
-    bpy.utils.unregister_class(FC_TargetSelectOperator)
-    bpy.utils.unregister_class(FC_MirrorOperator)
-    bpy.utils.unregister_class(FC_SymmetrizeOperator)
-    bpy.utils.unregister_class(FC_OriginActiveOperator)
-    bpy.utils.unregister_class(FC_CenterActiveOperator)
-    bpy.utils.unregister_class(FC_DissolveEdgesOperator)
-    bpy.utils.unregister_class(FC_UnionSelectedOperator)
-    bpy.utils.unregister_class(FC_ApplyBoolOperator)         
-    bpy.utils.unregister_class(FC_MT_Bool_Menu)
-    bpy.utils.unregister_class(FC_AddonPreferences)    
-    bpy.utils.unregister_class(FC_Primitive_Mode_Operator)
-    bpy.utils.unregister_class(FC_Array_Mode_Operator)
-    bpy.utils.unregister_class(FC_Circle_Array_Mode_Operator)
+    for c in classes:
+        bpy.utils.register_class(c)
 
     # remove keymap entry
     for km, kmi in addon_keymaps:

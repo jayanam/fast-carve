@@ -5,6 +5,6 @@ def more_than_one_selected(context):
 
 def check_cutter_selected(context):
     result = len(context.selected_objects) > 0
-    result = result and not bpy.context.scene.carver_target is None
-    result = result and not (bpy.context.scene.carver_target == context.view_layer.objects.active)
+    result = result and not context.scene.carver_target is None
+    result = result and not (context.scene.carver_target == context.view_layer.objects.active)
     return result
