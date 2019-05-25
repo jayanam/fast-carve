@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 6, 6),
+    "version": (0, 9, 6, 7),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -182,7 +182,7 @@ def register():
     
 def unregister():
     for c in classes:
-        bpy.utils.register_class(c)
+        bpy.utils.unregister_class(c)
 
     # remove keymap entry
     for km, kmi in addon_keymaps:
