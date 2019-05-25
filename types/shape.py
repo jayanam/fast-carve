@@ -98,6 +98,7 @@ class Shape:
         self._hit = None
         self._normal = None
         self._actions = []
+        self._extrude_pos = 0
 
     def can_start_from_center(self):
         return False
@@ -312,9 +313,13 @@ class Shape:
         self._rotation = 0.0
 
     def start_extrude(self, mouse_pos_2d, context):
-        self._mouse_pos_2d = mouse_pos_2d
+        self._extrude_pos = mouse_pos_2d[0]
         self._is_extruding = True
         return True
+
+    def stop_extrude(self, context):
+        self._extrude_pos = 0
+        self._is_extruding = False
 
     def can_set_center_type(self):
         return False
@@ -331,9 +336,6 @@ class Shape:
 
         self._is_extruded = True
 
-    def stop_extrude(self, context):
-        self._is_extruding = False
-
     def handle_mouse_wheel(self, inc, context):
         return False
 
@@ -341,11 +343,16 @@ class Shape:
 
         if self.is_extruding():
             
-            self._extrusion += (mouse_pos_2d[0] - self._mouse_pos_2d[0]) / 5
+            self._extrude_pos -= mouse_pos_2d[0]
+
+            if(self._extrude_pos > 0):
+                self._extrusion -= 0.1
+            else:
+                self._extrusion += 0.1
 
             self.extrude_vertices(context)
 
-            self._mouse_pos_2d = mouse_pos_2d
+            self._extrude_pos = mouse_pos_2d[0]
             return True
 
         if self._vertex_moving is not None:
