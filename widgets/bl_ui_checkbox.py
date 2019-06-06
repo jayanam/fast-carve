@@ -51,11 +51,7 @@ class BL_UI_Checkbox(BL_UI_Widget):
         if value != self.__state:
             self.__state = value
 
-            try:
-                self.state_changed_func(self, self.__state)
-            except:
-                pass
-
+            self.call_state_changed()
 
     def update(self, x, y):        
         super().update(x, y)
@@ -69,8 +65,7 @@ class BL_UI_Checkbox(BL_UI_Widget):
         off_x = 0
         off_y = 0
         sx, sy = self.__boxsize 
-
-                
+        
         # top left, top right, ...
         vertices_box = (
                     (self.x_screen + off_x,      y_screen_flip - off_y - sy), 
@@ -142,14 +137,26 @@ class BL_UI_Checkbox(BL_UI_Widget):
     def set_state_changed(self, state_changed_func):
         self.state_changed_func = state_changed_func  
  
-    def mouse_up(self, x, y):
+    def call_state_changed(self):
+        try:
+            self.state_changed_func(self, self.__state)
+        except:
+            pass
+
+    def toggle_state(self):
+        self.__state = not self.__state
+
+    def mouse_enter(self, event, x, y):
+        if self._mouse_down:
+            self.toggle_state()
+            self.call_state_changed()
+
+    def mouse_down(self, x, y):
         if self.is_in_rect(x,y):
-            self.__state = not self.__state
-            try:
-                self.state_changed_func(self, self.__state)
-            except:
-                pass
-                
+            self.toggle_state()
+
+            self.call_state_changed()
+
             return True
 
         return False

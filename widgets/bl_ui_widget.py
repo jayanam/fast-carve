@@ -15,6 +15,8 @@ class BL_UI_Widget:
         self._bg_color = (0.8, 0.8, 0.8, 1.0)
         self._tag = None
         self.context = None
+        self.__inrect = False
+        self._mouse_down = False
 
     def set_location(self, x, y):
         self.x = x
@@ -73,15 +75,33 @@ class BL_UI_Widget:
         self.batch_panel = batch_for_shader(self.shader, 'TRIS', {"pos" : vertices}, indices=indices)
     
     def handle_event(self, event):
+        x = event.mouse_region_x
+        y = event.mouse_region_y
+
         if(event.type == 'LEFTMOUSE'):
             if(event.value == 'PRESS'):
-                return self.mouse_down(event.mouse_region_x, event.mouse_region_y)
+                self._mouse_down = True
+                return self.mouse_down(x, y)
             else:
-                self.mouse_up(event.mouse_region_x, event.mouse_region_y)
+                self._mouse_down = False
+                self.mouse_up(x, y)
                 
         
         elif(event.type == 'MOUSEMOVE'):
-            self.mouse_move(event.mouse_region_x, event.mouse_region_y)
+            self.mouse_move(x, y)
+
+            inrect = self.is_in_rect(x, y)
+
+            # we enter the rect
+            if not self.__inrect and inrect:
+                self.__inrect = True
+                self.mouse_enter(event, x, y)
+
+            # we are leaving the rect
+            elif self.__inrect and not inrect:
+                self.__inrect = False
+                self.mouse_exit(event, x, y)
+
             return False
                         
         return False                 
@@ -104,8 +124,14 @@ class BL_UI_Widget:
     def mouse_down(self, x, y):       
         return self.is_in_rect(x,y)
 
-    def mouse_move(self, x, y):
+    def mouse_up(self, x, y):
         pass
 
-    def mouse_up(self, x, y):
+    def mouse_enter(self, event, x, y):
+        pass
+
+    def mouse_exit(self, event, x, y):
+        pass
+
+    def mouse_move(self, x, y):
         pass
