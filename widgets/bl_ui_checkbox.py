@@ -65,6 +65,8 @@ class BL_UI_Checkbox(BL_UI_Widget):
         off_x = 0
         off_y = 0
         sx, sy = self.__boxsize 
+
+        self.shader_chb = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
         
         # top left, top right, ...
         vertices_box = (
@@ -73,8 +75,7 @@ class BL_UI_Checkbox(BL_UI_Widget):
                     (self.x_screen + off_x + sx, y_screen_flip - off_y),
                     (self.x_screen + off_x,      y_screen_flip - off_y))
 
-        self.shader_box = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-        self.batch_box = batch_for_shader(self.shader_box, 'LINE_LOOP', {"pos": vertices_box})
+        self.batch_box = batch_for_shader(self.shader_chb, 'LINE_LOOP', {"pos": vertices_box})
 
         inset = 4
 
@@ -85,26 +86,24 @@ class BL_UI_Checkbox(BL_UI_Widget):
             (self.x_screen + off_x + sx - inset, y_screen_flip - off_y -  inset), 
             (self.x_screen + off_x + inset, y_screen_flip - off_y - sy + inset))
 
-        self.shader_cross = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-        self.batch_cross = batch_for_shader(self.shader_cross, 'LINES', {"pos": vertices_cross})
+        self.batch_cross = batch_for_shader(self.shader_chb, 'LINES', {"pos": vertices_cross})
 
    
     def draw(self):
 
         area_height = self.get_area_height()
+        self.shader_chb.bind()
 
         if self.is_checked:
             bgl.glLineWidth(3)
-            self.shader_cross.bind()
-            self.shader_cross.uniform_float("color", self._cross_color)
+            self.shader_chb.uniform_float("color", self._cross_color)
 
-            self.batch_cross.draw(self.shader_cross) 
+            self.batch_cross.draw(self.shader_chb) 
 
         bgl.glLineWidth(2)
-        self.shader_box.bind()
-        self.shader_box.uniform_float("color", self._box_color)
+        self.shader_chb.uniform_float("color", self._box_color)
 
-        self.batch_box.draw(self.shader_box) 
+        self.batch_box.draw(self.shader_chb) 
 
         # Draw text
         self.draw_text(area_height)
