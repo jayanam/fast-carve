@@ -339,20 +339,24 @@ class Shape:
     def handle_mouse_wheel(self, inc, context):
         return False
 
+
     def handle_mouse_move(self, mouse_pos_2d, mouse_pos_3d, event, context):
 
         if self.is_extruding():
             
-            self._extrude_pos -= mouse_pos_2d[0]
+            diff = self._extrude_pos - mouse_pos_2d[0]
 
-            if(self._extrude_pos > 0):
+            if(diff > 0):
                 self._extrusion -= 0.1
-            else:
+            elif (diff < 0):
                 self._extrusion += 0.1
-
+            
             self.extrude_vertices(context)
 
-            self._extrude_pos = mouse_pos_2d[0]
+            # change direction of mouse?
+            if not ((diff * self._extrusion) > 0):
+                self._extrude_pos = mouse_pos_2d[0]
+
             return True
 
         if self._vertex_moving is not None:
