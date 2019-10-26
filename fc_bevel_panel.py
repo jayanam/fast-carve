@@ -21,7 +21,13 @@ class FC_PT_Bevel_Panel(Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.object is not None)
+        if context.object is None:
+            return False
+        
+        if context.object.mode == "SCULPT":
+            return False
+
+        return True
      
     def draw(self, context):
         

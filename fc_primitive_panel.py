@@ -5,7 +5,6 @@ class FC_PT_Primitive_Panel(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_label = "Primitives"
-    bl_context = "objectmode"
     bl_category = "Fast Carve"
    
     def draw(self, context):

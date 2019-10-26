@@ -39,7 +39,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         if context.object == None:
             return True
 
-        return context.object.mode == "OBJECT"
+        return context.object.mode == "OBJECT" or context.object.mode == "SCULPT"
 		
     def __init__(self):
         self.draw_handle_2d = None
@@ -61,6 +61,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         #     return {"FINISHED"}
 
         context.window_manager.in_primitive_mode = True
+
+        self.current_mode = context.object.mode
 
         self.create_shape(context, target_obj, snap_to_target)                 
 
@@ -275,6 +277,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
     def create_object(self, context):
         try:
+            bpy.ops.object.mode_set(mode='OBJECT')
+
             # Create a mesh and an object and 
             # add the object to the scene collection
             mesh = bpy.data.meshes.new("MyMesh")
@@ -339,6 +343,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                         select_active(target_obj)
         except RuntimeError:
             pass
+        finally:
+            bpy.ops.object.mode_set(mode=self.current_mode)
 
     def get_bool_mode_id(self, bool_name):
         if bool_name == "Difference":
