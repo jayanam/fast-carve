@@ -62,7 +62,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         context.window_manager.in_primitive_mode = True
 
-        self.current_mode = context.object.mode
+        self.current_mode = None
+
+        if context.object is not None:
+            self.current_mode = context.object.mode
 
         self.create_shape(context, target_obj, snap_to_target)                 
 
@@ -277,7 +280,9 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
     def create_object(self, context):
         try:
-            bpy.ops.object.mode_set(mode='OBJECT')
+
+            if context.object is not None:
+                bpy.ops.object.mode_set(mode='OBJECT')
 
             # Create a mesh and an object and 
             # add the object to the scene collection
@@ -344,7 +349,8 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         except RuntimeError:
             pass
         finally:
-            bpy.ops.object.mode_set(mode=self.current_mode)
+            if self.current_mode is not None:
+                bpy.ops.object.mode_set(mode=self.current_mode)
 
     def get_bool_mode_id(self, bool_name):
         if bool_name == "Difference":
