@@ -8,7 +8,7 @@ class FC_PT_Panel(Panel):
     bl_category = "Fast Carve"
     
     def draw(self, context):
-        global custom_icons;
+        # global custom_icons;
         
         layout = self.layout
         scene = context.scene
@@ -16,6 +16,10 @@ class FC_PT_Panel(Panel):
         # Carver Target
         row = layout.row()
         layout.prop_search(context.scene, "carver_target", context.scene, "objects", text="Target")
+
+        # Selected as target
+        row = layout.row()
+        row.operator('object.bool_target', icon='MOD_BOOLEAN')
 
         if context.mode != "SCULPT":
             
@@ -49,7 +53,3 @@ class FC_PT_Panel(Panel):
             # Apply all booleans
             row = layout.row()
             row.operator('object.apply_bool',icon='MOD_BOOLEAN')
-            
-            # Selected = target
-            row = layout.row()
-            row.operator('object.bool_target', icon='MOD_BOOLEAN')
