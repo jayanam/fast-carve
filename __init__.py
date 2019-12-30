@@ -2,7 +2,7 @@ bl_info = {
     "name": "Fast Carve",
     "description": "Hardsurface utility Blender addon for quick and easy boolean and bevel operations",
     "author": "Jayanam",
-    "version": (0, 9, 7, 2),
+    "version": (0, 9, 7, 3),
     "blender": (2, 80, 0),
     "location": "View3D",
     "category": "Object"}
@@ -89,7 +89,7 @@ center_items = [ ("Mouse",     "Mouse", "", 0),
                ]
 
 bpy.types.Scene.bool_mode = bpy.props.EnumProperty(items=mode_items, 
-                                                   name="Mode",
+                                                   name="Operation",
                                                    default="Create")
 
 bpy.types.Scene.center_type = bpy.props.EnumProperty(items=center_items, 

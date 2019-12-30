@@ -58,7 +58,7 @@ class Polyline_Shape(Shape):
         super().build_actions()
         bool_mode = bpy.context.scene.bool_mode
         self.add_action(Action(self.get_prim_id(),  "Primitive",          "Polyline"),  None)
-        self.add_action(Action("M",                 "Mode",               bool_mode),   None)
+        self.add_action(Action("O",                 "Operation",          bool_mode),   None)
         self.build_move_action()
         self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)
         self.add_action(Action("Left Click",        "Add line",           ""),          ShapeState.PROCESSING)

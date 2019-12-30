@@ -119,7 +119,7 @@ class Circle_Shape(Shape):
         center_type = bpy.context.scene.center_type
 
         self.add_action(Action(self.get_prim_id(),  "Primitive",          "Circle"),    None)
-        self.add_action(Action("M",                 "Mode",               bool_mode),   None)
+        self.add_action(Action("O",                 "Operation",           bool_mode),   None)
 
         self.build_move_action()
 

@@ -173,7 +173,7 @@ class Rectangle_Shape(Shape):
             from_center = "No"
 
         self.add_action(Action(self.get_prim_id(),  "Primitive",          "Rectangle"), None)
-        self.add_action(Action("M",                 "Mode",               bool_mode),   None)
+        self.add_action(Action("O",                 "Operation",           bool_mode),   None)
         self.build_move_action()
         self.add_action(Action("R",                 "Rotate",             ""),          ShapeState.CREATED)
         self.add_action(Action("E",                 "Extrude",            ""),          ShapeState.CREATED)

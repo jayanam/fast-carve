@@ -236,7 +236,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                     result = "RUNNING_MODAL"
 
             # toggle bool mode
-            if event.type == "M":
+            if event.type == "O":
                 context.scene.bool_mode = next_enum(context.scene.bool_mode, 
                                                     context.scene, "bool_mode")
 
