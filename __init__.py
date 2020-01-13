@@ -111,7 +111,6 @@ bpy.types.Scene.start_center    = BoolProperty(
                                       description="Start primtive from center",
                                       default = False)
 
-
 # Addon preferences
 class FC_AddonPreferences(AddonPreferences):
     bl_idname = __name__
