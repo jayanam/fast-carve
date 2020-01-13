@@ -11,6 +11,10 @@ import bmesh
 import gpu
 from gpu_extras.batch import batch_for_shader
 
+from bpy_extras import view3d_utils
+
+import mathutils
+
 from .utils.fc_bool_util import select_active, execute_boolean_op, execute_slice_op, is_apply_immediate
 from .utils.fc_view_3d_utils import *
 
@@ -18,6 +22,7 @@ from .types.shape import *
 from .types.rectangle_shape import *
 from .types.polyline_shape import *
 from .types.circle_shape import *
+from .types.curve_shape import *
 
 from .types.enums import *
 
@@ -95,6 +100,24 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         self.draw_handle_2d = None
         self.draw_handle_3d = None
         self.draw_event  = None
+
+    def get_mousepos_on_object(self, context, mouse_pos):
+
+        scene = context.scene
+        region = context.region
+        region3D = context.space_data.region_3d
+
+        view_vector = view3d_utils.region_2d_to_vector_3d(region,   region3D, mouse_pos)
+        origin      = view3d_utils.region_2d_to_origin_3d(region,   region3D, mouse_pos)
+        rot         = Vector((1,1,1))
+
+        # Get intersection with objects
+        hit, loc_hit, norm, face, *_ = scene.ray_cast(context.view_layer, origin, view_vector)
+        if hit:
+            z = Vector((0,0,1))
+            return loc_hit, norm
+
+        return get_3d_vertex(context, mouse_pos), rot
 
     def get_snapped_mouse_pos(self, mouse_pos_2d, context):
         mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
@@ -190,8 +213,21 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 if self.shape.set_vertex_moving(mouse_pos_3d):
                     result = "RUNNING_MODAL"
 
+            if isinstance(self.shape, Curve_Shape) and not self.shape.is_created():
+                # Get position of object under mouse cursor
+                # TODO: Add this method to the shape object
+                # Something like: Get next mouse pos 3d...
+                mouse_pos_3d, normal = self.get_mousepos_on_object(context, mouse_pos_2d)
+                self.shape.set_rotation(normal)
+
             if self.shape.handle_mouse_press(mouse_pos_2d, mouse_pos_3d, event, context):
-                self.create_object(context)
+
+                # TODO: ObjectCreation factory with the shape as parameter
+                # for a create-method
+                if self.shape.connected_shape():
+                    self.create_mesh(context)
+                else:
+                    self.create_curve(context)
             else:
                 # So that the direction is defined during shape
                 # creation, not when it is extruded
@@ -273,12 +309,44 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 self.shape = Circle_Shape()
             elif context.scene.primitive_type == "Polyline":
                 self.shape = Polyline_Shape()
+            elif context.scene.primitive_type == "Curve":
+                self.shape = Curve_Shape()
             else:
                 self.shape = Rectangle_Shape()
 
             self.shape.initialize(context, target_obj, snap_to_target)
 
-    def create_object(self, context):
+    def create_curve(self, context):
+        if context.object is not None:
+            bpy.ops.object.mode_set(mode='OBJECT')
+
+        bpy.ops.curve.primitive_bezier_curve_add(enter_editmode=True, location=(0, 0, 0))
+
+        curve = context.active_object
+        curve_shape = self.shape
+
+        obj_data = context.active_object.data
+        obj_data.bevel_depth = 0.05
+        obj_data.resolution_u = 12
+        obj_data.fill_mode = 'FULL'  
+
+        bez_points = curve.data.splines[0].bezier_points
+        point_count = len(bez_points) - 1
+
+        rot_start = curve_shape.get_start_rotation()
+        rot_end = curve_shape.get_end_rotation()
+
+        bez_points[0].co = curve_shape.get_start_point()
+        bez_points[0].handle_right = bez_points[0].co + rot_start
+        bez_points[0].handle_left = bez_points[0].co - rot_start
+
+        bez_points[point_count].co = curve_shape.get_end_point()
+        bez_points[point_count].handle_right = bez_points[point_count].co - rot_end
+        bez_points[point_count].handle_left = bez_points[point_count].co + rot_end
+
+
+
+    def create_mesh(self, context):
         try:
 
             if context.object is not None:
@@ -453,20 +521,26 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 	# Draw handler to paint onto the screen
     def draw_callback_3d(self, op, context):
 
-        # Draw lines
-        bgl.glEnable(bgl.GL_LINE_SMOOTH)
         self.shader.bind()
 
-        self.shader.uniform_float("color", (0.2, 0.5, 0.8, 1.0))
-        bgl.glLineWidth(2)
-        self.batch_extruded.draw(self.shader)
+        if self.shape.connected_shape():
 
-        bgl.glLineWidth(1)
-        self.batch_lines_extruded.draw(self.shader)
+            # Draw lines
+            bgl.glEnable(bgl.GL_LINE_SMOOTH)
 
-        bgl.glLineWidth(3)
-        self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
-        self.batch.draw(self.shader)
+            self.shader.uniform_float("color", (0.2, 0.5, 0.8, 1.0))
+            bgl.glLineWidth(2)
+            self.batch_extruded.draw(self.shader)
+
+            bgl.glLineWidth(1)
+            self.batch_lines_extruded.draw(self.shader)
+
+            bgl.glLineWidth(3)
+            self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
+            self.batch.draw(self.shader)
+
+        else:
+            self.shader.uniform_float("color", (0.1, 0.3, 0.7, 1.0))
 
         bgl.glPointSize(self.shape.get_point_size())
         self.batch_points.draw(self.shader)

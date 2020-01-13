@@ -156,6 +156,9 @@ class Shape:
     def is_extruding(self):
         return self._is_extruding
 
+    def connected_shape(self):
+        return True
+
     def set_vertex_moving(self, mouse_pos_3d):
 
         if mouse_pos_3d is None:
