@@ -109,7 +109,6 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
         view_vector = view3d_utils.region_2d_to_vector_3d(region,   region3D, mouse_pos)
         origin      = view3d_utils.region_2d_to_origin_3d(region,   region3D, mouse_pos)
-        rot         = Vector((1,1,1))
 
         # Get intersection with objects
         hit, loc_hit, norm, face, *_ = scene.ray_cast(context.view_layer, origin, view_vector)
@@ -117,7 +116,7 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
             z = Vector((0,0,1))
             return loc_hit, norm
 
-        return get_3d_vertex(context, mouse_pos), rot
+        return get_3d_vertex(context, mouse_pos), None
 
     def get_snapped_mouse_pos(self, mouse_pos_2d, context):
         mouse_pos_3d = self.get_3d_for_mouse(mouse_pos_2d, context)
@@ -213,21 +212,10 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
                 if self.shape.set_vertex_moving(mouse_pos_3d):
                     result = "RUNNING_MODAL"
 
-            if isinstance(self.shape, Curve_Shape) and not self.shape.is_created():
-                # Get position of object under mouse cursor
-                # TODO: Add this method to the shape object
-                # Something like: Get next mouse pos 3d...
-                mouse_pos_3d, normal = self.get_mousepos_on_object(context, mouse_pos_2d)
-                self.shape.set_rotation(normal)
-
             if self.shape.handle_mouse_press(mouse_pos_2d, mouse_pos_3d, event, context):
 
-                # TODO: ObjectCreation factory with the shape as parameter
-                # for a create-method
-                if self.shape.connected_shape():
-                    self.create_mesh(context)
-                else:
-                    self.create_curve(context)
+                self.create_object(context)
+
             else:
                 # So that the direction is defined during shape
                 # creation, not when it is extruded
@@ -316,6 +304,13 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
 
             self.shape.initialize(context, target_obj, snap_to_target)
 
+    def create_object(self, context):
+        # TODO: Refactor -> Creation factory with shape as parameter
+        if self.shape.connected_shape():
+            self.create_mesh(context)
+        else:
+            self.create_curve(context)
+
     def create_curve(self, context):
         if context.object is not None:
             bpy.ops.object.mode_set(mode='OBJECT')
@@ -333,16 +328,20 @@ class FC_Primitive_Mode_Operator(bpy.types.Operator):
         bez_points = curve.data.splines[0].bezier_points
         point_count = len(bez_points) - 1
 
-        rot_start = curve_shape.get_start_rotation()
-        rot_end = curve_shape.get_end_rotation()
+        norm_start = curve_shape.get_normal_start()
+        norm_end = curve_shape.get_normal_end()
 
         bez_points[0].co = curve_shape.get_start_point()
-        bez_points[0].handle_right = bez_points[0].co + rot_start
-        bez_points[0].handle_left = bez_points[0].co - rot_start
+        if norm_start is not None:
+            bez_points[0].handle_right = bez_points[0].co + norm_start
+            bez_points[0].handle_left = bez_points[0].co - norm_start
 
         bez_points[point_count].co = curve_shape.get_end_point()
-        bez_points[point_count].handle_right = bez_points[point_count].co - rot_end
-        bez_points[point_count].handle_left = bez_points[point_count].co + rot_end
+        if norm_end is not None:
+            bez_points[point_count].handle_right = bez_points[point_count].co - norm_end
+            bez_points[point_count].handle_left = bez_points[point_count].co + norm_end
+
+        self.shape.reset()
 
 
 
